@@ -10,6 +10,15 @@
                       "type":  1
                   },
                   {
+                      "name":  "🎬瓜子影视",
+                      "type":  3,
+                      "api":  "csp_guazi",
+                      "ext":  "https://ghp.xptvhelper.link/https://raw.githubusercontent.com/Yswag/xptv-extensions/main/js/gzys.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
                       "api":  "http://154.219.117.232:9981/jacloudapi.php/provide/vod",
                       "key":  "建安采集",
                       "name":  "影视 | 建安",
