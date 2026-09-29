@@ -130,10 +130,33 @@
                       "filterable":  1
                   },
                   {
+                      "key":  "bili_heji",
+                      "name":  "🅱哔哔┃合集",
+                      "type":  3,
+                      "api":  "csp_Bili",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/bilibili.json",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "bili_gequ",
+                      "name":  "🅱哔哔┃歌曲",
+                      "type":  3,
+                      "api":  "csp_Bili",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/biliych.json",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
                       "key":  "ck",
                       "name":  "📺CK资源",
                       "type":  1,
-                      "api":  "https://ckzy.me/api.php/provide/vod/"
+                      "api":  "https://www.ckckv.com/api.php/provide/vod/from/ckm3u8",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
                   },
                   {
                       "key":  "jinying",
