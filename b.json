@@ -10,10 +10,37 @@
                       "type":  1
                   },
                   {
-                      "name":  "🎬瓜子影视",
-                      "type":  3,
-                      "api":  "csp_guazi",
-                      "ext":  "https://ghp.xptvhelper.link/https://raw.githubusercontent.com/Yswag/xptv-extensions/main/js/gzys.js",
+                      "key":  "U酷资源",
+                      "name":  "🎬U酷资源",
+                      "type":  1,
+                      "api":  "https://api.ukuapi.com/api.php/provide/vod/",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "樱花资源",
+                      "name":  "🌸樱花资源",
+                      "type":  1,
+                      "api":  "https://m3u8.apiyhzy.com/api.php/provide/vod/?ac=list",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "CK资源",
+                      "name":  "📺CK资源",
+                      "type":  1,
+                      "api":  "https://ckzy.me/api.php/provide/vod/?ac=list",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "金鹰影视",
+                      "name":  "🦅金鹰影视",
+                      "type":  1,
+                      "api":  "https://jinyingzy.com/provide/vod/from/jinyingm3u8/",
                       "searchable":  1,
                       "quickSearch":  1,
                       "filterable":  1
