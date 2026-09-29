@@ -10,40 +10,16 @@
                       "type":  1
                   },
                   {
-                      "key":  "U酷资源",
+                      "key":  "uku",
                       "name":  "🎬U酷资源",
                       "type":  1,
-                      "api":  "https://api.ukuapi.com/api.php/provide/vod/",
-                      "searchable":  1,
-                      "quickSearch":  1,
-                      "filterable":  1
+                      "api":  "https://api.ukuapi.com/api.php/provide/vod/"
                   },
                   {
-                      "key":  "樱花资源",
+                      "key":  "yinghua",
                       "name":  "🌸樱花资源",
                       "type":  1,
-                      "api":  "https://m3u8.apiyhzy.com/api.php/provide/vod/?ac=list",
-                      "searchable":  1,
-                      "quickSearch":  1,
-                      "filterable":  1
-                  },
-                  {
-                      "key":  "CK资源",
-                      "name":  "📺CK资源",
-                      "type":  1,
-                      "api":  "https://ckzy.me/api.php/provide/vod/?ac=list",
-                      "searchable":  1,
-                      "quickSearch":  1,
-                      "filterable":  1
-                  },
-                  {
-                      "key":  "金鹰影视",
-                      "name":  "🦅金鹰影视",
-                      "type":  1,
-                      "api":  "https://jinyingzy.com/provide/vod/from/jinyingm3u8/",
-                      "searchable":  1,
-                      "quickSearch":  1,
-                      "filterable":  1
+                      "api":  "https://m3u8.apiyhzy.com/api.php/provide/vod/"
                   },
                   {
                       "api":  "http://154.219.117.232:9981/jacloudapi.php/provide/vod",
@@ -146,6 +122,18 @@
                       "key":  "索尼",
                       "name":  "影视 | 索尼[直连]",
                       "type":  0
+                  },
+                  {
+                      "key":  "ck",
+                      "name":  "📺CK资源",
+                      "type":  1,
+                      "api":  "https://ckzy.me/api.php/provide/vod/"
+                  },
+                  {
+                      "key":  "jinying",
+                      "name":  "🦅金鹰影视",
+                      "type":  1,
+                      "api":  "https://jinyingzy.com/provide/vod/from/jinyingm3u8/"
                   }
               ],
     "parses":  [
