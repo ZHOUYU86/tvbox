@@ -4,6 +4,12 @@
     "logo":  "https://szyyds.cn/1.png",
     "sites":  [
                   {
+                      "api":  "https://360zy.com/api.php/provide/vod/",
+                      "key":  "360",
+                      "name":  "⚡360资源[综艺/电视剧专用]",
+                      "type":  1
+                  },
+                  {
                       "api":  "http://154.219.117.232:9981/jacloudapi.php/provide/vod",
                       "key":  "建安采集",
                       "name":  "影视 | 建安",
@@ -43,12 +49,6 @@
                       "api":  "https://cj.lziapi.com/api.php/provide/vod/",
                       "key":  "量子",
                       "name":  "影视 | 量子[直连]",
-                      "type":  1
-                  },
-                  {
-                      "api":  "https://360zy.com/api.php/provide/vod/",
-                      "key":  "360",
-                      "name":  "⚡360资源[综艺/电视剧专用]",
                       "type":  1
                   },
                   {
