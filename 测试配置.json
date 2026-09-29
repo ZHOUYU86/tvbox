@@ -1,0 +1,27 @@
+{
+  "spider": "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/fty.jar;md5;3d161697458ecbcd2651a749db761ba",
+  "wallpaper": "https://szyyds.cn/api.php",
+  "logo": "https://szyyds.cn/1.png",
+  "sites": [
+    {
+      "key": "test",
+      "name": "🧪最简单测试",
+      "type": 3,
+      "api": "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+      "ext": "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/最简单测试.js",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1
+    },
+    {
+      "key": "juok",
+      "name": "🎬剧OK[测试]",
+      "type": 3,
+      "api": "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+      "ext": "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/剧OK.js",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1
+    }
+  ]
+}
