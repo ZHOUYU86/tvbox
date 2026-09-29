@@ -130,21 +130,11 @@
                       "filterable":  1
                   },
                   {
-                      "key":  "bili_heji",
-                      "name":  "🅱哔哔┃合集",
+                      "key":  "bili_js",
+                      "name":  "🎬B站┃影视",
                       "type":  3,
-                      "api":  "csp_Bili",
-                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/bilibili.json",
-                      "searchable":  1,
-                      "quickSearch":  1,
-                      "filterable":  1
-                  },
-                  {
-                      "key":  "bili_gequ",
-                      "name":  "🅱哔哔┃歌曲",
-                      "type":  3,
-                      "api":  "csp_Bili",
-                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/biliych.json",
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/bzys.js",
                       "searchable":  1,
                       "quickSearch":  1,
                       "filterable":  1
