@@ -143,6 +143,56 @@
                       "name":  "🦅金鹰影视",
                       "type":  1,
                       "api":  "https://jinyingzy.com/provide/vod/from/jinyingm3u8/"
+                  },
+                  {
+                      "key":  "007_js",
+                      "name":  "🎬007影视",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/007.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "sc1080_js",
+                      "name":  "🎬SC1080高清",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/SC1080.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "hoho_js",
+                      "name":  "🎬吼吼影视",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/hoho.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "duanju_js",
+                      "name":  "🎬短剧精选",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/上头短剧.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "tuxiaobei_js",
+                      "name":  "🎬兔小贝儿童",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/兔小贝.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
                   }
               ],
     "parses":  [
