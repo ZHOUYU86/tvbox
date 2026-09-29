@@ -130,16 +130,6 @@
                       "filterable":  1
                   },
                   {
-                      "key":  "bilibili_js",
-                      "name":  "📺哔哩哔哩",
-                      "type":  3,
-                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
-                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/B站精简.js",
-                      "searchable":  1,
-                      "quickSearch":  1,
-                      "filterable":  1
-                  },
-                  {
                       "key":  "ck",
                       "name":  "📺CK资源",
                       "type":  1,
