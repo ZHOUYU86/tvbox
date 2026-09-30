@@ -1,4 +1,4 @@
-// 热播之家 v2 - 修正分页url格式，加上请求头
+// 热播之家 v3 - 修复搜索功能，搜索URL改成正确的GET参数格式
 var rule = {
   title: '热播之家',
   host: 'https://www.rebozj.cc',
@@ -20,7 +20,7 @@ var rule = {
     list_url: 'a&&href'
   },
   搜索: '.stui-vodlist li;a&&title;a&&data-original;.pic-text&&Text;a&&href',
-  搜索页: '/index.php/vod/search/page/1/wd/***.html',
+  searchUrl: '/search/-------------.html?wd=**',
   播放配置: 'player_aaaa',
   播放解析: 'json',
   下载: 'm3u8',
