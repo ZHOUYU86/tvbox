@@ -12,14 +12,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download xs config
+      - name: Download xs config and spider.jar
         run: |
-          curl -L -o xs.json "https://raw.githubusercontent.com/qist/tvbox/refs/heads/master/xiaosa/api.json"
+          mkdir -p xs
+          curl -L -o xs/api.json "https://raw.githubusercontent.com/qist/tvbox/refs/heads/master/xiaosa/api.json"
+          curl -L -o xs/spider.jar "https://raw.githubusercontent.com/qist/tvbox/refs/heads/master/xiaosa/spider.jar"
 
       - name: Commit and push if changed
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add xs.json
+          git add xs/
           git diff --staged --quiet || git commit -m "auto sync xs config"
           git push
