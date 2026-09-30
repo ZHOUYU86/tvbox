@@ -1,0 +1,25 @@
+﻿name: sync fty config
+
+on:
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download fty config
+        run: |
+          curl -L -o fty.json "https://raw.githubusercontent.com/qist/tvbox/master/fty.json"
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add fty.json
+          git diff --staged --quiet || git commit -m "auto sync fty config"
+          git push
