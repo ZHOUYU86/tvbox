@@ -1,0 +1,25 @@
+﻿name: sync xs config
+
+on:
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download xs config
+        run: |
+          curl -L -o xs.json "https://raw.githubusercontent.com/qist/tvbox/refs/heads/master/xiaosa/api.json"
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add xs.json
+          git diff --staged --quiet || git commit -m "auto sync xs config"
+          git push
