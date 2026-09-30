@@ -1,20 +1,27 @@
-// 大米星球 v16 - 完善请求头，绕过反爬
-muban.mxpro.二级.title = 'div.module-info-heading h1&&Text;.module-info-tag-link:eq(2)&&Text'
-muban.mxpro.二级.desc = '.module-info-item:eq(5) .module-info-item-content&&Text;.module-info-tag-link:eq(0)&&Text;.module-info-tag-link:eq(1)&&Text;.module-info-item:eq(3) .module-info-item-content&&Text;.module-info-item:eq(1) .module-info-item-content&&Text'
-muban.mxpro.二级.content = 'div.module-info-introduction-content&&Text'
-
+// 大米星球 v19 - 改用/vodshow/页面（电视剧库），有完整分页按钮，解决翻页问题
 var rule = {
     title:'大米星球',
-    模板:'mxpro',
     host:'https://dmxq7.com',
-    url:'/vodtype/fyclass-fypage.html',
+    homeUrl:'https://dmxq7.com/',
+    url:'/vodshow/fyclass--------fypage---.html',
     detailUrl:'/voddetail/fyid.html',
     searchUrl:'/vodsearch/**-------------.html',
     class_url:'20&21&36&22&23',
     class_name:'电影&电视剧&短剧&动漫&综艺',
-    class_parse:'',
     一级:'.module-items .module-item;a&&title;.lazyload&&data-original;.module-item-note&&Text;a&&href',
     推荐:'.module-items .module-item;a&&title;.lazyload&&data-original;.module-item-note&&Text;a&&href',
+    二级: {
+        title: 'h1&&Text',
+        img: '.module-item-pic img&&data-original',
+        desc: '.module-info-item:eq(1)&&Text;.module-info-item:eq(3)&&Text;.module-info-item:eq(4)&&Text;.module-info-item:eq(5)&&Text',
+        content: '.module-info-introduction-content&&Text',
+        tabs: '.module-tab-item',
+        tab_text: '&&Text',
+        lists: '.module-play-list-link',
+        list_text: '&&Text',
+        list_url: 'a&&href'
+    },
+    搜索: '.module-items .module-item;a&&title;.lazyload&&data-original;.module-item-note&&Text;a&&href',
     headers:{
         'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Referer':'https://dmxq7.com/',
