@@ -34,6 +34,16 @@
                       "filterable":  1
                   },
                   {
+                      "key":  "juok9",
+                      "name":  "🎬剧OK[秒开秒播]",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/剧ok.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
                       "api":  "https://360zy.com/api.php/provide/vod/",
                       "key":  "360",
                       "name":  "⚡360资源[综艺/电视剧专用]",
