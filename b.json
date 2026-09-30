@@ -4,31 +4,11 @@
     "logo":  "https://szyyds.cn/1.png",
     "sites":  [
                   {
-                      "key":  "555ys",
-                      "name":  "🎬555影视[秒开秒播]",
+                      "key":  "yxxq",
+                      "name":  "🌟映像星球[秒开秒播]",
                       "type":  3,
                       "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
-                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/555ys.js",
-                      "searchable":  1,
-                      "quickSearch":  1,
-                      "filterable":  1
-                  },
-                  {
-                      "key":  "dmxq",
-                      "name":  "🌟大米星球[秒开秒播]",
-                      "type":  3,
-                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
-                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/大米星球.js",
-                      "searchable":  1,
-                      "quickSearch":  1,
-                      "filterable":  1
-                  },
-                  {
-                      "key":  "rebozj",
-                      "name":  "🔥热播之家[秒开秒播]",
-                      "type":  3,
-                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
-                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/热播之家.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/映像星球.js",
                       "searchable":  1,
                       "quickSearch":  1,
                       "filterable":  1
@@ -190,6 +170,36 @@
                       "type":  3,
                       "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
                       "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/兔小贝.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "555ys",
+                      "name":  "🎬555影视[秒开秒播]",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/555ys.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "dmxq",
+                      "name":  "🌟大米星球[秒开秒播]",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/大米星球.js",
+                      "searchable":  1,
+                      "quickSearch":  1,
+                      "filterable":  1
+                  },
+                  {
+                      "key":  "rebozj",
+                      "name":  "🔥热播之家[秒开秒播]",
+                      "type":  3,
+                      "api":  "https://ghproxy.net/https://raw.githubusercontent.com/liu673cn/box/main/libs/js/drpy2.min.js",
+                      "ext":  "https://ghproxy.net/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/热播之家.js",
                       "searchable":  1,
                       "quickSearch":  1,
                       "filterable":  1
