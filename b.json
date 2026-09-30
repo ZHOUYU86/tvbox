@@ -207,6 +207,11 @@
               ],
     "parses":  [
                    {
+                       "name":  "yemu",
+                       "type":  0,
+                       "url":  "https://www.yemu.xyz/?url="
+                   },
+                   {
                        "name":  "聚合1",
                        "type":  3,
                        "url":  "Demo"
@@ -255,11 +260,6 @@
                                                   "User-Agent":  "Mozilla/5.0"
                                               }
                                }
-                   },
-                   {
-                       "name":  "yemu",
-                       "type":  0,
-                       "url":  "https://www.yemu.xyz/?url="
                    },
                    {
                        "name":  "解析1",
