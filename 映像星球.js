@@ -15,7 +15,7 @@ var rule = {
     content: '.module-info-content&&Text',
     tabs: '.module-tab-items-box .module-tab-item',
     tab_text: 'span&&Text',
-    lists: '.module-list.his-tab-list .module-play-list-link',
+    lists: '.module-list.his-tab-list.active .module-play-list-link',
     list_text: 'span&&Text',
     list_url: 'a&&href'
   },
