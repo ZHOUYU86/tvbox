@@ -1,0 +1,31 @@
+name: Sync FongMi Config
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download FongMi config and spider
+        run: |
+          mkdir -p fm
+          curl -L -o fm/api.json "https://www.252035.xyz/z/FongMi.json"
+          curl -L -o fm/spider.jar "https://www.252035.xyz/z/custom_spider.jar"
+
+      - name: Update spider path
+        run: |
+          sed -i 's|"./custom_spider.jar|"./spider.jar|g' fm/api.json
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add fm/
+          git commit -m "Sync FongMi config" || echo "No changes to commit"
+          git push
