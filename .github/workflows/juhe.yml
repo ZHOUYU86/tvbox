@@ -1,0 +1,33 @@
+name: Sync Aggregated Config
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download aggregated configs
+        run: |
+          mkdir -p juhe
+          curl -L -o juhe/单仓聚合.json "https://raw.githubusercontent.com/Lightconer/tvbox-ysc-config/main/output/单仓聚合.json"
+          curl -L -o juhe/多仓订阅.json "https://raw.githubusercontent.com/Lightconer/tvbox-ysc-config/main/output/多仓订阅.json"
+          curl -L -o juhe/4k.json "https://raw.githubusercontent.com/Lightconer/tvbox-ysc-config/main/output/4k.json"
+          curl -L -o juhe/feimao.json "https://raw.githubusercontent.com/Lightconer/tvbox-ysc-config/main/output/feimao.json"
+          curl -L -o juhe/ouge.json "https://raw.githubusercontent.com/Lightconer/tvbox-ysc-config/main/output/ouge.json"
+          curl -L -o juhe/shield.json "https://raw.githubusercontent.com/Lightconer/tvbox-ysc-config/main/output/shield.json"
+          curl -L -o juhe/wangerxiao.json "https://raw.githubusercontent.com/Lightconer/tvbox-ysc-config/main/output/wangerxiao.json"
+          curl -L -o juhe/status.json "https://raw.githubusercontent.com/Lightconer/tvbox-ysc-config/main/output/status.json"
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add juhe/
+          git commit -m "Sync aggregated configs" || echo "No changes to commit"
+          git push
