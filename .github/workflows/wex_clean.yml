@@ -1,0 +1,46 @@
+name: 王二小配置自动同步去广告
+on:
+  schedule:
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 下载上游配置
+        run: |
+          curl -sL "https://9280.kstore.space/wex.json" -o wex_raw.json
+          echo "下载完成: $(wc -c < wex_raw.json) 字节"
+      - name: 清理广告
+        run: |
+          python3 -c "
+import json, re
+with open('wex_raw.json', 'r', encoding='utf-8') as f:
+    content = f.read()
+# 删除push_agent
+content = re.sub(r',\s*\{\s*\"key\":\s*\"push_agent\".*?\}', '', content, flags=re.DOTALL)
+# 清空ads数组
+content = re.sub(r'\"ads\":\s*\[.*?\]', '\"ads\": []', content, flags=re.DOTALL)
+# 清空wallpaper
+content = re.sub(r'\"wallpaper\":\s*\"[^\"]*\"', '\"wallpaper\": \"\"', content)
+with open('wex.json', 'w', encoding='utf-8') as f:
+    f.write(content)
+print('清理完成')
+"
+      - name: 验证JSON
+        run: |
+          python3 -c "
+import json
+with open('wex.json', 'r', encoding='utf-8') as f:
+    d = json.load(f)
+print(f'源数量: {len(d[\"sites\"])}, 广告: {len(d[\"ads\"])}, wallpaper: \"{d[\"wallpaper\"]}\"')
+"
+      - name: 提交
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add wex.json
+          git commit -m "自动同步王二小配置(去广告)" || echo "无变化"
+          git push
