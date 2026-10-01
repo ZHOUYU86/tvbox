@@ -1,4 +1,4 @@
-name: 王二小配置自动同步去广告
+name: wex
 on:
   schedule:
     - cron: "0 14 * * *"
@@ -20,6 +20,7 @@ jobs:
           content = re.sub(r',\s*\{\s*"key":\s*"push_agent".*?\}', '', content, flags=re.DOTALL)
           content = re.sub(r'"ads":\s*\[.*?\]', '"ads": []', content, flags=re.DOTALL)
           content = re.sub(r'"wallpaper":\s*"[^"]*"', '"wallpaper": ""', content)
+          content = re.sub(r'"spider":\s*"[^"]*"', '"spider": "http://oss4liview.moji.com/thd_file/2026/09/24/06cf2230c30d9c26fa46ea79147b330d.jpg;md5;fc8f993c9297d38139363cd0e3db9853"', content)
           with open('wex.json', 'w', encoding='utf-8') as f:
               f.write(content)
           d = json.loads(content)
