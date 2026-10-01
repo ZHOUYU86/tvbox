@@ -10,33 +10,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: 下载上游配置
+        run: curl -sL "https://9280.kstore.space/wex.json" -o wex_raw.json
+      - name: 写清理脚本
         run: |
-          curl -sL "https://9280.kstore.space/wex.json" -o wex_raw.json
-          echo "下载完成: $(wc -c < wex_raw.json) 字节"
-      - name: 清理广告
-        run: |
-          python3 -c "
-import json, re
-with open('wex_raw.json', 'r', encoding='utf-8') as f:
-    content = f.read()
-# 删除push_agent
-content = re.sub(r',\s*\{\s*\"key\":\s*\"push_agent\".*?\}', '', content, flags=re.DOTALL)
-# 清空ads数组
-content = re.sub(r'\"ads\":\s*\[.*?\]', '\"ads\": []', content, flags=re.DOTALL)
-# 清空wallpaper
-content = re.sub(r'\"wallpaper\":\s*\"[^\"]*\"', '\"wallpaper\": \"\"', content)
-with open('wex.json', 'w', encoding='utf-8') as f:
-    f.write(content)
-print('清理完成')
-"
-      - name: 验证JSON
-        run: |
-          python3 -c "
-import json
-with open('wex.json', 'r', encoding='utf-8') as f:
-    d = json.load(f)
-print(f'源数量: {len(d[\"sites\"])}, 广告: {len(d[\"ads\"])}, wallpaper: \"{d[\"wallpaper\"]}\"')
-"
+          cat > clean.py << 'PYEOF'
+          import re, json
+          with open('wex_raw.json', 'r', encoding='utf-8') as f:
+              content = f.read()
+          content = re.sub(r',\s*\{\s*"key":\s*"push_agent".*?\}', '', content, flags=re.DOTALL)
+          content = re.sub(r'"ads":\s*\[.*?\]', '"ads": []', content, flags=re.DOTALL)
+          content = re.sub(r'"wallpaper":\s*"[^"]*"', '"wallpaper": ""', content)
+          with open('wex.json', 'w', encoding='utf-8') as f:
+              f.write(content)
+          d = json.loads(content)
+          print(f'清理完成: 源={len(d["sites"])}, 广告={len(d["ads"])}, wallpaper空')
+          PYEOF
+      - name: 执行清理
+        run: python3 clean.py
       - name: 提交
         run: |
           git config user.name "github-actions[bot]"
