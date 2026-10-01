@@ -1,6 +1,6 @@
 {
   "spider": "http://oss4liview.moji.com/thd_file/2026/09/24/06cf2230c30d9c26fa46ea79147b330d.jpg;md5;fc8f993c9297d38139363cd0e3db9853",
-  "wallpaper": "https://www.loliapi.com/acg/",
+  "wallpaper": "",
   "logo": "https://storage.7x24cc.com/storage-server/presigned/ss1/a6-online-fileupload/newMediaFile/3CEAE9E_773_wexfnw_20250911190012684newMediaFile.gif",
   "sites": [
 
@@ -624,14 +624,6 @@
       "style": {
         "type": "list"
       }
-    },
-    {
-      "key": "push_agent",
-      "name": "推送",
-      "type": 3,
-      "api": "csp_PushGuard",
-      "searchable": 1,
-      "changeable": 0
     }
   ],
   "parses": [
@@ -801,11 +793,7 @@
       ]
     }
   ],
-  "ads": [
-    "mozai.4gtv.tv",
-    "pv.vipwm.cc",
-	"static-mozai.4gtv.tv"
-  ],
+  "ads": [],
   "lives": [
     {
         "name": "Kimentanm",
