@@ -1,5 +1,6 @@
 {
-  "spider": "./spider.jar;md5;9f0f10fb162ccfa135349cfadaeb95c4",
+    "spider": "https://gh-proxy.com/https://raw.githubusercontent.com/ZHOUYU86/tvbox/main/juhe/spider.jar;md5;9f0f10fb162ccfa135349cfadaeb95c4",
+
   "wallpaper": "https://深色壁纸.xxooo.cf/",
   "logo": "http://w.junce.dpdns.org/fm.gif",
   "headers": [
