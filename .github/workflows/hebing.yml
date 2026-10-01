@@ -1,0 +1,29 @@
+name: Sync HebIng Config
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download hebing configs
+        run: |
+          mkdir -p hebing
+          curl -L -o hebing/tvbox.json "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/tvbox.json"
+          curl -L -o hebing/vod.json "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/vod.json"
+          curl -L -o hebing/short.json "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/short.json"
+          curl -L -o hebing/XYQ.jar "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/jar/XYQ.jar"
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add hebing/
+          git commit -m "Sync hebing configs" || echo "No changes to commit"
+          git push
