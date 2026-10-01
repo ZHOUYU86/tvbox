@@ -12,18 +12,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download hebing configs
+      - name: Clone source repo and copy configs
         run: |
-          mkdir -p hebing
-          curl -L -o hebing/tvbox.json "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/tvbox.json"
-          curl -L -o hebing/vod.json "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/vod.json"
-          curl -L -o hebing/short.json "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/short.json"
-          curl -L -o hebing/XYQ.jar "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/jar/XYQ.jar"
+          # 克隆源仓库（只克隆最新版本，减少下载量）
+          git clone --depth 1 https://github.com/hebijunge/tvbox-config.git source_repo
+          
+          # 创建目标目录
+          mkdir -p hebing/deps
+          
+          # 复制配置文件
+          cp source_repo/tvbox.json hebing/
+          cp source_repo/vod.json hebing/
+          cp source_repo/short.json hebing/
+          
+          # 复制整个deps目录（爬虫插件）
+          cp -r source_repo/deps/* hebing/deps/
+          
+          # 清理临时文件
+          rm -rf source_repo
+          
+          # 显示复制的文件数
+          echo "配置文件数: $(ls hebing/*.json | wc -l)"
+          echo "deps目录文件数: $(find hebing/deps -type f | wc -l)"
+          echo "deps目录大小: $(du -sh hebing/deps | cut -f1)"
 
       - name: Commit and push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add hebing/
-          git commit -m "Sync hebing configs" || echo "No changes to commit"
+          git commit -m "Sync hebing configs with deps" || echo "No changes to commit"
           git push
