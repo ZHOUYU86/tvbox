@@ -522,21 +522,6 @@
             </div>
         </div>
 
-        <!-- 影视源接口（折叠隐藏） -->
-        <div class="api-section">
-            <div class="api-toggle" id="apiToggle">
-                <span>📺 影视源接口（点击展开）</span>
-                <span id="apiArrow">▼</span>
-            </div>
-            <div class="api-content" id="apiContent">
-                <div class="api-item">
-                    <span>合并配置18：</span>
-                    <a href="/hebing/tvbox18.json" target="_blank">/hebing/tvbox18.json</a>
-                    <button class="copy-btn" onclick="copyText('/hebing/tvbox18.json')">复制</button>
-                </div>
-            </div>
-        </div>
-
         <!-- 底部 -->
         <div class="footer">
             <p>✨ 我的音乐空间 · 用心打造 ✨</p>
@@ -717,9 +702,6 @@
         const songNameInput = document.getElementById('songNameInput');
         const songUrlInput = document.getElementById('songUrlInput');
         const songArtistInput = document.getElementById('songArtistInput');
-        const apiToggle = document.getElementById('apiToggle');
-        const apiContent = document.getElementById('apiContent');
-        const apiArrow = document.getElementById('apiArrow');
 
         // 初始化
         audio.volume = 0.7;
@@ -873,22 +855,6 @@
         // 保存到localStorage
         function savePlaylist() {
             localStorage.setItem('musicPlaylist', JSON.stringify(playlist));
-        }
-
-        // 影视源接口折叠
-        apiToggle.addEventListener('click', () => {
-            apiContent.classList.toggle('show');
-            apiArrow.textContent = apiContent.classList.contains('show') ? '▲' : '▼';
-        });
-
-        // 复制文本
-        function copyText(text) {
-            const fullUrl = window.location.origin + text;
-            navigator.clipboard.writeText(fullUrl).then(() => {
-                alert('接口地址已复制：' + fullUrl);
-            }).catch(() => {
-                alert('复制失败，请手动复制：' + fullUrl);
-            });
         }
 
         // 回车键添加歌曲
