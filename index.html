@@ -189,14 +189,66 @@
             background: rgba(255,255,255,0.05);
             backdrop-filter: blur(20px);
             border-radius: 30px;
-            padding: 40px;
+            padding: 30px;
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
+        /* 图片轮播区域 */
+        .ktv-image-slider {
+            width: 100%;
+            height: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        .slider-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 5s ease;
+            transform: scale(1);
+        }
+
+        .slider-image.active {
+            opacity: 1;
+            transform: scale(1.08);
+        }
+
+        /* 图片切换闪烁效果 */
+        .slider-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .slider-flash.flash {
+            animation: flashEffect 0.5s ease;
+        }
+
+        @keyframes flashEffect {
+            0% { opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+
         .ktv-song-info {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .ktv-song-title {
@@ -796,11 +848,25 @@
             <div class="date-display-large" id="dateDisplay">加载中...</div>
             
             <div class="ktv-player">
+                <!-- 图片轮播区域 -->
+                <div class="ktv-image-slider" id="ktvImageSlider">
+                    <div class="slider-image active" style="background-image: url('https://picsum.photos/seed/beauty1/800/450')"></div>
+                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/beauty2/800/450')"></div>
+                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/model1/800/450')"></div>
+                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/model2/800/450')"></div>
+                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/girl1/800/450')"></div>
+                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/girl2/800/450')"></div>
+                    <!-- 图片切换闪烁效果 -->
+                    <div class="slider-flash" id="sliderFlash"></div>
+                </div>
+                
+                <!-- 歌曲信息 -->
                 <div class="ktv-song-info">
                     <div class="ktv-song-title" id="ktvSongTitle">选择一首歌曲</div>
                     <div class="ktv-song-artist" id="ktvSongArtist">点击下方播放列表</div>
                 </div>
                 
+                <!-- KTV歌词 -->
                 <div class="ktv-lyrics">
                     <div class="lyrics-container" id="lyricsContainer">
                         <div class="lyric-line">🎵 欢迎使用KTV音乐播放器 🎵</div>
@@ -812,12 +878,14 @@
                     </div>
                 </div>
                 
+                <!-- 播放控制 -->
                 <div class="ktv-controls">
                     <button class="ktv-control-btn" id="ktvPrevBtn">⏮</button>
                     <button class="ktv-control-btn play-btn" id="ktvPlayBtn">▶</button>
                     <button class="ktv-control-btn" id="ktvNextBtn">⏭</button>
                 </div>
                 
+                <!-- 进度条 -->
                 <div class="ktv-progress" id="ktvProgress">
                     <div class="ktv-progress-fill" id="ktvProgressFill"></div>
                 </div>
@@ -1256,6 +1324,33 @@
             renderPlaylist();
             savePlaylist();
         }
+
+        // ========== 图片轮播功能 ==========
+        let currentImageIndex = 0;
+        const sliderImages = document.querySelectorAll('.slider-image');
+        const sliderFlash = document.getElementById('sliderFlash');
+        const totalImages = sliderImages.length;
+
+        function switchImage() {
+            // 移除当前图片的active
+            sliderImages[currentImageIndex].classList.remove('active');
+            
+            // 计算下一张
+            currentImageIndex = (currentImageIndex + 1) % totalImages;
+            
+            // 闪烁效果
+            sliderFlash.classList.remove('flash');
+            void sliderFlash.offsetWidth; // 触发重绘
+            sliderFlash.classList.add('flash');
+            
+            // 显示下一张
+            setTimeout(() => {
+                sliderImages[currentImageIndex].classList.add('active');
+            }, 100);
+        }
+
+        // 每5秒自动切换图片
+        setInterval(switchImage, 5000);
 
         // 更新歌词显示（KTV效果，一行显示）
         function updateLyrics(songName) {
