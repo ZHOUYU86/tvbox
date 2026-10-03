@@ -472,6 +472,241 @@
             box-shadow: 0 6px 20px rgba(29,78,216,0.6);
         }
 
+        /* ===== 全新KTV播放器 - 大图片+翻页特效风格 ===== */
+        .ktv-player-new {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(0, 153, 153, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 15px;
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        /* 大图片区域 - 带翻页特效 */
+        .ktv-cover-area {
+            width: 100%;
+            height: 380px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border: 2px solid rgba(0,0,0,0.3);
+        }
+
+        .ktv-cover-base {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-image: url('images/beauty1.jpg');
+            transition: opacity 0.3s ease;
+        }
+
+        /* 翻页特效层 */
+        .ktv-cover-flip {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 100%;
+            overflow: hidden;
+            z-index: 5;
+            transition: width 0.8s ease-in-out;
+        }
+
+        .ktv-cover-flip.flipping {
+            width: 100%;
+        }
+
+        .ktv-cover-flip-inner {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 700px;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-image: url('images/beauty2.jpg');
+        }
+
+        /* 歌曲信息叠加在图片上 */
+        .ktv-song-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            z-index: 10;
+        }
+
+        .ktv-song-title-new {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            margin-bottom: 5px;
+        }
+
+        .ktv-song-artist-new {
+            font-size: 16px;
+            color: rgba(255,255,255,0.8);
+            text-shadow: 0 1px 5px rgba(0,0,0,0.8);
+        }
+
+        /* KTV歌词区域 - 新版 */
+        .ktv-lyrics-new {
+            height: 50px;
+            margin-bottom: 15px;
+            position: relative;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .lyric-text-new {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            padding: 0 15px;
+            width: 100%;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            z-index: 2;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .lyric-progress-bar-new {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(30, 144, 255, 0.6), rgba(0, 191, 255, 0.6));
+            width: 0%;
+            z-index: 1;
+            transition: width 0.1s linear;
+        }
+
+        .lyric-cursor-new {
+            position: absolute;
+            top: 5px;
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(180deg, #00bfff, #1e90ff);
+            border-radius: 2px;
+            left: 0;
+            z-index: 3;
+            box-shadow: 0 0 10px #00bfff, 0 0 20px rgba(0, 191, 255, 0.5);
+            display: none;
+            transition: left 0.1s linear;
+        }
+
+        .lyric-cursor-new.show {
+            display: block;
+        }
+
+        /* 控制栏 - 新版 */
+        .ktv-controls-new {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ktv-btn-new {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            flex-shrink: 0;
+        }
+
+        .ktv-btn-new:hover {
+            background: linear-gradient(135deg, rgba(0, 191, 255, 0.4), rgba(30, 144, 255, 0.3));
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
+        }
+
+        .play-btn-new {
+            width: 55px;
+            height: 55px;
+            font-size: 22px;
+            background: linear-gradient(135deg, #00bfff, #1e90ff);
+            box-shadow: 0 5px 20px rgba(0, 191, 255, 0.5);
+        }
+
+        .play-btn-new:hover {
+            background: linear-gradient(135deg, #00d4ff, #00a0ff);
+            transform: scale(1.15);
+        }
+
+        /* 进度条 - 新版 */
+        .ktv-progress-new {
+            flex: 1;
+            min-width: 100px;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .ktv-progress-fill-new {
+            height: 100%;
+            background: linear-gradient(90deg, #00bfff, #1e90ff);
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+        }
+
+        .ktv-time-new {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* 计数显示 */
+        .ktv-counter-new {
+            font-size: 14px;
+            font-weight: bold;
+            color: #00bfff;
+            background: rgba(0, 191, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            flex-shrink: 0;
+        }
+
+        .playlist-btn-new {
+            background: linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 140, 0, 0.2));
+        }
+
+        .add-btn-new {
+            background: linear-gradient(135deg, rgba(50, 205, 50, 0.3), rgba(34, 139, 34, 0.2));
+        }
+
         /* 播放列表弹窗 */
         .ktv-playlist-modal {
             position: fixed;
@@ -903,49 +1138,50 @@
             <div class="time-display-large" id="timeDisplay">00:00:00</div>
             <div class="date-display-large" id="dateDisplay">加载中...</div>
             
-            <div class="ktv-player">
-                <!-- 图片轮播区域 - 美女图片 -->
-                <div class="ktv-image-slider" id="ktvImageSlider">
-                    <div class="slider-image active" style="background-image: url('images/beauty1.jpg')"></div>
-                    <div class="slider-image" style="background-image: url('images/beauty2.jpg')"></div>
-                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/model3/600/300')"></div>
-                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/model4/600/300')"></div>
-                    <!-- 图片切换闪烁效果 -->
-                    <div class="slider-flash" id="sliderFlash"></div>
+            <div class="ktv-player-new">
+                <!-- 大图片区域 - 带翻页特效 -->
+                <div class="ktv-cover-area" id="ktvCoverArea">
+                    <div class="ktv-cover-base" id="ktvCoverBase"></div>
+                    <div class="ktv-cover-flip" id="ktvCoverFlip">
+                        <div class="ktv-cover-flip-inner" id="ktvCoverFlipInner"></div>
+                    </div>
+                    <!-- 歌曲信息叠加在图片上 -->
+                    <div class="ktv-song-overlay">
+                        <div class="ktv-song-title-new" id="ktvSongTitle">选择一首歌曲</div>
+                        <div class="ktv-song-artist-new" id="ktvSongArtist">点击下方播放列表</div>
+                    </div>
                 </div>
                 
-                <!-- 歌曲信息 -->
-                <div class="ktv-song-info">
-                    <div class="ktv-song-title" id="ktvSongTitle">选择一首歌曲</div>
-                    <div class="ktv-song-artist" id="ktvSongArtist">点击下方播放列表</div>
+                <!-- KTV歌词区域 -->
+                <div class="ktv-lyrics-new">
+                    <div class="lyric-text-new" id="lyricText">🎵 欢迎使用KTV音乐播放器，点击播放列表添加歌曲 🎵</div>
+                    <div class="lyric-progress-bar-new" id="lyricProgressBar"></div>
+                    <div class="lyric-cursor-new" id="lyricCursor"></div>
                 </div>
                 
-                <!-- KTV歌词 - 超简单可靠版 -->
-                <div class="ktv-lyrics">
-                    <div class="lyric-text" id="lyricText">🎵 欢迎使用KTV音乐播放器，点击播放列表添加歌曲 🎵</div>
-                    <div class="lyric-progress-bar" id="lyricProgressBar"></div>
-                    <div class="lyric-cursor" id="lyricCursor"></div>
-                </div>
-                
-                <!-- 播放控制 -->
-                <div class="ktv-controls">
-                    <button class="ktv-control-btn" id="ktvPrevBtn">⏮</button>
-                    <button class="ktv-control-btn play-btn" id="ktvPlayBtn">▶</button>
-                    <button class="ktv-control-btn" id="ktvNextBtn">⏭</button>
-                </div>
-                
-                <!-- 进度条 -->
-                <div class="ktv-progress" id="ktvProgress">
-                    <div class="ktv-progress-fill" id="ktvProgressFill"></div>
-                </div>
-                
-                <div class="ktv-time">
-                    <span id="ktvCurrentTime">00:00</span>
-                    <span id="ktvTotalTime">00:00</span>
-                </div>
-                
-                <div class="ktv-playlist-toggle">
-                    <button class="ktv-playlist-btn" id="ktvPlaylistBtn">📋 播放列表</button>
+                <!-- 控制栏 -->
+                <div class="ktv-controls-new">
+                    <button class="ktv-btn-new" id="ktvPrevBtn" title="上一首">⏮</button>
+                    <button class="ktv-btn-new play-btn-new" id="ktvPlayBtn" title="播放/暂停">▶</button>
+                    <button class="ktv-btn-new" id="ktvNextBtn" title="下一首">⏭</button>
+                    
+                    <!-- 进度条 -->
+                    <div class="ktv-progress-new" id="ktvProgress">
+                        <div class="ktv-progress-fill-new" id="ktvProgressFill"></div>
+                    </div>
+                    
+                    <div class="ktv-time-new">
+                        <span id="ktvCurrentTime">00:00</span> / <span id="ktvTotalTime">00:00</span>
+                    </div>
+                    
+                    <!-- 计数显示 -->
+                    <div class="ktv-counter-new" id="ktvCounter">0 / 0</div>
+                    
+                    <!-- 播放列表按钮 -->
+                    <button class="ktv-btn-new playlist-btn-new" id="ktvPlaylistBtn" title="播放列表">📋</button>
+                    
+                    <!-- 添加歌曲按钮 -->
+                    <button class="ktv-btn-new add-btn-new" id="ktvAddBtn" title="添加歌曲">➕</button>
                 </div>
             </div>
         </div>
@@ -1554,25 +1790,37 @@
         const playlistModal = document.getElementById('playlistModal');
         const playlistItems = document.getElementById('playlistItems');
 
-        // 默认播放列表（预置几首好听的歌，用户打开就能选）
+        // 默认播放列表（高胜美经典歌曲）
         const defaultPlaylist = [
             {
-                name: "红唇",
-                artist: "王峰",
-                url: "https://music.163.com/song/media/outer/url?id=1884167780.mp3",
-                lrc: "[00:00.00]🎵 红唇 - 王峰 🎵\n[00:15.00]你用思念涂成一抹红\n[00:20.00]让我跌进胭脂色的梦\n[00:25.00]情有多浓心就有多痛\n[00:30.00]最怕这样突然的重逢\n[00:35.00]风把回忆摇落一地红\n[00:40.00]我已不再为谁而心动\n[00:45.00]烟花春雨都藏在心中\n[00:50.00]那是一生不能说的痛\n[00:55.00]就像秋夜里最后的红枫\n[01:00.00]你用唇印将往事尘封\n[01:05.00]红唇微启泪光闪动\n[01:10.00]忘了这场短暂的相逢\n[01:15.00]就像记忆里最后的红枫\n[01:20.00]层层叠叠染红了天空\n[01:25.00]红尘相送胭脂消融\n[01:30.00]我们从此山水不相逢\n[01:40.00]🎵 间奏 🎵\n[01:55.00]风把回忆摇落一地红\n[02:00.00]我已不再为谁而心动\n[02:05.00]烟花春雨都藏在心中\n[02:10.00]那是一生不能说的痛\n[02:15.00]就像秋夜里最后的红枫\n[02:20.00]你用唇印将往事尘封\n[02:25.00]红唇微启泪光闪动\n[02:30.00]忘了这场短暂的相逢\n[02:35.00]就像记忆里最后的红枫\n[02:40.00]层层叠叠染红了天空\n[02:45.00]红尘相送胭脂消融\n[02:50.00]我们从此山水不相逢\n[03:00.00]🎵 谢谢收听 🎵"
+                name: "往事只能回味",
+                artist: "高胜美",
+                url: "music/01. 往事只能回味.wav",
+                lrc: "[00:00.00]🎵 往事只能回味 - 高胜美 🎵\n[00:15.00]时光一逝永不回\n[00:20.00]往事只能回味\n[00:25.00]忆童年时竹马青梅\n[00:30.00]两小无猜日夜相随\n[00:35.00]春风又吹红了花蕊\n[00:40.00]你已经也添了新岁\n[00:45.00]你就要变心像时光难倒回\n[00:50.00]我只有在梦里相依偎\n[01:00.00]🎵 间奏 🎵\n[01:20.00]时光一逝永不回\n[01:25.00]往事只能回味\n[01:30.00]忆童年时竹马青梅\n[01:35.00]两小无猜日夜相随\n[01:40.00]春风又吹红了花蕊\n[01:45.00]你已经也添了新岁\n[01:50.00]你就要变心像时光难倒回\n[01:55.00]我只有在梦里相依偎\n[02:10.00]🎵 谢谢收听 🎵"
             },
             {
-                name: "可能",
-                artist: "程响",
-                url: "https://music.163.com/song/media/outer/url?id=1901371647.mp3",
-                lrc: "[00:00.00]🎵 可能 - 程响 🎵\n[00:15.00]可能南方的阳光\n[00:18.50]照着北方的风\n[00:22.00]可能时光被吹走\n[00:25.50]从此无影无踪\n[00:29.00]可能故事只剩下\n[00:32.50]一个难忘的人\n[00:36.00]可能在昨夜梦里\n[00:39.50]依然笑得纯真\n[00:43.00]可能北京的后海\n[00:46.50]许多漂泊的魂\n[00:50.00]可能成都小酒馆\n[00:53.50]有群孤独的人\n[00:57.00]可能枕边有微笑\n[01:00.50]才能暖你清晨\n[01:04.00]可能夜空有流星\n[01:07.50]才能照你前行\n[01:11.00]可能西安城墙上\n[01:14.50]有人誓言不分\n[01:18.00]可能要去到大理\n[01:21.50]才算爱得认真\n[01:25.00]可能谁说要陪你\n[01:28.50]牵手走完一生\n[01:32.00]可能笑着流出泪\n[01:35.50]某天在某时辰\n[01:45.00]🎵 间奏 🎵\n[02:00.00]可能桂林有渔船\n[02:03.50]为你迷茫点灯\n[02:07.00]可能在呼伦草原\n[02:10.50]牛羊流成风景\n[02:14.00]可能再也找不到\n[02:17.50]愿意相信的人\n[02:21.00]可能穿越了彷徨\n[02:24.50]脚步才能坚定\n[02:28.00]可能武当山道上\n[02:31.50]有人虔诚攀登\n[02:35.00]可能周庄小巷里\n[02:38.50]忽然忘掉年轮\n[02:42.00]可能要多年以后\n[02:45.50]才能看清曾经\n[02:49.00]可能在当时身边\n[02:52.50]有双温柔眼睛\n[03:00.00]🎵 谢谢收听 🎵"
+                name: "绿岛小夜曲",
+                artist: "高胜美",
+                url: "music/02. 绿岛小夜曲.wav",
+                lrc: "[00:00.00]🎵 绿岛小夜曲 - 高胜美 🎵\n[00:15.00]这绿岛像一只船\n[00:20.00]在月夜里摇呀摇\n[00:25.00]姑娘哟你也在我的心海里飘呀飘\n[00:30.00]让我的歌声随那微风\n[00:35.00]吹开了你的窗帘\n[00:40.00]让我的衷情随那流水\n[00:45.00]不断地向你倾诉\n[00:50.00]椰子树的长影\n[00:55.00]掩不住我的情意\n[01:00.00]明媚的月光更照亮了我的心\n[01:05.00]这绿岛的夜已经这样沉静\n[01:10.00]姑娘哟你为什么还是默默无语\n[01:20.00]🎵 间奏 🎵\n[01:40.00]椰子树的长影\n[01:45.00]掩不住我的情意\n[01:50.00]明媚的月光更照亮了我的心\n[01:55.00]这绿岛的夜已经这样沉静\n[02:00.00]姑娘哟你为什么还是默默无语\n[02:15.00]🎵 谢谢收听 🎵"
             },
             {
-                name: "红颜知己",
-                artist: "陈明",
-                url: "https://music.163.com/song/media/outer/url?id=1956202523.mp3",
-                lrc: "[00:00.00]🎵 红颜知己 - 陈明 🎵\n[00:12.00]不知道从那天起\n[00:16.50]虽然你也会整天把我惦记\n[00:21.00]但是我知道我知道我始终没有\n[00:26.00]始终没有真正走入你心里\n[00:31.00]知道了一些关于你的其它事情\n[00:36.00]为何告诉我的永远不会是你\n[00:41.00]知道了一些关于你的其它事情\n[00:46.00]还是让我做你的红颜知己\n[00:51.00]还是让我做你的红颜知己\n[00:56.00]在未来未知的日子里\n[01:01.00]我们将会继续\n[01:06.00]不愿失去你\n[01:15.00]🎵 间奏 🎵\n[01:30.00]不知道从那天起\n[01:34.50]虽然你也会整天把我惦记\n[01:39.00]但是我知道我知道我始终没有\n[01:44.00]始终没有真正走入你心里\n[01:49.00]知道了一些关于你的其它事情\n[01:54.00]为何告诉我的永远不会是你\n[01:59.00]知道了一些关于你的其它事情\n[02:04.00]还是让我做你的红颜知己\n[02:09.00]还是让我做你的红颜知己\n[02:14.00]在未来未知的日子里\n[02:19.00]我们将会继续\n[02:24.00]不愿失去你\n[02:30.00]🎵 谢谢收听 🎵"
+                name: "女儿圈",
+                artist: "高胜美",
+                url: "music/03. 女儿圈.wav",
+                lrc: "[00:00.00]🎵 女儿圈 - 高胜美 🎵\n[00:15.00]山一重呀水一湾\n[00:20.00]我家住在女儿圈\n[00:25.00]女儿圈里风景好\n[00:30.00]前有水后有山\n[00:35.00]山一重呀水一湾\n[00:40.00]我家住在女儿圈\n[00:45.00]女儿圈里女儿多\n[00:50.00]找不到男儿汉\n[00:55.00]清早起没有人陪我玩\n[01:00.00]黄昏后没有人陪我谈\n[01:05.00]女儿圈呀女儿圈\n[01:10.00]我不要住在女儿圈\n[01:20.00]🎵 间奏 🎵\n[01:40.00]山一重呀水一湾\n[01:45.00]我家住在女儿圈\n[01:50.00]女儿圈里女儿多\n[01:55.00]找不到男儿汉\n[02:05.00]🎵 谢谢收听 🎵"
+            },
+            {
+                name: "山地情歌",
+                artist: "高胜美",
+                url: "music/05. 山地情歌.wav",
+                lrc: "[00:00.00]🎵 山地情歌 - 高胜美 🎵\n[00:15.00]多少痛苦多少眼泪为你流\n[00:20.00]为你流浪到台北一个人寂寞\n[00:25.00]为你把歌唱想念着好哥哥\n[00:30.00]心上人呀心上人你到底在哪里\n[00:35.00]心上人请你告诉我我恨你不了解我\n[00:40.00]多少痛苦多少眼泪为你流\n[00:45.00]为你流浪到台北一个人寂寞\n[00:50.00]为你把歌唱想念着好哥哥\n[00:55.00]心上人呀心上人你到底在哪里\n[01:00.00]心上人请你告诉我我恨你不了解我\n[01:10.00]🎵 间奏 🎵\n[01:30.00]多少痛苦多少眼泪为你流\n[01:35.00]为你流浪到台北一个人寂寞\n[01:40.00]为你把歌唱想念着好哥哥\n[01:45.00]心上人呀心上人你到底在哪里\n[01:50.00]心上人请你告诉我我恨你不了解我\n[02:00.00]🎵 谢谢收听 🎵"
+            },
+            {
+                name: "梨山痴情花",
+                artist: "高胜美",
+                url: "music/06. 梨山痴情花.wav",
+                lrc: "[00:00.00]🎵 梨山痴情花 - 高胜美 🎵\n[00:15.00]梨山有个姑娘叫呀叫娜旦\n[00:20.00]她的两颗眼睛水呀水汪汪\n[00:25.00]乌溜溜的头发披肩膀\n[00:30.00]一把热情像太阳\n[00:35.00]梨山有个姑娘叫呀叫娜旦\n[00:40.00]唱起那个情歌多呀多嘹亮\n[00:45.00]不管早晨黄昏天天等\n[00:50.00]痴痴等她心上人\n[00:55.00]太阳那个下山又一天\n[01:00.00]冬去那个春到又一年\n[01:05.00]梨山上痴情花受折磨\n[01:10.00]雪花飘飘已经过了三年\n[01:15.00]负心那个情郎踪影如云烟\n[01:20.00]梨山上痴情花还在等\n[01:30.00]🎵 间奏 🎵\n[01:50.00]梨山有个姑娘叫呀叫娜旦\n[01:55.00]她的两颗眼睛水呀水汪汪\n[02:00.00]乌溜溜的头发披肩膀\n[02:05.00]一把热情像太阳\n[02:10.00]🎵 谢谢收听 🎵"
             }
         ];
 
@@ -1620,34 +1868,60 @@
             // 更新播放列表高亮
             renderPlaylist();
             savePlaylist();
+            updateCounter();
         }
 
-        // ========== 图片轮播功能 ==========
+        // ========== 图片翻页特效功能 ==========
         let currentImageIndex = 0;
-        const sliderImages = document.querySelectorAll('.slider-image');
-        const sliderFlash = document.getElementById('sliderFlash');
-        const totalImages = sliderImages.length;
+        const coverBase = document.getElementById('ktvCoverBase');
+        const coverFlip = document.getElementById('ktvCoverFlip');
+        const coverFlipInner = document.getElementById('ktvCoverFlipInner');
+        const counterDisplay = document.getElementById('ktvCounter');
+        
+        // 专辑封面图片列表（从下载的图片中选）
+        const coverImages = [
+            'images/beauty1.jpg',
+            'images/beauty2.jpg',
+            'images/music_covers/0023_mm-xdhs.jpg',
+            'images/music_covers/0221_cyxm.jpg',
+            'images/music_covers/0916_ply.jpg',
+            'images/music_covers/sy-fm3.jpg',
+            'images/music_covers/smdq.jpg',
+            'images/music_covers/1945_wjqjx.jpg',
+            'images/music_covers/516_rz-amqfx.jpg',
+            'images/music_covers/994_cjrhf.jpg'
+        ];
+        const totalImages = coverImages.length;
 
         function switchImage() {
-            // 移除当前图片的active
-            sliderImages[currentImageIndex].classList.remove('active');
-            
             // 计算下一张
-            currentImageIndex = (currentImageIndex + 1) % totalImages;
+            const nextIndex = (currentImageIndex + 1) % totalImages;
             
-            // 闪烁效果
-            sliderFlash.classList.remove('flash');
-            void sliderFlash.offsetWidth; // 触发重绘
-            sliderFlash.classList.add('flash');
+            // 设置翻页层的图片
+            coverFlipInner.style.backgroundImage = `url('${coverImages[nextIndex]}')`;
             
-            // 显示下一张
+            // 开始翻页动画
+            coverFlip.classList.add('flipping');
+            
+            // 翻页完成后，更新底层图片，重置翻页层
             setTimeout(() => {
-                sliderImages[currentImageIndex].classList.add('active');
-            }, 100);
+                coverBase.style.backgroundImage = `url('${coverImages[nextIndex]}')`;
+                coverFlip.classList.remove('flipping');
+                currentImageIndex = nextIndex;
+            }, 800);
         }
 
-        // 每5秒自动切换图片
-        setInterval(switchImage, 5000);
+        // 每6秒自动切换图片（翻页特效）
+        setInterval(switchImage, 6000);
+
+        // 更新计数显示
+        function updateCounter() {
+            if (counterDisplay && playlist.length > 0) {
+                counterDisplay.textContent = `${currentSongIndex + 1} / ${playlist.length}`;
+            } else if (counterDisplay) {
+                counterDisplay.textContent = '0 / 0';
+            }
+        }
 
         // 更新歌词显示
         function updateLyrics(songName) {
@@ -1664,7 +1938,7 @@
             const progressBar = document.getElementById('lyricProgressBar');
             const cursor = document.getElementById('lyricCursor');
             const lyricText = document.getElementById('lyricText');
-            const lyricsBox = document.querySelector('.ktv-lyrics');
+            const lyricsBox = document.querySelector('.ktv-lyrics-new');
             
             // 安全检查：音频没有正常加载时，不更新进度条，避免乱跑
             if (!audio || !audio.duration || isNaN(audio.duration) || !isFinite(audio.duration) || audio.duration <= 0) {
