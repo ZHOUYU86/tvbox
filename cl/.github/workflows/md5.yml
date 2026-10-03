@@ -1,0 +1,66 @@
+name: Update md5
+
+on:
+  # 监听代码推送
+  push:
+    # 只有当 .js 和 .jar 文件发生变化时才触发，避免无意义运行
+    paths:
+      - '**.js'
+      - '**.jar'
+
+permissions:
+  contents: write           # 'write' access to repository contents
+  pull-requests: write      # 'write' access to pull requests
+
+jobs:
+  generate-md5:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          fetch-depth: 0 # 获取完整历史，方便提交
+
+      - name: Calculate & Update MD5
+        run: |
+          echo "Start scanning all .js and .jar files..."
+          
+          # Match both .js and .jar files
+          find . -type f \( -name "*.js" -o -name "*.jar" \) -not -path '*/.git/*' | while read -r file; do
+            
+            currentMd5=$(md5sum "$file" | awk '{print $1}')
+            targetFile="${file}.md5"
+
+            echo "$currentMd5" > "$targetFile"
+            
+            echo "Updated: $targetFile -> $currentMd5"
+          done
+
+      - name: Submit the changes
+        run: |
+          # Configure bot identity
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage both js and jar md5 files
+          # git add "*.js.md5" "*.jar.md5"
+
+          # if ! git diff-index --quiet HEAD; then
+            # git commit -m "Update md5"
+            # git push
+            # echo "::notice::MD5 files updated and pushed."
+          # else
+            # echo "::notice::No changes in MD5 values, skipping commit."
+          # fi
+          
+          git commit -a -m "Update md5"
+          
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          # pull: rebase   # pull --rebase before push; also accepts: merge | ff-only | true
+

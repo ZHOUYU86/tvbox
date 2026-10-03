@@ -1,0 +1,40 @@
+//http://肥猫.live   
+//南风   https://agit.ai/Yoursmile7/TVBox/raw/branch/master/XC.json               https://github.moeyy.xyz/raw.githubusercontent.com/adminouyang/231006/main/tvbox/南风/XC.json
+//巧技   http://cdn.qiaoji8.com/tvbox.json
+//采妮丝  https://tvbox.cainisi.cf
+{
+  "urls": [
+    {
+      "url": "./肥猫/肥猫.json",
+      "name": "🦝肥猫 "
+    },
+    {
+      "url": "https://github.moeyy.xyz/raw.githubusercontent.com/adminouyang/231006/main/tvbox/南风/XC.json",
+      "name": "🎃南风"
+    },
+    {
+      "url": "http://cdn.qiaoji8.com/tvbox.json",
+      "name": "🏀巧技"
+    },
+    {
+      "url": "https://tvbox.cainisi.cf",
+      "name": "🥦菜妮丝"
+    },
+    {
+      "url": "https://github.moeyy.xyz/raw.githubusercontent.com/adminouyang/231006/main/tvbox/gao/0826.json",
+      "name": "gao 0826"
+    },
+    {
+      "url": "https://github.moeyy.xyz/raw.githubusercontent.com/adminouyang/231006/main/tvbox/js/js.json",
+      "name": "高天流云 JS"
+    },
+    {
+      "url": "https://github.moeyy.xyz/raw.githubusercontent.com/adminouyang/231006/main/tvbox/gao/XBPQ.json",
+      "name": "gao XBPQ"
+    },
+    {
+      "url": "https://github.moeyy.xyz/raw.githubusercontent.com/adminouyang/231006/main/tvbox/gao/XYQ.json",
+      "name": "gao XYQ"
+    }
+  ]
+}

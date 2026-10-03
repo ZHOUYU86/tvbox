@@ -1,0 +1,17 @@
+{
+    "urls": [
+        {
+            "url": "https://gh-proxy.com/https://raw.githubusercontent.com/adminouyang/231006/main/tvbox/PizazzGY/影视_api.json",
+            "name": "影视"
+        },
+
+        {
+            "url": "https://gh-proxy.com/https://raw.githubusercontent.com/adminouyang/231006/main/tvbox/PizazzGY/磁力_api.json",
+            "name": "磁力"
+        },
+        {
+            "url": "https://gh-proxy.com/https://raw.githubusercontent.com/adminouyang/231006/main/tvbox/PizazzGY/云盘_api.json",
+            "name": "云盘"
+        }
+    ]
+}

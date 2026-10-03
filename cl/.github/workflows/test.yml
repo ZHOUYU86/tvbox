@@ -1,0 +1,97 @@
+name: Update Test
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: write      # 'write' access to pull requests
+
+on:
+  # schedule:
+    # - cron: '30 2 * * *'
+  workflow_dispatch:
+
+env:
+  TZ: Asia/Shanghai
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Update:
+    runs-on: self-hosted
+    timeout-minutes: 15
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v7
+      with:
+        repository: cluntop/tvbox
+        token: ${{ secrets.GIT_TOKEN }}
+        fetch-depth: 1
+
+    - name: Delete old workflow runs
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+        token: ${{ github.token }}
+        repository: ${{ github.repository }}
+        retain_days: 1
+        keep_minimum_runs: 3
+
+    #- name: Set up Python
+      # uses: actions/setup-python@v6
+      # with:
+        # python-version: '3.10'
+        # cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m venv .venv
+        source .venv/bin/activate
+        python -m pip install --upgrade pip
+        # if [ -f .github/requirements.txt ]; then pip install -r .github/requirements.txt; fi
+        pip install aiohttp playwright
+
+        sudo apt-get update
+        sudo apt-get install -y libasound2t64 libgbm-dev libnotify-dev libnss3 libxss1 \
+        libxcomposite1 libxdamage1 libxrandr2 libxcursor1 libxkbcommon0 \
+        libpango-1.0-0 libcairo2 libatk1.0-0t64 libatk-bridge2.0-0t64 libcups2t64
+    
+    - name: Initialize chromium 
+      run: |
+        source .venv/bin/activate
+        playwright install chromium
+        # playwright install-deps chromium
+
+    - name: Run M3U script
+      run: |
+        source .venv/bin/activate
+        python py/sinparty.py
+
+    - name: Submit the changes
+      run: |
+        export HOME=${GITHUB_WORKSPACE}
+        
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        # if [ -n "$(git status --porcelain)" ]; then
+          # echo "Changes detected, committing..."
+          # git add .
+          # git commit -m "Update Test"
+          
+          # git pull --rebase origin main
+          # git push origin main
+        # else
+          # echo "No changes detected, skipping push."
+        # fi
+        
+        git commit -a -m "Update test"
+        
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        # pull: rebase   # pull --rebase before push; also accepts: merge | ff-only | true
+

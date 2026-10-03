@@ -1,0 +1,43 @@
+name: TV_v4.6
+
+on:
+  # 定时运行，例如每天16:00 UTC（即每天凌晨00:00上海时间）
+  schedule:
+    - cron: '0 */12 * * *'
+  # 手动触发
+  workflow_dispatch:
+
+jobs:
+  run-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+        
+    - name: Install FFmpeg
+      run: sudo apt-get update && sudo apt-get install -y ffmpeg 
+
+    - name: Install Dependencies
+      run: |
+        pip install requests urllib3
+        python -m pip install --upgrade pip
+        # pip install -r py/TV/requirements.txt
+
+    - name: Run Python Script
+      run: |
+        python py/TV/v4.6.py
+
+    - name: Commit Results
+      run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "更新直播源"
+          # git commit *.m3u -m "Add generated file"
+          git push --force origin main

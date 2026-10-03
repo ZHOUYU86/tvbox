@@ -1,0 +1,170 @@
+============================================================
+影视源接口与上游仓库完整清单
+电脑IP: 10.144.194.238  端口: 8080
+基础目录: D:\tvbox
+更新时间: 2026-10-03
+============================================================
+
+【1】小洒 (xs) — OK影视主力
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/xs/api.json
+上游仓库: https://github.com/qist/tvbox  (master分支)
+上游配置: https://raw.githubusercontent.com/qist/tvbox/master/api.json
+爬虫: ./spider.jar
+  md5: abc13beac287a298e6b7ca91af7404cd
+  大小: 1859860 B
+关键文件: api.json, spider.jar
+文件数: 237
+状态: 健康
+更新脚本: update_xs.ps1
+
+【2】fty (mrgao) — 替代饭太硬, 影视仓用
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/fty/api.json
+上游仓库1: https://github.com/mrgaoshuiquan/tvbox-config  (main)
+上游配置1: https://raw.githubusercontent.com/mrgaoshuiquan/tvbox-config/main/tvbox.json
+上游仓库2: https://github.com/fantaiying7/EXT  (JS依赖库, 43文件)
+爬虫: ./spider.jar
+  md5: 1ac25ccd1b5ac56fd19eb91c6f7daf4d
+  大小: 1113561 B
+关键文件: api.json, spider.jar, jar/ (7个JAR), FTY/ (4个JS)
+文件数: 13
+状态: 健康
+更新脚本: update_fty.ps1
+备注: 饭太硬主地址(xn--sss604efuw.cc/tv)返回HTML非JSON, 改用此替代源
+
+【3】王二小 (wex) — 影视仓主力
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/wex/api.json
+上游地址: https://9280.kstore.vip/newwex.json
+备用地址: https://9280.kstore.vip/wex.json
+爬虫: ./spider.jar
+  md5: fc8f993c9297d38139363cd0e3db9853
+  大小: 1000156 B
+关键文件: api.json, spider.jar
+文件数: 10
+状态: 健康
+更新脚本: update_wex.ps1
+备注: kstore托管, 无GitHub仓库, 无上游树API对照
+
+【4】南风 (nf) — 当前损坏(上游文件本身坏了)
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/nf/api.json
+上游仓库: https://github.com/yoursmile66/TVBox  (main)
+上游配置: https://raw.githubusercontent.com/yoursmile66/TVBox/main/XC.json
+爬虫: 无全局spider (使用JS爬虫, 内嵌在配置中)
+关键文件: api.json, js/ (73个JS文件)
+文件数: 74
+状态: 损坏 — 上游api.json返回十六进制乱码, 所有本地备份同样损坏, 备用代理地址全部超时
+更新脚本: update_nf.ps1
+备注: 等上游作者修复仓库后, 下次开机自动更新会拉回正常版本
+
+【5】肥猫 (feimao)
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/feimao/api.json
+上游地址: http://xn--z7x900a.net/tv  (解码: 肥猫.net)
+爬虫: ./spider.jar
+  md5: 46da6b6a6a111d7924717db2ae790de3
+  大小: 915337 B
+关键文件: api.json, spider.jar, multi.json (多仓配置)
+文件数: 3
+状态: 健康
+更新脚本: update_feimao.ps1
+
+【6】cl (cluntop)
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/cl/api.json
+上游仓库: https://github.com/cluntop/tvbox  (main)
+上游配置: https://raw.githubusercontent.com/cluntop/tvbox/main/box.json
+爬虫: ./jar/xs.jar
+  md5: 5400486b7884dd01de5a306e34724c3c
+  大小: 2019727 B
+关键文件: api.json, jar/xs.jar, js/, json/, py/
+文件数: 749
+状态: 健康
+更新脚本: update_cl.ps1
+
+【7】ouyang (231006聚合)
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/ouyang/api.json
+上游仓库: https://github.com/adminouyang/231006  (main)
+上游配置: https://raw.githubusercontent.com/adminouyang/231006/main/tvbox/gao/XYQ.json
+爬虫: ./jar/XYQ.jar
+  md5: 8ad8655497f68798486068d6360c4142
+  大小: 398586 B
+关键文件: api.json, jar/XYQ.jar, jar/pg.jar, jar/XBPQ.jar, tvbox/, js/
+文件数: 745
+状态: 健康
+更新脚本: update_ouyang.ps1
+备注: api.json开头有JS注释(//引用高天流云...), TVBox兼容, 健康检测用宽松模式
+
+【8】lubin (lubin776聚合)
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/lubin/api.json
+上游仓库: https://github.com/lubin776/tvbox-api-backup  (main)
+上游配置: https://raw.githubusercontent.com/lubin776/tvbox-api-backup/main/tvbox/X4菠菜pro.json
+爬虫: ./p.jar
+  md5: 440f930ef3fe699051b53f1d02d575ce
+  大小: 2097428 B
+关键文件: api.json, p.jar, tvbox/X4菠菜pro.json, js/
+文件数: 69
+状态: 健康
+更新脚本: update_lubin.ps1
+
+【9】东篱 (dl)
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/dl/api.json
+上游仓库: https://github.com/chitue/dongliTV  (main)
+上游配置: https://raw.githubusercontent.com/chitue/dongliTV/main/api.json
+爬虫: ./jar/dongli-spider.jar
+  md5: b6c28db3ed75438481f2fbae81a58428
+  大小: 1133745 B
+关键文件: api.json, jar/dongli-spider.jar, config/, js/, json/, py/
+文件数: 45
+状态: 健康
+更新脚本: update_dl.ps1
+
+【10】多仓配置 (feimao/multi.json)
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/feimao/multi.json
+上游地址: https://github.catvod.com/https://raw.githubusercontent.com/tushen6/Tomorrow/master/lmw.json
+备注: 不是独立源, 是肥猫目录下的多仓聚合配置
+
+============================================================
+自动更新机制说明
+============================================================
+1. 开机运行: 启动影视服务.bat
+   等网络(最多60秒) → update_all.ps1(更新9个源) → health_check.ps1(体检) → cleanup.ps1(清理) → 启动server.py(端口8080)
+
+2. 更新保护: 每个源更新前备份到tmp_backup → 更新后验证(api.json有效+爬虫完整) → 验证不通过自动还原
+
+3. 上游对照: health_check对比GitHub上游文件列表, 缺失自动补回, 上游已删的本地也删
+
+4. 备份策略: last_good_backup保留最新健康版, 旧备份归档到backup_archive, 30天以上自动清理
+
+5. 意外断电: 下次开机检测到不完整更新会删除坏文件重新更新
+
+============================================================
+使用说明
+============================================================
+1. 电脑开机, 启动影视服务.bat自动运行(端口8080)
+2. 手机/投影仪和电脑连同一个WiFi
+3. 在OK影视或影视仓的配置地址输入上面的本地接口
+4. 每次开机联网自动更新所有9个源
+5. 更新带备份验证还原保护, 不会弄坏好源
+
+【10】tvurl (ne7359) — 285星, 大而全配置, 86点播+16直播
+------------------------------------------------------------
+本地接口: http://10.144.194.238:8080/tvurl/api.json
+上游仓库: https://github.com/ne7359/tvurl  (main分支)
+上游配置: https://raw.githubusercontent.com/ne7359/tvurl/main/0821.json
+爬虫: ./jar/fan.txt
+  md5: 2cc088afa757ba8bafffcfbab4b73ccc
+  大小: 1115265 B
+关键文件: api.json (0821.json改名), jar/fan.txt, jar/ (8个JAR), js/ (31个JS), lib/, list.txt, radio.txt
+点播源数: 86
+直播源数: 16
+文件数: 72
+状态: 健康
+更新脚本: update_tvurl.ps1
+备注: GitHub 285星, 2026-09-30更新, 在饭太硬基础上添加优质点播源+直播线路+解析

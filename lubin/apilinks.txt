@@ -1,0 +1,12 @@
+# 单 URL
+更新专用接口, https://0.12yue.de5.net/tvbox/更新专用接口.json
+菠菜pro, https://0.12yue.de5.net/5/x4pro.json
+
+# 多 URL（同一名称多个镜像，脚本会自动分组去重）
+饭太硬, http://www.饭太硬.net/tv, http://www.饭太硬.art/tv, http://fty.xxooo.cf/tv, http://fty.888484.xyz/tv, http://fty.333232.xyz/tv
+嗷呜, http://www.英格里希嗷呜.top/tv, https://9763.kstore.vip/aowu.json, http://itv666.cc/aowu/config.webp
+潇洒, https://9877.kstore.space/single.json, https://9877.kstore.space/AnotherD/api.json, https://9877.kstore.space/one.json, https://9877.kstore.space/ONE/one.json
+
+# 带空格、逗号后带空格都可以，脚本会 strip
+王二小, https://9280.kstore.vip/aiwex.json, https://9280.kstore.space/aiwex.json
+南风, https://ghproxy.monkeyray.net/raw.githubusercontent.com/yoursmile66/TVBox/main/XC.json
