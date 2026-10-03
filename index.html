@@ -1191,9 +1191,9 @@
             <div class="nav-grid-large" id="navGrid2"></div>
         </div>
 
-        <!-- 第3页：影视音乐 -->
+        <!-- 第3页：影视娱乐 -->
         <div class="page" id="page2">
-            <div class="nav-page-title">🎬 影视音乐 <button class="add-site-btn-small" onclick="openAddSiteModal(3)">➕ 添加</button></div>
+            <div class="nav-page-title">🎬 影视娱乐 <button class="add-site-btn-small" onclick="openAddSiteModal(3)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput3" placeholder="搜索影视或百度一下...">
                 <button class="search-btn-large" onclick="doSearch('searchInput3')">搜索</button>
@@ -1201,8 +1201,18 @@
             <div class="nav-grid-large" id="navGrid3"></div>
         </div>
 
-        <!-- 第4页：购物生活 -->
+        <!-- 第4页：音乐电台 -->
         <div class="page" id="page3">
+            <div class="nav-page-title">🎵 音乐电台 <button class="add-site-btn-small" onclick="openAddSiteModal(4)">➕ 添加</button></div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput4" placeholder="搜索音乐或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput4')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid4"></div>
+        </div>
+
+    <!-- 第5页：购物生活 -->
+        <div class="page" id="page4">
             <div class="nav-page-title">🛒 购物生活 <button class="add-site-btn-small" onclick="openAddSiteModal(4)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput4" placeholder="搜索商品或百度一下...">
@@ -1211,8 +1221,8 @@
             <div class="nav-grid-large" id="navGrid4"></div>
         </div>
 
-        <!-- 第5页：社交通讯 -->
-        <div class="page" id="page4">
+        <!-- 第6页：社交通讯 -->
+        <div class="page" id="page5">
             <div class="nav-page-title">📱 社交通讯 <button class="add-site-btn-small" onclick="openAddSiteModal(5)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput5" placeholder="搜索或百度一下...">
@@ -1221,8 +1231,8 @@
             <div class="nav-grid-large" id="navGrid5"></div>
         </div>
 
-        <!-- 第6页：实用工具 -->
-        <div class="page" id="page5">
+        <!-- 第7页：实用工具 -->
+        <div class="page" id="page6">
             <div class="nav-page-title">🛠️ 实用工具 <button class="add-site-btn-small" onclick="openAddSiteModal(6)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput6" placeholder="搜索或百度一下...">
@@ -1231,8 +1241,8 @@
             <div class="nav-grid-large" id="navGrid6"></div>
         </div>
 
-        <!-- 第7页：论坛社区 -->
-        <div class="page" id="page6">
+        <!-- 第8页：论坛社区 -->
+        <div class="page" id="page7">
             <div class="nav-page-title">💬 论坛社区 <button class="add-site-btn-small" onclick="openAddSiteModal(7)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput7" placeholder="搜索或百度一下...">
@@ -1241,8 +1251,8 @@
             <div class="nav-grid-large" id="navGrid7"></div>
         </div>
 
-        <!-- 第8页：新闻资讯 -->
-        <div class="page" id="page7">
+        <!-- 第9页：新闻资讯 -->
+        <div class="page" id="page8">
             <div class="nav-page-title">📰 新闻资讯 <button class="add-site-btn-small" onclick="openAddSiteModal(8)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput8" placeholder="搜索或百度一下...">
@@ -1256,12 +1266,13 @@
     <div class="page-indicator" id="pageIndicator">
         <div class="indicator-dot active" data-page="0" title="实用网站"></div>
         <div class="indicator-dot" data-page="1" title="实用网站2"></div>
-        <div class="indicator-dot" data-page="2" title="影视音乐"></div>
-        <div class="indicator-dot" data-page="3" title="购物生活"></div>
-        <div class="indicator-dot" data-page="4" title="社交通讯"></div>
-        <div class="indicator-dot" data-page="5" title="实用工具"></div>
-        <div class="indicator-dot" data-page="6" title="论坛社区"></div>
-        <div class="indicator-dot" data-page="7" title="新闻资讯"></div>
+        <div class="indicator-dot" data-page="2" title="影视娱乐"></div>
+        <div class="indicator-dot" data-page="3" title="音乐电台"></div>
+        <div class="indicator-dot" data-page="4" title="购物生活"></div>
+        <div class="indicator-dot" data-page="5" title="社交通讯"></div>
+        <div class="indicator-dot" data-page="6" title="实用工具"></div>
+        <div class="indicator-dot" data-page="7" title="论坛社区"></div>
+        <div class="indicator-dot" data-page="8" title="新闻资讯"></div>
     </div>
 
     <!-- 翻页提示 -->
@@ -1336,7 +1347,7 @@
 
         // ========== 翻书特效 ==========
         let currentPage = 0;
-        const totalPages = 8;
+        const totalPages = 9;
         const pages = document.querySelectorAll('.page');
         const dots = document.querySelectorAll('.indicator-dot');
         const scrollHint = document.getElementById('scrollHint');
@@ -1459,7 +1470,7 @@
         }
 
         // 搜索框回车
-        ['searchInput1', 'searchInput2', 'searchInput3', 'searchInput4', 'searchInput5', 'searchInput6', 'searchInput7', 'searchInput8'].forEach(id => {
+        ['searchInput1', 'searchInput2', 'searchInput3', 'searchInput4', 'searchInput5', 'searchInput6', 'searchInput7', 'searchInput8', 'searchInput9'].forEach(id => {
             document.getElementById(id).addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') doSearch(id);
             });
@@ -1474,20 +1485,38 @@
                 { name: '腾讯视频', icon: '🎬', url: 'https://v.qq.com' },
                 { name: '优酷', icon: '🎬', url: 'https://www.youku.com' },
                 { name: 'B站', icon: '📺', url: 'https://www.bilibili.com' },
+                { name: '芒果TV', icon: '🎬', url: 'https://www.mgtv.com' },
+                { name: '搜狐视频', icon: '🎬', url: 'https://tv.sohu.com' },
+                { name: '西瓜视频', icon: '🎬', url: 'https://www.ixigua.com' },
+                { name: '咪咕视频', icon: '🎬', url: 'https://www.miguvideo.com' },
+                { name: '央视影音', icon: '📺', url: 'https://tv.cctv.com' },
+                { name: 'PP视频', icon: '🎬', url: 'https://www.pptv.com' },
+                { name: '乐视视频', icon: '🎬', url: 'https://www.le.com' },
+                { name: '虎牙直播', icon: '🎮', url: 'https://www.huya.com' },
+                { name: '斗鱼直播', icon: '🎮', url: 'https://www.douyu.com' },
                 { name: '抖音', icon: '🎵', url: 'https://www.douyin.com' },
                 { name: '快手', icon: '🎵', url: 'https://www.kuaishou.com' },
-                { name: '芒果TV', icon: '🎬', url: 'https://www.mgtv.com' },
+                { name: '哔哩哔哩漫画', icon: '📚', url: 'https://manga.bilibili.com' }
+            ],
+            page4: [
                 { name: '网易云音乐', icon: '🎵', url: 'https://music.163.com' },
                 { name: 'QQ音乐', icon: '🎵', url: 'https://y.qq.com' },
                 { name: '酷狗音乐', icon: '🎵', url: 'https://www.kugou.com' },
                 { name: '酷我音乐', icon: '🎵', url: 'https://www.kuwo.cn' },
-                { name: '咪咕视频', icon: '🎬', url: 'https://www.miguvideo.com' },
-                { name: '央视影音', icon: '📺', url: 'https://tv.cctv.com' },
-                { name: '西瓜视频', icon: '🎬', url: 'https://www.ixigua.com' },
-                { name: '虎牙直播', icon: '🎮', url: 'https://www.huya.com' },
-                { name: '斗鱼直播', icon: '🎮', url: 'https://www.douyu.com' }
+                { name: '咪咕音乐', icon: '🎵', url: 'https://music.migu.cn' },
+                { name: '虾米音乐', icon: '🎵', url: 'https://www.xiami.com' },
+                { name: '千千音乐', icon: '🎵', url: 'https://music.taihe.com' },
+                { name: '5sing原创音乐', icon: '🎵', url: 'https://5sing.kugou.com' },
+                { name: '豆瓣音乐', icon: '🎵', url: 'https://music.douban.com' },
+                { name: 'Last.fm', icon: '🎵', url: 'https://www.last.fm' },
+                { name: 'Spotify', icon: '🎵', url: 'https://www.spotify.com' },
+                { name: 'Apple Music', icon: '🎵', url: 'https://www.apple.com/apple-music' },
+                { name: 'SoundCloud', icon: '🎵', url: 'https://soundcloud.com' },
+                { name: '喜马拉雅', icon: '📻', url: 'https://www.ximalaya.com' },
+                { name: '蜻蜓FM', icon: '📻', url: 'https://www.qingting.fm' },
+                { name: '荔枝FM', icon: '📻', url: 'https://www.lizhi.fm' }
             ],
-            page4: [
+            page5: [
                 { name: '淘宝', icon: '🛒', url: 'https://www.taobao.com' },
                 { name: '京东', icon: '🛒', url: 'https://www.jd.com' },
                 { name: '拼多多', icon: '🛒', url: 'https://www.pinduoduo.com' },
@@ -1505,7 +1534,7 @@
                 { name: '蘑菇街', icon: '👗', url: 'https://www.mogujie.com' },
                 { name: '盒马鲜生', icon: '🦐', url: 'https://www.freshhema.com' }
             ],
-            page5: [
+            page6: [
                 { name: '微信', icon: '💬', url: 'https://weixin.qq.com' },
                 { name: 'QQ', icon: '💬', url: 'https://im.qq.com' },
                 { name: '微博', icon: '📱', url: 'https://weibo.com' },
@@ -1523,7 +1552,7 @@
                 { name: '探探', icon: '💕', url: 'https://www.tantanapp.com' },
                 { name: 'Soul', icon: '💕', url: 'https://www.soulapp.cn' }
             ],
-            page6: [
+            page7: [
                 { name: '百度', icon: '🔍', url: 'https://www.baidu.com' },
                 { name: '百度网盘', icon: '☁️', url: 'https://pan.baidu.com' },
                 { name: '12306', icon: '🚄', url: 'https://www.12306.cn' },
@@ -1541,7 +1570,7 @@
                 { name: '学习强国', icon: '📚', url: 'https://www.xuexi.cn' },
                 { name: '阿里云盘', icon: '☁️', url: 'https://www.aliyundrive.com' }
             ],
-            page7: [
+            page8: [
                 { name: '百度贴吧', icon: '💬', url: 'https://tieba.baidu.com' },
                 { name: '天涯社区', icon: '💬', url: 'https://www.tianya.cn' },
                 { name: '虎扑', icon: '🏀', url: 'https://www.hupu.com' },
@@ -1553,13 +1582,13 @@
                 { name: 'Stack Overflow', icon: '💻', url: 'https://stackoverflow.com' },
                 { name: 'GitHub', icon: '🐙', url: 'https://github.com' },
                 { name: 'Gitee', icon: '🐙', url: 'https://gitee.com' },
-                { name: '知乎专栏', icon: '❓', url: 'https://zhuanlan.zhihu.com' },
                 { name: '少数派', icon: '📱', url: 'https://sspai.com' },
                 { name: '机核网', icon: '🎮', url: 'https://www.gcores.com' },
                 { name: '游民星空', icon: '🎮', url: 'https://www.gamersky.com' },
-                { name: '3DM游戏网', icon: '🎮', url: 'https://www.3dmgame.com' }
+                { name: '3DM游戏网', icon: '🎮', url: 'https://www.3dmgame.com' },
+                { name: 'A9VG电玩部落', icon: '🎮', url: 'https://www.a9vg.com' }
             ],
-            page8: [
+            page9: [
                 { name: '新浪新闻', icon: '📰', url: 'https://news.sina.com.cn' },
                 { name: '腾讯新闻', icon: '📰', url: 'https://news.qq.com' },
                 { name: '网易新闻', icon: '📰', url: 'https://news.163.com' },
