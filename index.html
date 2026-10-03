@@ -1666,12 +1666,24 @@
             const lyricText = document.getElementById('lyricText');
             const lyricsBox = document.querySelector('.ktv-lyrics');
             
-            if (!audio.duration || !isPlaying) {
+            // 安全检查：音频没有正常加载时，不更新进度条，避免乱跑
+            if (!audio || !audio.duration || isNaN(audio.duration) || !isFinite(audio.duration) || audio.duration <= 0) {
+                cursor.classList.remove('show');
+                progressBar.style.width = '0%';
+                return;
+            }
+            
+            if (!isPlaying || audio.paused) {
                 cursor.classList.remove('show');
                 return;
             }
             
             const currentTime = audio.currentTime;
+            
+            // 安全检查：当前时间无效
+            if (isNaN(currentTime) || !isFinite(currentTime) || currentTime < 0) {
+                return;
+            }
             
             // 如果有LRC歌词，实现真正的KTV同步效果
             if (currentLrc.length > 0) {
@@ -1698,9 +1710,15 @@
                         ? currentLrc[currentLrcIndex + 1].time 
                         : audio.duration;
                     const lineDuration = lineEndTime - lineStartTime;
-                    const lineProgress = lineDuration > 0 
-                        ? Math.min(100, ((currentTime - lineStartTime) / lineDuration) * 100)
-                        : 0;
+                    
+                    // 安全检查：句子时长无效
+                    if (lineDuration <= 0 || isNaN(lineDuration)) {
+                        return;
+                    }
+                    
+                    let lineProgress = ((currentTime - lineStartTime) / lineDuration) * 100;
+                    // 限制进度在0-100之间，避免乱跑
+                    lineProgress = Math.max(0, Math.min(100, lineProgress));
                     
                     // 蓝色进度条和光标在句子里从左往右跑
                     progressBar.style.width = lineProgress + '%';
@@ -1710,7 +1728,10 @@
                 }
             } else {
                 // 没有LRC歌词，用整体进度
-                const progress = (currentTime / audio.duration) * 100;
+                let progress = (currentTime / audio.duration) * 100;
+                // 限制进度在0-100之间
+                progress = Math.max(0, Math.min(100, progress));
+                
                 progressBar.style.width = progress + '%';
                 const boxWidth = lyricsBox.offsetWidth;
                 cursor.style.left = (progress / 100) * boxWidth + 'px';
