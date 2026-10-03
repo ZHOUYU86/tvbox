@@ -11,123 +11,471 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
             font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            overflow-x: hidden;
+        }
+
+        body {
+            background: #0a0a1a;
+            color: #fff;
             position: relative;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* 粒子背景 */
-        #particleCanvas {
+        /* 动态背景 - 慢慢转动的光晕 */
+        .bg-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: rotateGlow 20s linear infinite;
+        }
+
+        .bg-glow:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #6b21a8, transparent);
+            top: -200px;
+            left: -200px;
+            animation-duration: 25s;
+        }
+
+        .bg-glow:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #1e40af, transparent);
+            bottom: -150px;
+            right: -150px;
+            animation-duration: 30s;
+            animation-direction: reverse;
+        }
+
+        .bg-glow:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #be185d, transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 35s;
+        }
+
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* 星星背景 */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* 页面容器 */
+        .pages-container {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
             pointer-events: none;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            position: relative;
-            z-index: 1;
+        .page.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
         }
 
-        /* 顶部信息栏 */
-        .top-bar {
+        /* 翻页指示器 */
+        .page-indicator {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        .time-section {
-            text-align: left;
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
 
-        .time-display {
-            font-size: 48px;
+        .indicator-dot.active {
+            background: #a78bfa;
+            border-color: #fff;
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
+        }
+
+        .indicator-dot:hover {
+            background: rgba(255,255,255,0.6);
+        }
+
+        /* ========== 第一页：时间 + 音乐播放器 ========== */
+        .time-display-large {
+            font-size: 120px;
             font-weight: bold;
             color: #fff;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            text-shadow: 0 0 40px rgba(167, 139, 250, 0.5);
+            letter-spacing: 10px;
+            margin-bottom: 10px;
+        }
+
+        .date-display-large {
+            font-size: 24px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 50px;
             letter-spacing: 3px;
         }
 
-        .date-display {
-            font-size: 16px;
-            color: rgba(255,255,255,0.9);
-            margin-top: 5px;
+        /* KTV风格音乐播放器 */
+        .ktv-player {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        .weather-section {
-            text-align: right;
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            padding: 15px 25px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.2);
+        .ktv-song-info {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        .weather-city {
-            font-size: 14px;
-            color: rgba(255,255,255,0.8);
+        .ktv-song-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
         }
 
-        .weather-info {
+        .ktv-song-artist {
+            font-size: 18px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* KTV歌词显示 */
+        .ktv-lyrics {
+            height: 120px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+            mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+        }
+
+        .lyrics-container {
+            transition: transform 0.5s ease;
+        }
+
+        .lyric-line {
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            font-size: 22px;
+            color: rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .lyric-line.active {
+            color: #fff;
+            font-size: 26px;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+        }
+
+        .lyric-line.next {
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* 播放控制 */
+        .ktv-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .ktv-control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-top: 5px;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        .weather-icon {
-            font-size: 32px;
+        .ktv-control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
         }
 
-        .weather-temp {
+        .ktv-control-btn.play-btn {
+            width: 70px;
+            height: 70px;
             font-size: 28px;
-            font-weight: bold;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .ktv-control-btn.play-btn:hover {
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        /* 进度条 */
+        .ktv-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .ktv-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            border-radius: 3px;
+            width: 0%;
+            position: relative;
+        }
+
+        .ktv-progress-fill::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
+        }
+
+        .ktv-time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+        }
+
+        /* 播放列表按钮 */
+        .ktv-playlist-toggle {
+            text-align: center;
+        }
+
+        .ktv-playlist-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: rgba(255,255,255,0.7);
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .ktv-playlist-btn:hover {
+            background: rgba(255,255,255,0.2);
             color: #fff;
         }
 
-        .weather-desc {
-            font-size: 14px;
-            color: rgba(255,255,255,0.9);
+        /* 播放列表弹窗 */
+        .ktv-playlist-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ktv-playlist-modal.show {
+            display: flex;
+        }
+
+        .playlist-content {
+            width: 90%;
+            max-width: 500px;
+            max-height: 70vh;
+            background: rgba(20, 20, 40, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow-y: auto;
+        }
+
+        .playlist-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .playlist-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .playlist-item.playing {
+            background: rgba(139, 92, 246, 0.3);
+            color: #a78bfa;
+        }
+
+        .playlist-close {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .playlist-close button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            padding: 10px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* ========== 导航页通用样式 ========== */
+        .nav-page-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+        }
+
+        .nav-grid-large {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .nav-item-large {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-item-large:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            border-color: rgba(167, 139, 250, 0.5);
+        }
+
+        .nav-item-large .site-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .nav-item-large .site-name {
+            font-size: 15px;
+            color: #fff;
         }
 
         /* 搜索框 */
-        .search-section {
-            margin-bottom: 40px;
-        }
-
-        .search-box {
+        .search-box-large {
             display: flex;
+            width: 100%;
             max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.2);
+            margin-bottom: 40px;
+            background: rgba(255,255,255,0.05);
             backdrop-filter: blur(10px);
             border-radius: 30px;
-            padding: 5px;
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .search-input {
+        .search-input-large {
             flex: 1;
             padding: 12px 20px;
             border: none;
@@ -137,14 +485,14 @@
             outline: none;
         }
 
-        .search-input::placeholder {
-            color: rgba(255,255,255,0.7);
+        .search-input-large::placeholder {
+            color: rgba(255,255,255,0.4);
         }
 
-        .search-btn {
+        .search-btn-large {
             padding: 12px 30px;
             border: none;
-            background: rgba(255,255,255,0.3);
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
             color: #fff;
             font-size: 16px;
             border-radius: 25px;
@@ -152,407 +500,175 @@
             transition: all 0.3s ease;
         }
 
-        .search-btn:hover {
-            background: rgba(255,255,255,0.4);
+        .search-btn-large:hover {
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
         }
 
-        /* 网址导航 */
-        .nav-section {
-            margin-bottom: 40px;
-        }
-
-        .nav-category {
-            margin-bottom: 30px;
-        }
-
-        .category-title {
-            font-size: 18px;
-            color: #fff;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding-left: 10px;
-            border-left: 4px solid rgba(255,255,255,0.8);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .category-title .add-site-btn {
-            font-size: 12px;
-            padding: 4px 12px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: #fff;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .category-title .add-site-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 15px;
-        }
-
-        .nav-item {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 15px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.2);
-            position: relative;
-            text-decoration: none;
-            display: block;
-        }
-
-        .nav-item:hover {
-            background: rgba(255,255,255,0.25);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-
-        .nav-item .site-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .nav-item .site-name {
-            font-size: 13px;
-            color: #fff;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .nav-item .delete-site {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 20px;
-            height: 20px;
-            background: rgba(255,0,0,0.6);
-            border: none;
-            color: #fff;
-            border-radius: 50%;
-            font-size: 12px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-item:hover .delete-site {
-            display: flex;
-        }
-
-        /* 音乐播放器 - 小巧版 */
-        .mini-player {
+        /* 翻页提示 */
+        .scroll-hint {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
-        }
-
-        .player-toggle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: #fff;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .player-toggle:hover {
-            background: rgba(255,255,255,0.35);
-            transform: scale(1.1);
-        }
-
-        .player-toggle.playing {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); }
-            100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-        }
-
-        .player-panel {
-            position: absolute;
-            bottom: 60px;
-            right: 0;
-            width: 300px;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            display: none;
-        }
-
-        .player-panel.show {
-            display: block;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .player-panel-title {
-            color: #fff;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.4);
             font-size: 14px;
-            margin-bottom: 15px;
-            text-align: center;
+            z-index: 50;
+            animation: bounce 2s infinite;
         }
 
-        .mini-song-info {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .mini-song-title {
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .mini-song-artist {
-            color: rgba(255,255,255,0.7);
-            font-size: 12px;
-        }
-
-        .mini-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-
-        .mini-control-btn {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: #fff;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .mini-control-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .mini-control-btn.play {
-            width: 45px;
-            height: 45px;
-            font-size: 18px;
-            background: rgba(255,255,255,0.3);
-        }
-
-        .mini-progress {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .mini-progress-fill {
-            height: 100%;
-            background: #fff;
-            border-radius: 2px;
-            width: 0%;
-        }
-
-        .mini-playlist {
-            max-height: 150px;
-            overflow-y: auto;
-            margin-top: 15px;
-        }
-
-        .mini-playlist-item {
-            padding: 8px 10px;
-            color: rgba(255,255,255,0.8);
-            font-size: 12px;
-            cursor: pointer;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .mini-playlist-item:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .mini-playlist-item.playing {
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-        }
-
-        .mini-playlist-item .delete-mini-song {
-            background: none;
-            border: none;
-            color: rgba(255,255,255,0.5);
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .add-mini-song {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .add-mini-song input {
-            width: 100%;
-            padding: 6px 10px;
-            margin-bottom: 5px;
-            border: none;
-            background: rgba(255,255,255,0.15);
-            color: #fff;
-            border-radius: 8px;
-            font-size: 12px;
-            outline: none;
-        }
-
-        .add-mini-song input::placeholder {
-            color: rgba(255,255,255,0.5);
-        }
-
-        .add-mini-song button {
-            width: 100%;
-            padding: 6px;
-            border: none;
-            background: rgba(255,255,255,0.25);
-            color: #fff;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        /* 底部 */
-        .footer {
-            text-align: center;
-            margin-top: 50px;
-            color: rgba(255,255,255,0.6);
-            font-size: 13px;
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
         }
 
         /* 响应式 */
-        @media (max-width: 600px) {
-            .time-display {
-                font-size: 32px;
+        @media (max-width: 768px) {
+            .time-display-large {
+                font-size: 60px;
+                letter-spacing: 5px;
             }
-            .top-bar {
-                flex-direction: column;
-                text-align: center;
+            .ktv-player {
+                padding: 20px;
             }
-            .weather-section {
-                text-align: center;
+            .ktv-song-title {
+                font-size: 24px;
             }
-            .nav-grid {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-                gap: 10px;
+            .lyric-line {
+                font-size: 18px;
             }
-            .player-panel {
-                width: calc(100vw - 40px);
-                right: 0;
+            .lyric-line.active {
+                font-size: 20px;
+            }
+            .nav-grid-large {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                gap: 15px;
+            }
+            .nav-item-large .site-icon {
+                font-size: 30px;
+            }
+            .nav-page-title {
+                font-size: 28px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 粒子背景 -->
-    <canvas id="particleCanvas"></canvas>
-    
-    <div class="container">
-        <!-- 顶部信息栏 -->
-        <div class="top-bar">
-            <div class="time-section">
-                <div class="time-display" id="timeDisplay">00:00:00</div>
-                <div class="date-display" id="dateDisplay">加载中...</div>
-            </div>
-            <div class="weather-section">
-                <div class="weather-city" id="weatherCity">正在定位...</div>
-                <div class="weather-info">
-                    <span class="weather-icon" id="weatherIcon">🌤</span>
-                    <span class="weather-temp" id="weatherTemp">--°</span>
-                    <span class="weather-desc" id="weatherDesc">加载中</span>
+    <!-- 动态背景 -->
+    <div class="bg-container">
+        <div class="bg-glow"></div>
+        <div class="bg-glow"></div>
+        <div class="bg-glow"></div>
+        <div class="stars" id="stars"></div>
+    </div>
+
+    <!-- 翻页指示器 -->
+    <div class="page-indicator" id="pageIndicator">
+        <div class="indicator-dot active" data-page="0" title="首页"></div>
+        <div class="indicator-dot" data-page="1" title="影视娱乐"></div>
+        <div class="indicator-dot" data-page="2" title="购物生活"></div>
+        <div class="indicator-dot" data-page="3" title="社交通讯"></div>
+        <div class="indicator-dot" data-page="4" title="实用工具"></div>
+    </div>
+
+    <!-- 翻页提示 -->
+    <div class="scroll-hint" id="scrollHint">↓ 滚动鼠标翻页 ↓</div>
+
+    <!-- 页面容器 -->
+    <div class="pages-container">
+        <!-- 第1页：时间 + KTV音乐播放器 -->
+        <div class="page active" id="page0">
+            <div class="time-display-large" id="timeDisplay">00:00:00</div>
+            <div class="date-display-large" id="dateDisplay">加载中...</div>
+            
+            <div class="ktv-player">
+                <div class="ktv-song-info">
+                    <div class="ktv-song-title" id="ktvSongTitle">选择一首歌曲</div>
+                    <div class="ktv-song-artist" id="ktvSongArtist">点击下方播放列表</div>
+                </div>
+                
+                <div class="ktv-lyrics">
+                    <div class="lyrics-container" id="lyricsContainer">
+                        <div class="lyric-line">🎵 欢迎使用KTV音乐播放器 🎵</div>
+                        <div class="lyric-line active">添加歌曲，开始享受音乐吧！</div>
+                        <div class="lyric-line next">点击右下角播放列表添加歌曲</div>
+                    </div>
+                </div>
+                
+                <div class="ktv-controls">
+                    <button class="ktv-control-btn" id="ktvPrevBtn">⏮</button>
+                    <button class="ktv-control-btn play-btn" id="ktvPlayBtn">▶</button>
+                    <button class="ktv-control-btn" id="ktvNextBtn">⏭</button>
+                </div>
+                
+                <div class="ktv-progress" id="ktvProgress">
+                    <div class="ktv-progress-fill" id="ktvProgressFill"></div>
+                </div>
+                
+                <div class="ktv-time">
+                    <span id="ktvCurrentTime">00:00</span>
+                    <span id="ktvTotalTime">00:00</span>
+                </div>
+                
+                <div class="ktv-playlist-toggle">
+                    <button class="ktv-playlist-btn" id="ktvPlaylistBtn">📋 播放列表</button>
                 </div>
             </div>
         </div>
 
-        <!-- 搜索框 -->
-        <div class="search-section">
-            <div class="search-box">
-                <input type="text" class="search-input" id="searchInput" placeholder="搜索网址或百度一下...">
-                <button class="search-btn" id="searchBtn">搜索</button>
+        <!-- 第2页：影视娱乐 -->
+        <div class="page" id="page1">
+            <div class="nav-page-title">🎬 影视娱乐</div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput2" placeholder="搜索影视或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput2')">搜索</button>
             </div>
+            <div class="nav-grid-large" id="navGrid2"></div>
         </div>
 
-        <!-- 网址导航 -->
-        <div class="nav-section" id="navSection">
-            <!-- 动态生成 -->
+        <!-- 第3页：购物生活 -->
+        <div class="page" id="page2">
+            <div class="nav-page-title">🛒 购物生活</div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput3" placeholder="搜索商品或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput3')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid3"></div>
         </div>
 
-        <!-- 底部 -->
-        <div class="footer">
-            <p>✨ 我的导航 · 用心打造 ✨</p>
+        <!-- 第4页：社交通讯 -->
+        <div class="page" id="page3">
+            <div class="nav-page-title">📱 社交通讯</div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput4" placeholder="搜索或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput4')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid4"></div>
+        </div>
+
+        <!-- 第5页：实用工具 -->
+        <div class="page" id="page4">
+            <div class="nav-page-title">🔧 实用工具</div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput5" placeholder="搜索或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput5')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid5"></div>
         </div>
     </div>
 
-    <!-- 小巧音乐播放器 -->
-    <div class="mini-player">
-        <button class="player-toggle" id="playerToggle">🎵</button>
-        <div class="player-panel" id="playerPanel">
-            <div class="player-panel-title">🎵 我的音乐</div>
-            <div class="mini-song-info">
-                <div class="mini-song-title" id="miniSongTitle">选择一首歌曲</div>
-                <div class="mini-song-artist" id="miniSongArtist">在下方添加歌曲</div>
+    <!-- 播放列表弹窗 -->
+    <div class="ktv-playlist-modal" id="playlistModal">
+        <div class="playlist-content">
+            <div class="playlist-title">🎵 播放列表</div>
+            <div id="playlistItems"></div>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <input type="text" id="addSongName" placeholder="歌曲名称" style="width:100%; padding:10px; margin-bottom:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
+                <input type="text" id="addSongUrl" placeholder="歌曲链接(MP3)" style="width:100%; padding:10px; margin-bottom:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
+                <input type="text" id="addSongArtist" placeholder="歌手（可选）" style="width:100%; padding:10px; margin-bottom:10px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
+                <button onclick="addSong()" style="width:100%; padding:10px; background:linear-gradient(135deg,#8b5cf6,#6366f1); border:none; color:#fff; border-radius:8px; cursor:pointer;">➕ 添加歌曲</button>
             </div>
-            <div class="mini-controls">
-                <button class="mini-control-btn" id="miniPrevBtn">⏮</button>
-                <button class="mini-control-btn play" id="miniPlayBtn">▶</button>
-                <button class="mini-control-btn" id="miniNextBtn">⏭</button>
-            </div>
-            <div class="mini-progress" id="miniProgress">
-                <div class="mini-progress-fill" id="miniProgressFill"></div>
-            </div>
-            <div class="mini-playlist" id="miniPlaylist">
-                <!-- 动态生成 -->
-            </div>
-            <div class="add-mini-song">
-                <input type="text" id="miniSongName" placeholder="歌曲名称">
-                <input type="text" id="miniSongUrl" placeholder="歌曲链接(MP3)">
-                <input type="text" id="miniSongArtist" placeholder="歌手（可选）">
-                <button id="miniAddBtn">➕ 添加歌曲</button>
+            <div class="playlist-close">
+                <button onclick="closePlaylist()">关闭</button>
             </div>
         </div>
     </div>
@@ -560,76 +676,18 @@
     <audio id="audioPlayer"></audio>
 
     <script>
-        // ========== 动态粒子背景 ==========
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        // ========== 生成星星背景 ==========
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.width = Math.random() * 3 + 1 + 'px';
+            star.style.height = star.style.width;
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.opacity = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.fill();
-            }
-        }
-        
-        const particles = [];
-        for (let i = 0; i < 80; i++) {
-            particles.push(new Particle());
-        }
-        
-        function connectParticles() {
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 120) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 * (1 - distance / 120)})`;
-                        ctx.lineWidth = 1;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-        
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            connectParticles();
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
 
         // ========== 实时时间 ==========
         function updateTime() {
@@ -649,57 +707,94 @@
         updateTime();
         setInterval(updateTime, 1000);
 
-        // ========== 天气 ==========
-        async function loadWeather() {
-            try {
-                // 通过IP获取城市
-                const ipRes = await fetch('https://ipapi.co/json/');
-                const ipData = await ipRes.json();
-                const city = ipData.city || '未知';
-                document.getElementById('weatherCity').textContent = city;
-                
-                // 获取天气（用wttr.in，免费无需key）
-                const weatherRes = await fetch(`https://wttr.in/${city}?format=j1&lang=zh`);
-                const weatherData = await weatherRes.json();
-                const current = weatherData.current_condition[0];
-                const temp = current.temp_C;
-                const desc = current.lang_zh[0].value || current.weatherDesc[0].value;
-                const code = current.weatherCode;
-                
-                // 天气图标映射
-                const iconMap = {
-                    '113': '☀️', '116': '⛅', '119': '☁️', '122': '☁️',
-                    '143': '🌫️', '176': '🌦️', '179': '🌨️', '182': '🌨️',
-                    '185': '🌧️', '200': '⛈️', '227': '🌨️', '230': '❄️',
-                    '248': '🌫️', '260': '🌫️', '263': '🌦️', '266': '🌧️',
-                    '281': '🌧️', '284': '🌧️', '293': '🌦️', '296': '🌧️',
-                    '299': '🌧️', '302': '🌧️', '305': '🌧️', '308': '🌧️',
-                    '311': '🌧️', '314': '🌧️', '317': '🌨️', '320': '🌨️',
-                    '323': '🌨️', '326': '🌨️', '329': '❄️', '332': '❄️',
-                    '335': '❄️', '338': '❄️', '350': '🌨️', '353': '🌦️',
-                    '356': '🌧️', '359': '🌧️', '362': '🌨️', '365': '🌨️',
-                    '368': '❄️', '371': '❄️', '374': '🌨️', '377': '🌨️',
-                    '386': '⛈️', '389': '⛈️', '392': '⛈️', '395': '❄️'
-                };
-                
-                document.getElementById('weatherIcon').textContent = iconMap[code] || '🌤️';
-                document.getElementById('weatherTemp').textContent = `${temp}°`;
-                document.getElementById('weatherDesc').textContent = desc;
-            } catch (e) {
-                document.getElementById('weatherCity').textContent = '天气加载失败';
-                document.getElementById('weatherDesc').textContent = '请检查网络';
+        // ========== 翻页功能 ==========
+        let currentPage = 0;
+        const totalPages = 5;
+        const pages = document.querySelectorAll('.page');
+        const dots = document.querySelectorAll('.indicator-dot');
+        const scrollHint = document.getElementById('scrollHint');
+
+        function goToPage(pageIndex) {
+            if (pageIndex < 0 || pageIndex >= totalPages) return;
+            currentPage = pageIndex;
+            
+            pages.forEach((page, index) => {
+                page.classList.remove('active');
+                if (index === currentPage) {
+                    page.classList.add('active');
+                }
+            });
+            
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index === currentPage) {
+                    dot.classList.add('active');
+                }
+            });
+            
+            // 最后一页隐藏翻页提示
+            if (currentPage === totalPages - 1) {
+                scrollHint.style.display = 'none';
+            } else {
+                scrollHint.style.display = 'block';
             }
         }
-        loadWeather();
 
-        // ========== 搜索 ==========
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        
-        function doSearch() {
-            const query = searchInput.value.trim();
+        // 点击指示器翻页
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const pageIndex = parseInt(dot.dataset.page);
+                goToPage(pageIndex);
+            });
+        });
+
+        // 鼠标滚轮翻页
+        let isScrolling = false;
+        window.addEventListener('wheel', (e) => {
+            if (isScrolling) return;
+            isScrolling = true;
+            
+            if (e.deltaY > 0) {
+                goToPage(currentPage + 1);
+            } else {
+                goToPage(currentPage - 1);
+            }
+            
+            setTimeout(() => { isScrolling = false; }, 800);
+        });
+
+        // 键盘翻页
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                goToPage(currentPage + 1);
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                goToPage(currentPage - 1);
+            }
+        });
+
+        // 触摸翻页
+        let touchStartY = 0;
+        window.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+        window.addEventListener('touchend', (e) => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const diff = touchStartY - touchEndY;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    goToPage(currentPage + 1);
+                } else {
+                    goToPage(currentPage - 1);
+                }
+            }
+        });
+
+        // ========== 搜索功能 ==========
+        function doSearch(inputId) {
+            const input = document.getElementById(inputId);
+            const query = input.value.trim();
             if (!query) return;
-            // 如果是网址直接打开，否则百度搜索
+            
             if (query.startsWith('http://') || query.startsWith('https://')) {
                 window.open(query, '_blank');
             } else if (query.includes('.') && !query.includes(' ')) {
@@ -708,306 +803,289 @@
                 window.open(`https://www.baidu.com/s?wd=${encodeURIComponent(query)}`, '_blank');
             }
         }
-        
-        searchBtn.addEventListener('click', doSearch);
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') doSearch();
+
+        // 搜索框回车
+        ['searchInput2', 'searchInput3', 'searchInput4', 'searchInput5'].forEach(id => {
+            document.getElementById(id).addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') doSearch(id);
+            });
         });
 
-        // ========== 网址导航 ==========
-        // 默认分类和网站
-        const defaultNav = {
-            '🎬 影视娱乐': [
-                { name: '百度', icon: '🔍', url: 'https://www.baidu.com' },
+        // ========== 网址导航数据 ==========
+        const navData = {
+            page2: [
                 { name: '爱奇艺', icon: '🎬', url: 'https://www.iqiyi.com' },
                 { name: '腾讯视频', icon: '🎬', url: 'https://v.qq.com' },
                 { name: '优酷', icon: '🎬', url: 'https://www.youku.com' },
                 { name: 'B站', icon: '📺', url: 'https://www.bilibili.com' },
-                { name: '抖音', icon: '🎵', url: 'https://www.douyin.com' }
+                { name: '抖音', icon: '🎵', url: 'https://www.douyin.com' },
+                { name: '快手', icon: '🎵', url: 'https://www.kuaishou.com' },
+                { name: '芒果TV', icon: '🎬', url: 'https://www.mgtv.com' },
+                { name: '搜狐视频', icon: '🎬', url: 'https://tv.sohu.com' },
+                { name: '西瓜视频', icon: '🎬', url: 'https://www.ixigua.com' },
+                { name: '虎牙直播', icon: '🎮', url: 'https://www.huya.com' },
+                { name: '斗鱼直播', icon: '🎮', url: 'https://www.douyu.com' },
+                { name: '网易云音乐', icon: '🎵', url: 'https://music.163.com' }
             ],
-            '🛒 购物消费': [
+            page3: [
                 { name: '淘宝', icon: '🛒', url: 'https://www.taobao.com' },
                 { name: '京东', icon: '🛒', url: 'https://www.jd.com' },
                 { name: '拼多多', icon: '🛒', url: 'https://www.pinduoduo.com' },
-                { name: '天猫', icon: '🛒', url: 'https://www.tmall.com' }
+                { name: '天猫', icon: '🛒', url: 'https://www.tmall.com' },
+                { name: '苏宁易购', icon: '🛒', url: 'https://www.suning.com' },
+                { name: '唯品会', icon: '🛒', url: 'https://www.vip.com' },
+                { name: '美团', icon: '🍔', url: 'https://www.meituan.com' },
+                { name: '饿了么', icon: '🍔', url: 'https://www.ele.me' },
+                { name: '大众点评', icon: '🍔', url: 'https://www.dianping.com' },
+                { name: '携程', icon: '✈️', url: 'https://www.ctrip.com' },
+                { name: '去哪儿', icon: '✈️', url: 'https://www.qunar.com' },
+                { name: '滴滴出行', icon: '🚗', url: 'https://www.didiglobal.com' }
             ],
-            '📱 社交通讯': [
+            page4: [
                 { name: '微信', icon: '💬', url: 'https://weixin.qq.com' },
                 { name: 'QQ', icon: '💬', url: 'https://im.qq.com' },
                 { name: '微博', icon: '📱', url: 'https://weibo.com' },
-                { name: '知乎', icon: '❓', url: 'https://www.zhihu.com' }
+                { name: '知乎', icon: '❓', url: 'https://www.zhihu.com' },
+                { name: '小红书', icon: '📖', url: 'https://www.xiaohongshu.com' },
+                { name: '豆瓣', icon: '🎬', url: 'https://www.douban.com' },
+                { name: '百度贴吧', icon: '💬', url: 'https://tieba.baidu.com' },
+                { name: '天涯社区', icon: '💬', url: 'https://www.tianya.cn' },
+                { name: '虎扑', icon: '🏀', url: 'https://www.hupu.com' },
+                { name: 'NGA', icon: '🎮', url: 'https://bbs.nga.cn' },
+                { name: '简书', icon: '✍️', url: 'https://www.jianshu.com' },
+                { name: 'CSDN', icon: '💻', url: 'https://www.csdn.net' }
             ],
-            '🔧 实用工具': [
+            page5: [
+                { name: '百度', icon: '🔍', url: 'https://www.baidu.com' },
                 { name: '百度网盘', icon: '☁️', url: 'https://pan.baidu.com' },
                 { name: '12306', icon: '🚄', url: 'https://www.12306.cn' },
                 { name: '高德地图', icon: '🗺️', url: 'https://www.amap.com' },
-                { name: '翻译', icon: '🌐', url: 'https://fanyi.baidu.com' }
+                { name: '百度翻译', icon: '🌐', url: 'https://fanyi.baidu.com' },
+                { name: '有道词典', icon: '📖', url: 'https://dict.youdao.com' },
+                { name: 'WPS', icon: '📄', url: 'https://www.wps.cn' },
+                { name: '腾讯文档', icon: '📄', url: 'https://docs.qq.com' },
+                { name: '石墨文档', icon: '📄', url: 'https://shimo.im' },
+                { name: '天眼查', icon: '🏢', url: 'https://www.tianyancha.com' },
+                { name: '企查查', icon: '🏢', url: 'https://www.qcc.com' },
+                { name: '学习强国', icon: '📚', url: 'https://www.xuexi.cn' }
             ]
         };
-        
-        let navData = JSON.parse(localStorage.getItem('navData')) || defaultNav;
-        
-        function saveNav() {
-            localStorage.setItem('navData', JSON.stringify(navData));
-        }
-        
+
+        // 渲染导航
         function renderNav() {
-            const navSection = document.getElementById('navSection');
-            navSection.innerHTML = '';
-            
-            Object.keys(navData).forEach(category => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'nav-category';
+            for (let i = 2; i <= 5; i++) {
+                const grid = document.getElementById(`navGrid${i}`);
+                const pageKey = `page${i}`;
+                const sites = navData[pageKey] || [];
                 
-                const titleDiv = document.createElement('div');
-                titleDiv.className = 'category-title';
-                titleDiv.innerHTML = `
-                    <span>${category}</span>
-                    <button class="add-site-btn" onclick="addSite('${category}')">➕ 添加</button>
-                    <button class="add-site-btn" onclick="deleteCategory('${category}')">🗑 删除分类</button>
-                `;
-                categoryDiv.appendChild(titleDiv);
-                
-                const gridDiv = document.createElement('div');
-                gridDiv.className = 'nav-grid';
-                
-                navData[category].forEach((site, index) => {
-                    const siteDiv = document.createElement('a');
-                    siteDiv.className = 'nav-item';
-                    siteDiv.href = site.url;
-                    siteDiv.target = '_blank';
-                    siteDiv.innerHTML = `
-                        <button class="delete-site" onclick="event.preventDefault(); event.stopPropagation(); deleteSite('${category}', ${index})">×</button>
-                        <div class="site-icon">${site.icon || '🌐'}</div>
+                grid.innerHTML = sites.map(site => `
+                    <a href="${site.url}" target="_blank" class="nav-item-large">
+                        <div class="site-icon">${site.icon}</div>
                         <div class="site-name">${site.name}</div>
-                    `;
-                    gridDiv.appendChild(siteDiv);
-                });
-                
-                categoryDiv.appendChild(gridDiv);
-                navSection.appendChild(categoryDiv);
-            });
-            
-            // 添加分类按钮
-            const addCategoryDiv = document.createElement('div');
-            addCategoryDiv.style.marginTop = '20px';
-            addCategoryDiv.style.textAlign = 'center';
-            addCategoryDiv.innerHTML = `
-                <button onclick="addCategory()" style="padding: 10px 30px; background: rgba(255,255,255,0.2); border: 1px dashed rgba(255,255,255,0.5); color: #fff; border-radius: 20px; cursor: pointer; font-size: 14px;">
-                    ➕ 添加新分类
-                </button>
-            `;
-            navSection.appendChild(addCategoryDiv);
+                    </a>
+                `).join('');
+            }
         }
-        
-        window.addSite = function(category) {
-            const name = prompt('请输入网站名称：');
-            if (!name) return;
-            const url = prompt('请输入网站地址（如 https://www.baidu.com）：');
-            if (!url) return;
-            const icon = prompt('请输入图标（emoji，如 🌐，可留空）：') || '🌐';
-            
-            if (!navData[category]) navData[category] = [];
-            navData[category].push({ name, url, icon });
-            saveNav();
-            renderNav();
-        };
-        
-        window.deleteSite = function(category, index) {
-            if (confirm('确定要删除这个网站吗？')) {
-                navData[category].splice(index, 1);
-                saveNav();
-                renderNav();
-            }
-        };
-        
-        window.addCategory = function() {
-            const name = prompt('请输入分类名称（如 🎬 影视娱乐）：');
-            if (!name) return;
-            if (navData[name]) {
-                alert('该分类已存在！');
-                return;
-            }
-            navData[name] = [];
-            saveNav();
-            renderNav();
-        };
-        
-        window.deleteCategory = function(category) {
-            if (confirm(`确定要删除分类"${category}"吗？该分类下的所有网站都会被删除！`)) {
-                delete navData[category];
-                saveNav();
-                renderNav();
-            }
-        };
-        
         renderNav();
 
-        // ========== 小巧音乐播放器 ==========
+        // ========== KTV音乐播放器 ==========
         const audio = document.getElementById('audioPlayer');
-        const playerToggle = document.getElementById('playerToggle');
-        const playerPanel = document.getElementById('playerPanel');
-        const miniPlayBtn = document.getElementById('miniPlayBtn');
-        const miniPrevBtn = document.getElementById('miniPrevBtn');
-        const miniNextBtn = document.getElementById('miniNextBtn');
-        const miniProgress = document.getElementById('miniProgress');
-        const miniProgressFill = document.getElementById('miniProgressFill');
-        const miniSongTitle = document.getElementById('miniSongTitle');
-        const miniSongArtist = document.getElementById('miniSongArtist');
-        const miniPlaylist = document.getElementById('miniPlaylist');
-        const miniAddBtn = document.getElementById('miniAddBtn');
-        const miniSongName = document.getElementById('miniSongName');
-        const miniSongUrl = document.getElementById('miniSongUrl');
-        const miniSongArtistInput = document.getElementById('miniSongArtist');
-        
-        let miniPlaylistData = JSON.parse(localStorage.getItem('miniPlaylist')) || [];
-        let miniCurrentIndex = -1;
-        let miniIsPlaying = false;
-        
-        // 切换播放器面板
-        playerToggle.addEventListener('click', () => {
-            playerPanel.classList.toggle('show');
-        });
-        
-        // 渲染播放列表
-        function renderMiniPlaylist() {
-            if (miniPlaylistData.length === 0) {
-                miniPlaylist.innerHTML = '<div style="text-align:center; color:rgba(255,255,255,0.5); padding:15px; font-size:12px;">还没有歌曲，在下方添加吧！</div>';
-                return;
-            }
-            miniPlaylist.innerHTML = miniPlaylistData.map((song, index) => `
-                <div class="mini-playlist-item ${index === miniCurrentIndex ? 'playing' : ''}" onclick="playMiniSong(${index})">
-                    <span>${index + 1}. ${song.name} ${song.artist ? '- ' + song.artist : ''}</span>
-                    <button class="delete-mini-song" onclick="event.stopPropagation(); deleteMiniSong(${index})">🗑</button>
-                </div>
-            `).join('');
+        const ktvPlayBtn = document.getElementById('ktvPlayBtn');
+        const ktvPrevBtn = document.getElementById('ktvPrevBtn');
+        const ktvNextBtn = document.getElementById('ktvNextBtn');
+        const ktvProgress = document.getElementById('ktvProgress');
+        const ktvProgressFill = document.getElementById('ktvProgressFill');
+        const ktvCurrentTime = document.getElementById('ktvCurrentTime');
+        const ktvTotalTime = document.getElementById('ktvTotalTime');
+        const ktvSongTitle = document.getElementById('ktvSongTitle');
+        const ktvSongArtist = document.getElementById('ktvSongArtist');
+        const lyricsContainer = document.getElementById('lyricsContainer');
+        const playlistModal = document.getElementById('playlistModal');
+        const playlistItems = document.getElementById('playlistItems');
+
+        let playlist = JSON.parse(localStorage.getItem('ktvPlaylist')) || [];
+        let currentSongIndex = -1;
+        let isPlaying = false;
+
+        // 格式化时间
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
-        
+
         // 播放歌曲
-        window.playMiniSong = function(index) {
-            if (index < 0 || index >= miniPlaylistData.length) return;
-            miniCurrentIndex = index;
-            const song = miniPlaylistData[index];
+        function playSong(index) {
+            if (index < 0 || index >= playlist.length) return;
+            currentSongIndex = index;
+            const song = playlist[index];
+            
             audio.src = song.url;
             audio.play();
-            miniIsPlaying = true;
-            miniPlayBtn.textContent = '⏸';
-            miniSongTitle.textContent = song.name;
-            miniSongArtist.textContent = song.artist || '未知歌手';
-            playerToggle.classList.add('playing');
-            playerToggle.textContent = '🎶';
-            renderMiniPlaylist();
-            saveMiniPlaylist();
-        };
-        
+            isPlaying = true;
+            ktvPlayBtn.textContent = '⏸';
+            ktvSongTitle.textContent = song.name;
+            ktvSongArtist.textContent = song.artist || '未知歌手';
+            
+            // 更新歌词（简单模拟，实际应该解析LRC）
+            updateLyrics(song.name);
+            
+            // 更新播放列表高亮
+            renderPlaylist();
+            savePlaylist();
+        }
+
+        // 更新歌词显示（简单模拟）
+        function updateLyrics(songName) {
+            const mockLyrics = [
+                '🎵 正在播放：' + songName,
+                '♪ 旋律在空气中飘荡 ♪',
+                '♪ 音符在心里跳动 ♪',
+                '♪ 让我们一起享受音乐 ♪',
+                '♪ 感受每一个节拍 ♪',
+                '♪ 沉浸在美妙的旋律中 ♪',
+                '🎵 音乐让生活更美好 🎵'
+            ];
+            
+            lyricsContainer.innerHTML = mockLyrics.map((line, i) => 
+                `<div class="lyric-line ${i === 1 ? 'active' : ''} ${i === 2 ? 'next' : ''}">${line}</div>`
+            ).join('');
+        }
+
         // 播放/暂停
-        miniPlayBtn.addEventListener('click', () => {
-            if (miniCurrentIndex === -1 && miniPlaylistData.length > 0) {
-                playMiniSong(0);
+        ktvPlayBtn.addEventListener('click', () => {
+            if (currentSongIndex === -1 && playlist.length > 0) {
+                playSong(0);
                 return;
             }
-            if (miniIsPlaying) {
+            if (isPlaying) {
                 audio.pause();
-                miniPlayBtn.textContent = '▶';
-                playerToggle.classList.remove('playing');
-                playerToggle.textContent = '🎵';
+                ktvPlayBtn.textContent = '▶';
             } else {
                 audio.play();
-                miniPlayBtn.textContent = '⏸';
-                playerToggle.classList.add('playing');
-                playerToggle.textContent = '🎶';
+                ktvPlayBtn.textContent = '⏸';
             }
-            miniIsPlaying = !miniIsPlaying;
+            isPlaying = !isPlaying;
         });
-        
+
         // 上一首
-        miniPrevBtn.addEventListener('click', () => {
-            if (miniPlaylistData.length === 0) return;
-            const newIndex = (miniCurrentIndex - 1 + miniPlaylistData.length) % miniPlaylistData.length;
-            playMiniSong(newIndex);
+        ktvPrevBtn.addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            const newIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+            playSong(newIndex);
         });
-        
+
         // 下一首
-        miniNextBtn.addEventListener('click', () => {
-            if (miniPlaylistData.length === 0) return;
-            const newIndex = (miniCurrentIndex + 1) % miniPlaylistData.length;
-            playMiniSong(newIndex);
+        ktvNextBtn.addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            const newIndex = (currentSongIndex + 1) % playlist.length;
+            playSong(newIndex);
         });
-        
+
         // 进度条
         audio.addEventListener('timeupdate', () => {
             if (audio.duration) {
                 const percent = (audio.currentTime / audio.duration) * 100;
-                miniProgressFill.style.width = percent + '%';
+                ktvProgressFill.style.width = percent + '%';
+                ktvCurrentTime.textContent = formatTime(audio.currentTime);
             }
         });
-        
-        miniProgress.addEventListener('click', (e) => {
-            const rect = miniProgress.getBoundingClientRect();
+
+        audio.addEventListener('loadedmetadata', () => {
+            ktvTotalTime.textContent = formatTime(audio.duration);
+        });
+
+        ktvProgress.addEventListener('click', (e) => {
+            const rect = ktvProgress.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
             if (audio.duration) {
                 audio.currentTime = percent * audio.duration;
             }
         });
-        
+
         // 歌曲结束自动下一首
         audio.addEventListener('ended', () => {
-            if (miniPlaylistData.length > 0) {
-                const newIndex = (miniCurrentIndex + 1) % miniPlaylistData.length;
-                playMiniSong(newIndex);
+            if (playlist.length > 0) {
+                const newIndex = (currentSongIndex + 1) % playlist.length;
+                playSong(newIndex);
             }
         });
-        
+
+        // 播放列表
+        function renderPlaylist() {
+            if (playlist.length === 0) {
+                playlistItems.innerHTML = '<div style="text-align:center; color:rgba(255,255,255,0.5); padding:20px;">还没有歌曲，在下方添加吧！</div>';
+                return;
+            }
+            
+            playlistItems.innerHTML = playlist.map((song, index) => `
+                <div class="playlist-item ${index === currentSongIndex ? 'playing' : ''}" onclick="playSong(${index})">
+                    <span>${index + 1}. ${song.name} ${song.artist ? '- ' + song.artist : ''}</span>
+                    <button onclick="event.stopPropagation(); deleteSong(${index})" style="background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer;">🗑</button>
+                </div>
+            `).join('');
+        }
+
+        // 打开播放列表
+        document.getElementById('ktvPlaylistBtn').addEventListener('click', () => {
+            playlistModal.classList.add('show');
+            renderPlaylist();
+        });
+
+        // 关闭播放列表
+        function closePlaylist() {
+            playlistModal.classList.remove('show');
+        }
+
         // 添加歌曲
-        miniAddBtn.addEventListener('click', () => {
-            const name = miniSongName.value.trim();
-            const url = miniSongUrl.value.trim();
-            const artist = miniSongArtistInput.value.trim();
+        function addSong() {
+            const name = document.getElementById('addSongName').value.trim();
+            const url = document.getElementById('addSongUrl').value.trim();
+            const artist = document.getElementById('addSongArtist').value.trim();
             
             if (!name || !url) {
                 alert('请填写歌曲名称和歌曲链接！');
                 return;
             }
             
-            miniPlaylistData.push({ name, url, artist });
-            saveMiniPlaylist();
-            renderMiniPlaylist();
+            playlist.push({ name, url, artist });
+            savePlaylist();
+            renderPlaylist();
             
-            miniSongName.value = '';
-            miniSongUrl.value = '';
-            miniSongArtistInput.value = '';
+            document.getElementById('addSongName').value = '';
+            document.getElementById('addSongUrl').value = '';
+            document.getElementById('addSongArtist').value = '';
             
             alert('歌曲添加成功！');
-        });
-        
+        }
+
         // 删除歌曲
-        window.deleteMiniSong = function(index) {
+        function deleteSong(index) {
             if (confirm('确定要删除这首歌曲吗？')) {
-                miniPlaylistData.splice(index, 1);
-                if (miniCurrentIndex === index) {
+                playlist.splice(index, 1);
+                if (currentSongIndex === index) {
                     audio.pause();
                     audio.src = '';
-                    miniIsPlaying = false;
-                    miniPlayBtn.textContent = '▶';
-                    miniCurrentIndex = -1;
-                    miniSongTitle.textContent = '选择一首歌曲';
-                    miniSongArtist.textContent = '在下方添加歌曲';
-                    playerToggle.classList.remove('playing');
-                    playerToggle.textContent = '🎵';
-                } else if (miniCurrentIndex > index) {
-                    miniCurrentIndex--;
+                    isPlaying = false;
+                    ktvPlayBtn.textContent = '▶';
+                    currentSongIndex = -1;
+                    ktvSongTitle.textContent = '选择一首歌曲';
+                    ktvSongArtist.textContent = '点击下方播放列表';
+                } else if (currentSongIndex > index) {
+                    currentSongIndex--;
                 }
-                saveMiniPlaylist();
-                renderMiniPlaylist();
+                savePlaylist();
+                renderPlaylist();
             }
-        };
-        
-        // 保存
-        function saveMiniPlaylist() {
-            localStorage.setItem('miniPlaylist', JSON.stringify(miniPlaylistData));
         }
-        
-        renderMiniPlaylist();
+
+        // 保存播放列表
+        function savePlaylist() {
+            localStorage.setItem('ktvPlaylist', JSON.stringify(playlist));
+        }
+
+        // 初始化
+        renderPlaylist();
     </script>
 </body>
 </html>
