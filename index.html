@@ -20,9 +20,25 @@
         }
 
         body {
-            background: #0a0a1a;
+            background: linear-gradient(135deg, #006064 0%, #00838f 25%, #00acc1 50%, #26c6da 75%, #00bcd4 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
             color: #fff;
             position: relative;
+        }
+
+        /* 颗粒感噪点层 - 加强版 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.35;
+            z-index: 1;
+            pointer-events: none;
         }
 
         /* 动态背景 - 慢慢转动的光晕 */
@@ -47,7 +63,7 @@
         .bg-glow:nth-child(1) {
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, #6b21a8, transparent);
+            background: radial-gradient(circle, #006064, transparent);
             top: -200px;
             left: -200px;
             animation-duration: 25s;
@@ -56,7 +72,7 @@
         .bg-glow:nth-child(2) {
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, #1e40af, transparent);
+            background: radial-gradient(circle, #00acc1, transparent);
             bottom: -150px;
             right: -150px;
             animation-duration: 30s;
@@ -66,7 +82,7 @@
         .bg-glow:nth-child(3) {
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, #be185d, transparent);
+            background: radial-gradient(circle, #4dd0e1, transparent);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -214,8 +230,8 @@
             overflow: hidden;
             margin-bottom: 30px;
             position: relative;
-            mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+            mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
         }
 
         .lyrics-container {
@@ -226,20 +242,60 @@
             height: 40px;
             line-height: 40px;
             text-align: center;
-            font-size: 22px;
+            font-size: 20px;
             color: rgba(255,255,255,0.3);
             transition: all 0.3s ease;
+            position: relative;
+            display: block;
         }
 
         .lyric-line.active {
             color: #fff;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
-            text-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+            text-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
         }
 
         .lyric-line.next {
             color: rgba(255,255,255,0.5);
+        }
+
+        /* 当前行的KTV光标效果 */
+        .lyric-line.active .ktv-line-inner {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lyric-line.active .ktv-line-inner::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--progress, 0%);
+            height: 100%;
+            color: #3b82f6;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* 蓝色光标 */
+        .lyric-cursor {
+            position: absolute;
+            width: 3px;
+            height: 28px;
+            background: #3b82f6;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
+            border-radius: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+            z-index: 10;
+            display: none;
+        }
+
+        .lyric-line.active .lyric-cursor {
+            display: block;
         }
 
         /* 播放控制 */
@@ -422,6 +478,25 @@
             color: #fff;
             margin-bottom: 40px;
             text-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .add-site-btn-small {
+            font-size: 14px;
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-site-btn-small:hover {
+            background: rgba(139, 92, 246, 0.4);
+            border-color: rgba(167, 139, 250, 0.6);
         }
 
         .nav-grid-large {
@@ -460,6 +535,171 @@
         .nav-item-large .site-name {
             font-size: 15px;
             color: #fff;
+        }
+
+        .nav-item-large .delete-site {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.8);
+            border: none;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .nav-item-large .edit-site {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.9);
+            border: none;
+            color: #fff;
+            font-size: 11px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .nav-item-large:hover .delete-site,
+        .nav-item-large:hover .edit-site {
+            display: flex;
+        }
+
+        .nav-item-large {
+            position: relative;
+        }
+
+        .add-site-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px dashed rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+
+        .add-site-card:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(167, 139, 250, 0.6);
+        }
+
+        .add-site-card .add-icon {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+
+        .add-site-card .add-text {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* 添加网站弹窗 */
+        .add-site-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 300;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .add-site-modal.show {
+            display: flex;
+        }
+
+        .add-site-content {
+            width: 90%;
+            max-width: 400px;
+            background: rgba(20, 20, 40, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .add-site-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .add-site-content input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .add-site-content input:focus {
+            border-color: #8b5cf6;
+        }
+
+        .add-site-content input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .add-site-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .add-site-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: #fff;
+        }
+
+        .btn-confirm:hover {
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-cancel {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255,255,255,0.2);
         }
 
         /* 搜索框 */
@@ -589,8 +829,11 @@
                 <div class="ktv-lyrics">
                     <div class="lyrics-container" id="lyricsContainer">
                         <div class="lyric-line">🎵 欢迎使用KTV音乐播放器 🎵</div>
-                        <div class="lyric-line active">添加歌曲，开始享受音乐吧！</div>
-                        <div class="lyric-line next">点击右下角播放列表添加歌曲</div>
+                        <div class="lyric-line active">
+                            <span class="ktv-line-inner" data-text="添加歌曲，开始享受音乐吧！">添加歌曲，开始享受音乐吧！</span>
+                            <span class="lyric-cursor"></span>
+                        </div>
+                        <div class="lyric-line next">点击播放列表添加歌曲</div>
                     </div>
                 </div>
                 
@@ -617,7 +860,7 @@
 
         <!-- 第2页：影视娱乐 -->
         <div class="page" id="page1">
-            <div class="nav-page-title">🎬 影视娱乐</div>
+            <div class="nav-page-title">🎬 影视娱乐 <button class="add-site-btn-small" onclick="openAddSiteModal(2)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput2" placeholder="搜索影视或百度一下...">
                 <button class="search-btn-large" onclick="doSearch('searchInput2')">搜索</button>
@@ -627,7 +870,7 @@
 
         <!-- 第3页：购物生活 -->
         <div class="page" id="page2">
-            <div class="nav-page-title">🛒 购物生活</div>
+            <div class="nav-page-title">🛒 购物生活 <button class="add-site-btn-small" onclick="openAddSiteModal(3)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput3" placeholder="搜索商品或百度一下...">
                 <button class="search-btn-large" onclick="doSearch('searchInput3')">搜索</button>
@@ -637,7 +880,7 @@
 
         <!-- 第4页：社交通讯 -->
         <div class="page" id="page3">
-            <div class="nav-page-title">📱 社交通讯</div>
+            <div class="nav-page-title">📱 社交通讯 <button class="add-site-btn-small" onclick="openAddSiteModal(4)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput4" placeholder="搜索或百度一下...">
                 <button class="search-btn-large" onclick="doSearch('searchInput4')">搜索</button>
@@ -647,7 +890,7 @@
 
         <!-- 第5页：实用工具 -->
         <div class="page" id="page4">
-            <div class="nav-page-title">🔧 实用工具</div>
+            <div class="nav-page-title">🔧 实用工具 <button class="add-site-btn-small" onclick="openAddSiteModal(5)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput5" placeholder="搜索或百度一下...">
                 <button class="search-btn-large" onclick="doSearch('searchInput5')">搜索</button>
@@ -674,6 +917,20 @@
     </div>
 
     <audio id="audioPlayer"></audio>
+
+    <!-- 添加网站弹窗 -->
+    <div class="add-site-modal" id="addSiteModal">
+        <div class="add-site-content">
+            <div class="add-site-title">➕ 添加网站</div>
+            <input type="text" id="newSiteName" placeholder="网站名称（如：百度）">
+            <input type="text" id="newSiteIcon" placeholder="图标（emoji，如：🔍）">
+            <input type="text" id="newSiteUrl" placeholder="网站地址（如：https://www.baidu.com）">
+            <div class="add-site-buttons">
+                <button class="btn-cancel" onclick="closeAddSiteModal()">取消</button>
+                <button class="btn-confirm" onclick="confirmAddSite()">确定添加</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // ========== 生成星星背景 ==========
@@ -825,7 +1082,11 @@
                 { name: '西瓜视频', icon: '🎬', url: 'https://www.ixigua.com' },
                 { name: '虎牙直播', icon: '🎮', url: 'https://www.huya.com' },
                 { name: '斗鱼直播', icon: '🎮', url: 'https://www.douyu.com' },
-                { name: '网易云音乐', icon: '🎵', url: 'https://music.163.com' }
+                { name: '网易云音乐', icon: '🎵', url: 'https://music.163.com' },
+                { name: '乐视视频', icon: '🎬', url: 'https://www.le.com' },
+                { name: '咪咕视频', icon: '🎬', url: 'https://www.miguvideo.com' },
+                { name: '央视影音', icon: '📺', url: 'https://tv.cctv.com' },
+                { name: 'PP视频', icon: '🎬', url: 'https://www.pptv.com' }
             ],
             page3: [
                 { name: '淘宝', icon: '🛒', url: 'https://www.taobao.com' },
@@ -839,7 +1100,11 @@
                 { name: '大众点评', icon: '🍔', url: 'https://www.dianping.com' },
                 { name: '携程', icon: '✈️', url: 'https://www.ctrip.com' },
                 { name: '去哪儿', icon: '✈️', url: 'https://www.qunar.com' },
-                { name: '滴滴出行', icon: '🚗', url: 'https://www.didiglobal.com' }
+                { name: '滴滴出行', icon: '🚗', url: 'https://www.didiglobal.com' },
+                { name: '当当', icon: '📚', url: 'https://www.dangdang.com' },
+                { name: '亚马逊', icon: '📦', url: 'https://www.amazon.cn' },
+                { name: '聚美优品', icon: '💄', url: 'https://www.jumei.com' },
+                { name: '蘑菇街', icon: '👗', url: 'https://www.mogujie.com' }
             ],
             page4: [
                 { name: '微信', icon: '💬', url: 'https://weixin.qq.com' },
@@ -853,7 +1118,11 @@
                 { name: '虎扑', icon: '🏀', url: 'https://www.hupu.com' },
                 { name: 'NGA', icon: '🎮', url: 'https://bbs.nga.cn' },
                 { name: '简书', icon: '✍️', url: 'https://www.jianshu.com' },
-                { name: 'CSDN', icon: '💻', url: 'https://www.csdn.net' }
+                { name: 'CSDN', icon: '💻', url: 'https://www.csdn.net' },
+                { name: '脉脉', icon: '💼', url: 'https://maimai.cn' },
+                { name: '钉钉', icon: '📋', url: 'https://www.dingtalk.com' },
+                { name: '企业微信', icon: '🏢', url: 'https://work.weixin.qq.com' },
+                { name: 'QQ邮箱', icon: '📧', url: 'https://mail.qq.com' }
             ],
             page5: [
                 { name: '百度', icon: '🔍', url: 'https://www.baidu.com' },
@@ -867,9 +1136,112 @@
                 { name: '石墨文档', icon: '📄', url: 'https://shimo.im' },
                 { name: '天眼查', icon: '🏢', url: 'https://www.tianyancha.com' },
                 { name: '企查查', icon: '🏢', url: 'https://www.qcc.com' },
-                { name: '学习强国', icon: '📚', url: 'https://www.xuexi.cn' }
+                { name: '学习强国', icon: '📚', url: 'https://www.xuexi.cn' },
+                { name: '迅雷', icon: '⚡', url: 'https://www.xunlei.com' },
+                { name: '163邮箱', icon: '📧', url: 'https://mail.163.com' },
+                { name: '搜狗输入法', icon: '⌨️', url: 'https://pinyin.sogou.com' },
+                { name: '360安全卫士', icon: '🛡️', url: 'https://www.360.cn' }
             ]
         };
+
+        // 从localStorage读取用户自定义的网站（如果有的话）
+        const savedNavData = localStorage.getItem('myNavData');
+        if (savedNavData) {
+            try {
+                const parsed = JSON.parse(savedNavData);
+                for (let key in parsed) {
+                    if (navData[key]) {
+                        navData[key] = parsed[key];
+                    }
+                }
+            } catch (e) {
+                console.log('读取保存的网站数据失败');
+            }
+        }
+
+        // 当前要添加网站的页码
+        let currentAddPage = 2;
+        let currentEditIndex = -1; // 当前编辑的网站索引，-1表示添加模式
+
+        // 保存网站数据到localStorage
+        function saveNavData() {
+            localStorage.setItem('myNavData', JSON.stringify(navData));
+        }
+
+        // 打开添加网站弹窗
+        function openAddSiteModal(pageNum) {
+            currentAddPage = pageNum;
+            currentEditIndex = -1; // 添加模式
+            document.getElementById('newSiteName').value = '';
+            document.getElementById('newSiteIcon').value = '';
+            document.getElementById('newSiteUrl').value = '';
+            document.querySelector('.add-site-title').textContent = '➕ 添加网站';
+            document.getElementById('addSiteModal').classList.add('show');
+        }
+
+        // 打开编辑网站弹窗
+        function openEditSiteModal(pageNum, index) {
+            currentAddPage = pageNum;
+            currentEditIndex = index; // 编辑模式
+            const pageKey = `page${pageNum}`;
+            const site = navData[pageKey][index];
+            document.getElementById('newSiteName').value = site.name;
+            document.getElementById('newSiteIcon').value = site.icon;
+            document.getElementById('newSiteUrl').value = site.url;
+            document.querySelector('.add-site-title').textContent = '✏️ 编辑网站';
+            document.getElementById('addSiteModal').classList.add('show');
+        }
+
+        // 关闭添加网站弹窗
+        function closeAddSiteModal() {
+            document.getElementById('addSiteModal').classList.remove('show');
+        }
+
+        // 确认添加/编辑网站
+        function confirmAddSite() {
+            const name = document.getElementById('newSiteName').value.trim();
+            const icon = document.getElementById('newSiteIcon').value.trim() || '🌐';
+            let url = document.getElementById('newSiteUrl').value.trim();
+
+            if (!name || !url) {
+                alert('请填写网站名称和网站地址！');
+                return;
+            }
+
+            // 如果网址没有http开头，自动加上
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+
+            const pageKey = `page${currentAddPage}`;
+            if (!navData[pageKey]) {
+                navData[pageKey] = [];
+            }
+
+            if (currentEditIndex >= 0) {
+                // 编辑模式
+                navData[pageKey][currentEditIndex] = { name, icon, url };
+                alert('网站修改成功！');
+            } else {
+                // 添加模式
+                navData[pageKey].push({ name, icon, url });
+                alert('网站添加成功！');
+            }
+
+            saveNavData();
+            renderNav();
+            closeAddSiteModal();
+        }
+
+        // 删除网站
+        function deleteSite(pageNum, index) {
+            if (confirm('确定要删除这个网站吗？')) {
+                const pageKey = `page${pageNum}`;
+                navData[pageKey].splice(index, 1);
+                saveNavData();
+                renderNav();
+            }
+        }
 
         // 渲染导航
         function renderNav() {
@@ -878,11 +1250,13 @@
                 const pageKey = `page${i}`;
                 const sites = navData[pageKey] || [];
                 
-                grid.innerHTML = sites.map(site => `
-                    <a href="${site.url}" target="_blank" class="nav-item-large">
+                grid.innerHTML = sites.map((site, index) => `
+                    <div class="nav-item-large" onclick="window.open('${site.url}', '_blank')">
+                        <button class="edit-site" onclick="event.stopPropagation(); openEditSiteModal(${i}, ${index})">✏️</button>
+                        <button class="delete-site" onclick="event.stopPropagation(); deleteSite(${i}, ${index})">×</button>
                         <div class="site-icon">${site.icon}</div>
                         <div class="site-name">${site.name}</div>
-                    </a>
+                    </div>
                 `).join('');
             }
         }
@@ -935,21 +1309,45 @@
             savePlaylist();
         }
 
-        // 更新歌词显示（简单模拟）
+        // 更新歌词显示（KTV效果，一行显示）
         function updateLyrics(songName) {
-            const mockLyrics = [
-                '🎵 正在播放：' + songName,
-                '♪ 旋律在空气中飘荡 ♪',
-                '♪ 音符在心里跳动 ♪',
-                '♪ 让我们一起享受音乐 ♪',
-                '♪ 感受每一个节拍 ♪',
-                '♪ 沉浸在美妙的旋律中 ♪',
-                '🎵 音乐让生活更美好 🎵'
-            ];
+            const lyricLine = document.getElementById('ktvLyricLine');
+            const text = `🎵 ${songName} - 正在播放 🎵`;
+            lyricLine.textContent = text;
+            lyricLine.setAttribute('data-text', text);
+            // 重置进度
+            lyricLine.style.setProperty('--progress', '0%');
+            document.querySelector('.lyric-line::after').style.width = '0%';
+        }
+
+        // 更新KTV字幕进度（蓝色光标和唱过层）
+        function updateKtvLyricProgress() {
+            const lyricLine = document.getElementById('ktvLyricLine');
+            const cursor = document.getElementById('lyricCursor');
             
-            lyricsContainer.innerHTML = mockLyrics.map((line, i) => 
-                `<div class="lyric-line ${i === 1 ? 'active' : ''} ${i === 2 ? 'next' : ''}">${line}</div>`
-            ).join('');
+            if (!audio.duration || !isPlaying) {
+                cursor.classList.remove('show');
+                return;
+            }
+            
+            const progress = (audio.currentTime / audio.duration) * 100;
+            
+            // 更新蓝色唱过层
+            lyricLine.style.setProperty('--progress', progress + '%');
+            // 用JavaScript直接设置after伪元素的宽度
+            const style = document.createElement('style');
+            style.textContent = `.lyric-line::after { width: ${progress}% !important; }`;
+            // 移除旧的style
+            const oldStyle = document.getElementById('ktvLyricStyle');
+            if (oldStyle) oldStyle.remove();
+            style.id = 'ktvLyricStyle';
+            document.head.appendChild(style);
+            
+            // 更新蓝色光标位置
+            const lineWidth = lyricLine.offsetWidth - 40; // 减去padding
+            const cursorLeft = 20 + (progress / 100) * lineWidth;
+            cursor.style.left = cursorLeft + 'px';
+            cursor.classList.add('show');
         }
 
         // 播放/暂停
@@ -988,6 +1386,8 @@
                 const percent = (audio.currentTime / audio.duration) * 100;
                 ktvProgressFill.style.width = percent + '%';
                 ktvCurrentTime.textContent = formatTime(audio.currentTime);
+                // 更新KTV字幕效果
+                updateKtvLyricProgress();
             }
         });
 
