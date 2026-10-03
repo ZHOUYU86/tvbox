@@ -1044,7 +1044,8 @@
             <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
                 <input type="text" id="addSongName" placeholder="歌曲名称" style="width:100%; padding:10px; margin-bottom:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
                 <input type="text" id="addSongUrl" placeholder="歌曲链接(MP3)" style="width:100%; padding:10px; margin-bottom:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
-                <input type="text" id="addSongArtist" placeholder="歌手（可选）" style="width:100%; padding:10px; margin-bottom:10px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
+                <input type="text" id="addSongArtist" placeholder="歌手（可选）" style="width:100%; padding:10px; margin-bottom:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
+                <textarea id="addSongLrc" placeholder="LRC歌词（可选，粘贴带时间戳的歌词，实现KTV效果）" style="width:100%; padding:10px; margin-bottom:10px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none; height:80px; resize:vertical; font-size:12px;"></textarea>
                 <button onclick="addSong()" style="width:100%; padding:10px; background:linear-gradient(135deg,#8b5cf6,#6366f1); border:none; color:#fff; border-radius:8px; cursor:pointer;">➕ 添加歌曲</button>
             </div>
             <div class="playlist-close">
@@ -1548,6 +1549,10 @@
             currentSongIndex = index;
             const song = playlist[index];
             
+            // 解析LRC歌词
+            currentLrc = parseLrc(song.lrc);
+            currentLrcIndex = -1;
+            
             audio.src = song.url;
             audio.play();
             isPlaying = true;
@@ -1555,8 +1560,12 @@
             ktvSongTitle.textContent = song.name;
             ktvSongArtist.textContent = song.artist || '未知歌手';
             
-            // 更新歌词（简单模拟，实际应该解析LRC）
-            updateLyrics(song.name);
+            // 更新歌词
+            if (currentLrc.length > 0) {
+                document.getElementById('lyricText').textContent = '🎵 即将开始... 🎵';
+            } else {
+                updateLyrics(song.name);
+            }
             
             // 更新播放列表高亮
             renderPlaylist();
@@ -1600,10 +1609,11 @@
             document.getElementById('lyricCursor').style.left = '0px';
         }
 
-        // 更新KTV字幕进度（蓝色进度条和光标慢慢跑）
+        // 更新KTV字幕进度（真正的KTV同步效果）
         function updateKtvLyricProgress() {
             const progressBar = document.getElementById('lyricProgressBar');
             const cursor = document.getElementById('lyricCursor');
+            const lyricText = document.getElementById('lyricText');
             const lyricsBox = document.querySelector('.ktv-lyrics');
             
             if (!audio.duration || !isPlaying) {
@@ -1611,17 +1621,51 @@
                 return;
             }
             
-            // 计算播放进度百分比
-            const progress = (audio.currentTime / audio.duration) * 100;
+            const currentTime = audio.currentTime;
             
-            // 蓝色进度条从左往右慢慢跑
-            progressBar.style.width = progress + '%';
-            
-            // 蓝色光标跟着进度条跑
-            const boxWidth = lyricsBox.offsetWidth;
-            const cursorLeft = (progress / 100) * boxWidth;
-            cursor.style.left = cursorLeft + 'px';
-            cursor.classList.add('show');
+            // 如果有LRC歌词，实现真正的KTV同步效果
+            if (currentLrc.length > 0) {
+                // 找到当前应该显示的句子
+                let newIndex = -1;
+                for (let i = 0; i < currentLrc.length; i++) {
+                    if (currentTime >= currentLrc[i].time) {
+                        newIndex = i;
+                    } else {
+                        break;
+                    }
+                }
+                
+                // 如果句子变了，更新歌词文字
+                if (newIndex !== currentLrcIndex && newIndex >= 0) {
+                    currentLrcIndex = newIndex;
+                    lyricText.textContent = currentLrc[newIndex].text;
+                }
+                
+                // 计算当前句子的进度（光标在句子里从左往右跑）
+                if (currentLrcIndex >= 0) {
+                    const lineStartTime = currentLrc[currentLrcIndex].time;
+                    const lineEndTime = (currentLrcIndex + 1 < currentLrc.length) 
+                        ? currentLrc[currentLrcIndex + 1].time 
+                        : audio.duration;
+                    const lineDuration = lineEndTime - lineStartTime;
+                    const lineProgress = lineDuration > 0 
+                        ? Math.min(100, ((currentTime - lineStartTime) / lineDuration) * 100)
+                        : 0;
+                    
+                    // 蓝色进度条和光标在句子里从左往右跑
+                    progressBar.style.width = lineProgress + '%';
+                    const boxWidth = lyricsBox.offsetWidth;
+                    cursor.style.left = (lineProgress / 100) * boxWidth + 'px';
+                    cursor.classList.add('show');
+                }
+            } else {
+                // 没有LRC歌词，用整体进度
+                const progress = (currentTime / audio.duration) * 100;
+                progressBar.style.width = progress + '%';
+                const boxWidth = lyricsBox.offsetWidth;
+                cursor.style.left = (progress / 100) * boxWidth + 'px';
+                cursor.classList.add('show');
+            }
         }
 
         // 播放/暂停
@@ -1716,22 +1760,52 @@
             const name = document.getElementById('addSongName').value.trim();
             const url = document.getElementById('addSongUrl').value.trim();
             const artist = document.getElementById('addSongArtist').value.trim();
+            const lrc = document.getElementById('addSongLrc').value.trim();
             
             if (!name || !url) {
                 alert('请填写歌曲名称和歌曲链接！');
                 return;
             }
             
-            playlist.push({ name, url, artist });
+            playlist.push({ name, url, artist, lrc });
             savePlaylist();
             renderPlaylist();
             
             document.getElementById('addSongName').value = '';
             document.getElementById('addSongUrl').value = '';
             document.getElementById('addSongArtist').value = '';
+            document.getElementById('addSongLrc').value = '';
             
-            alert('歌曲添加成功！');
+            alert('歌曲添加成功！' + (lrc ? '已包含LRC歌词，可实现KTV效果！' : ''));
         }
+
+        // 解析LRC歌词
+        function parseLrc(lrcText) {
+            if (!lrcText) return [];
+            const lines = lrcText.split('\n');
+            const result = [];
+            const timeReg = /\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/g;
+            
+            for (const line of lines) {
+                const matches = [...line.matchAll(timeReg)];
+                const text = line.replace(timeReg, '').trim();
+                if (!text) continue;
+                
+                for (const match of matches) {
+                    const minutes = parseInt(match[1]);
+                    const seconds = parseInt(match[2]);
+                    const ms = match[3] ? parseInt(match[3].padEnd(3, '0')) : 0;
+                    const time = minutes * 60 + seconds + ms / 1000;
+                    result.push({ time, text });
+                }
+            }
+            
+            return result.sort((a, b) => a.time - b.time);
+        }
+
+        // 当前播放的LRC歌词
+        let currentLrc = [];
+        let currentLrcIndex = -1;
 
         // 删除歌曲
         function deleteSong(index) {
