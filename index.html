@@ -216,42 +216,42 @@
 
         /* ========== 第一页：时间 + 音乐播放器 ========== */
         .time-display-large {
-            font-size: 120px;
+            font-size: 72px;
             font-weight: bold;
             color: #fff;
-            text-shadow: 0 0 40px rgba(167, 139, 250, 0.5);
-            letter-spacing: 10px;
-            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
+            letter-spacing: 6px;
+            margin-bottom: 5px;
         }
 
         .date-display-large {
-            font-size: 24px;
+            font-size: 18px;
             color: rgba(255,255,255,0.7);
-            margin-bottom: 50px;
-            letter-spacing: 3px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
         }
 
-        /* KTV风格音乐播放器 */
+        /* KTV风格音乐播放器 - 缩小版 */
         .ktv-player {
             width: 100%;
-            max-width: 800px;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 550px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
 
-        /* 图片轮播区域 */
+        /* 图片轮播区域 - 缩小版 */
         .ktv-image-slider {
             width: 100%;
-            height: 350px;
-            border-radius: 20px;
+            height: 220px;
+            border-radius: 15px;
             overflow: hidden;
             position: relative;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            margin-bottom: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
         .slider-image {
@@ -312,62 +312,54 @@
             color: rgba(255,255,255,0.6);
         }
 
-        /* KTV歌词显示 - 一行显示 + 光标效果 */
+        /* KTV歌词显示 - 简单可靠版 */
         .ktv-lyrics {
-            height: 60px;
-            margin-bottom: 20px;
+            height: 50px;
+            margin-bottom: 15px;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
         }
 
-        .lyrics-container {
-            position: relative;
-            width: 100%;
-            text-align: center;
-        }
-
-        .lyric-line {
-            font-size: 26px;
+        .lyric-text {
+            font-size: 20px;
             font-weight: bold;
-            line-height: 60px;
             color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             position: relative;
-            display: inline-block;
-            padding: 0 30px;
+            z-index: 1;
+            padding: 0 20px;
+            white-space: nowrap;
         }
 
-        /* KTV字幕 - 蓝色唱过层 */
-        .lyric-line .ktv-text-overlay {
+        /* 蓝色唱过层 - 覆盖在歌词上面 */
+        .lyric-overlay {
             position: absolute;
             top: 0;
             left: 0;
-            width: 0%;
             height: 100%;
-            color: #3b82f6;
-            text-shadow: 0 0 15px rgba(59, 130, 246, 0.9);
-            overflow: hidden;
-            white-space: nowrap;
-            padding: 0 30px;
+            width: 0%;
+            background: linear-gradient(90deg, rgba(29,78,216,0.4), rgba(29,78,216,0.2));
+            z-index: 2;
             transition: width 0.1s linear;
         }
 
-        /* 蓝色光标 - 深蓝色 */
+        /* 蓝色光标 */
         .lyric-cursor {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 5px;
-            height: 36px;
+            width: 4px;
+            height: 30px;
             background: #1d4ed8;
-            box-shadow: 0 0 20px rgba(29, 78, 216, 1), 0 0 40px rgba(29, 78, 216, 0.6);
-            border-radius: 3px;
-            left: 30px;
-            transition: left 0.1s linear;
-            z-index: 10;
+            box-shadow: 0 0 15px rgba(29,78,216,1), 0 0 30px rgba(29,78,216,0.6);
+            border-radius: 2px;
+            left: 0;
+            z-index: 3;
             display: none;
         }
 
@@ -462,19 +454,22 @@
         }
 
         .ktv-playlist-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: rgba(255,255,255,0.7);
-            padding: 10px 25px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: bold;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(29,78,216,0.4);
         }
 
         .ktv-playlist-btn:hover {
-            background: rgba(255,255,255,0.2);
-            color: #fff;
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(29,78,216,0.6);
         }
 
         /* 播放列表弹窗 */
@@ -887,14 +882,12 @@
             <div class="date-display-large" id="dateDisplay">加载中...</div>
             
             <div class="ktv-player">
-                <!-- 图片轮播区域 -->
+                <!-- 图片轮播区域 - 美女图片 -->
                 <div class="ktv-image-slider" id="ktvImageSlider">
-                    <div class="slider-image active" style="background-image: url('https://picsum.photos/seed/beauty1/800/450')"></div>
-                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/beauty2/800/450')"></div>
-                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/model1/800/450')"></div>
-                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/model2/800/450')"></div>
-                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/girl1/800/450')"></div>
-                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/girl2/800/450')"></div>
+                    <div class="slider-image active" style="background-image: url('images/beauty1.jpg')"></div>
+                    <div class="slider-image" style="background-image: url('images/beauty2.jpg')"></div>
+                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/model3/600/300')"></div>
+                    <div class="slider-image" style="background-image: url('https://picsum.photos/seed/model4/600/300')"></div>
                     <!-- 图片切换闪烁效果 -->
                     <div class="slider-flash" id="sliderFlash"></div>
                 </div>
@@ -905,15 +898,11 @@
                     <div class="ktv-song-artist" id="ktvSongArtist">点击下方播放列表</div>
                 </div>
                 
-                <!-- KTV歌词 - 一行显示 + 光标效果 -->
+                <!-- KTV歌词 - 简单可靠版 -->
                 <div class="ktv-lyrics">
-                    <div class="lyrics-container">
-                        <div class="lyric-line" id="ktvLyricLine">
-                            <span class="ktv-text-base">🎵 欢迎使用KTV音乐播放器 🎵</span>
-                            <span class="ktv-text-overlay" id="ktvTextOverlay">🎵 欢迎使用KTV音乐播放器 🎵</span>
-                            <span class="lyric-cursor" id="lyricCursor"></span>
-                        </div>
-                    </div>
+                    <div class="lyric-text" id="lyricText">🎵 欢迎使用KTV音乐播放器，点击播放列表添加歌曲 🎵</div>
+                    <div class="lyric-overlay" id="lyricOverlay"></div>
+                    <div class="lyric-cursor" id="lyricCursor"></div>
                 </div>
                 
                 <!-- 播放控制 -->
@@ -1601,22 +1590,20 @@
         // 每5秒自动切换图片
         setInterval(switchImage, 5000);
 
-        // 更新歌词显示（KTV效果，一行显示）
+        // 更新歌词显示
         function updateLyrics(songName) {
-            const textBase = document.querySelector('.ktv-text-base');
-            const textOverlay = document.getElementById('ktvTextOverlay');
+            const lyricText = document.getElementById('lyricText');
             const text = `🎵 ${songName} - 正在播放 🎵`;
-            textBase.textContent = text;
-            textOverlay.textContent = text;
+            lyricText.textContent = text;
             // 重置进度
-            textOverlay.style.width = '0%';
+            document.getElementById('lyricOverlay').style.width = '0%';
         }
 
         // 更新KTV字幕进度（蓝色光标和唱过层）
         function updateKtvLyricProgress() {
-            const textOverlay = document.getElementById('ktvTextOverlay');
+            const lyricOverlay = document.getElementById('lyricOverlay');
             const cursor = document.getElementById('lyricCursor');
-            const lyricLine = document.getElementById('ktvLyricLine');
+            const lyricsBox = document.querySelector('.ktv-lyrics');
             
             if (!audio.duration || !isPlaying) {
                 cursor.classList.remove('show');
@@ -1626,11 +1613,11 @@
             const progress = (audio.currentTime / audio.duration) * 100;
             
             // 更新蓝色唱过层宽度
-            textOverlay.style.width = progress + '%';
+            lyricOverlay.style.width = progress + '%';
             
             // 更新蓝色光标位置
-            const lineWidth = lyricLine.offsetWidth - 60; // 减去左右padding
-            const cursorLeft = 30 + (progress / 100) * lineWidth;
+            const boxWidth = lyricsBox.offsetWidth;
+            const cursorLeft = (progress / 100) * boxWidth;
             cursor.style.left = cursorLeft + 'px';
             cursor.classList.add('show');
         }
