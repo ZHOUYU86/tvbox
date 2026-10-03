@@ -1576,10 +1576,11 @@
             }
         ];
 
-        let playlist = JSON.parse(localStorage.getItem('ktvPlaylist')) || defaultPlaylist;
+        let savedPlaylist = JSON.parse(localStorage.getItem('ktvPlaylist')) || [];
+        let playlist = savedPlaylist.length > 0 ? savedPlaylist : defaultPlaylist;
         
-        // 如果是第一次使用，保存默认播放列表
-        if (!localStorage.getItem('ktvPlaylist')) {
+        // 如果是第一次使用或者播放列表为空，保存默认播放列表
+        if (!localStorage.getItem('ktvPlaylist') || savedPlaylist.length === 0) {
             localStorage.setItem('ktvPlaylist', JSON.stringify(defaultPlaylist));
         }
         let currentSongIndex = -1;
