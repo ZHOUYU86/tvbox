@@ -571,13 +571,14 @@
             display: flex;
             align-items: center;
             border: 1px solid rgba(255,255,255,0.1);
+            padding: 0 15px;
+            box-sizing: border-box;
         }
 
         .lyric-text-new {
             font-size: 20px;
             font-weight: bold;
             color: #fff;
-            padding: 0 15px;
             width: 100%;
             text-align: center;
             white-space: nowrap;
@@ -585,6 +586,7 @@
             text-overflow: ellipsis;
             z-index: 2;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            position: relative;
         }
 
         .lyric-progress-bar-new {
@@ -1933,7 +1935,7 @@
             document.getElementById('lyricCursor').style.left = '0px';
         }
 
-        // 更新KTV字幕进度（真正的KTV同步效果）
+        // 更新KTV字幕进度（真正的KTV同步效果 - requestAnimationFrame流畅版）
         function updateKtvLyricProgress() {
             const progressBar = document.getElementById('lyricProgressBar');
             const cursor = document.getElementById('lyricCursor');
@@ -1959,6 +1961,12 @@
                 return;
             }
             
+            // 计算歌词区域的实际内容宽度（减去左右padding）
+            const boxStyle = window.getComputedStyle(lyricsBox);
+            const paddingLeft = parseFloat(boxStyle.paddingLeft) || 0;
+            const paddingRight = parseFloat(boxStyle.paddingRight) || 0;
+            const contentWidth = lyricsBox.offsetWidth - paddingLeft - paddingRight;
+            
             // 如果有LRC歌词，实现真正的KTV同步效果
             if (currentLrc.length > 0) {
                 // 找到当前应该显示的句子
@@ -1971,10 +1979,13 @@
                     }
                 }
                 
-                // 如果句子变了，更新歌词文字
+                // 如果句子变了，更新歌词文字并重置进度
                 if (newIndex !== currentLrcIndex && newIndex >= 0) {
                     currentLrcIndex = newIndex;
                     lyricText.textContent = currentLrc[newIndex].text;
+                    // 句子切换时重置进度条和光标
+                    progressBar.style.width = '0%';
+                    cursor.style.left = paddingLeft + 'px';
                 }
                 
                 // 计算当前句子的进度（光标在句子里从左往右跑）
@@ -1996,8 +2007,9 @@
                     
                     // 蓝色进度条和光标在句子里从左往右跑
                     progressBar.style.width = lineProgress + '%';
-                    const boxWidth = lyricsBox.offsetWidth;
-                    cursor.style.left = (lineProgress / 100) * boxWidth + 'px';
+                    // 光标位置 = 左边padding + 进度比例 × 内容宽度
+                    const cursorLeft = paddingLeft + (lineProgress / 100) * contentWidth;
+                    cursor.style.left = cursorLeft + 'px';
                     cursor.classList.add('show');
                 }
             } else {
@@ -2007,11 +2019,19 @@
                 progress = Math.max(0, Math.min(100, progress));
                 
                 progressBar.style.width = progress + '%';
-                const boxWidth = lyricsBox.offsetWidth;
-                cursor.style.left = (progress / 100) * boxWidth + 'px';
+                const cursorLeft = paddingLeft + (progress / 100) * contentWidth;
+                cursor.style.left = cursorLeft + 'px';
                 cursor.classList.add('show');
             }
         }
+
+        // 用requestAnimationFrame实现流畅的KTV同步（每帧更新，跟声音完全同步）
+        function ktvAnimationLoop() {
+            updateKtvLyricProgress();
+            requestAnimationFrame(ktvAnimationLoop);
+        }
+        // 启动动画循环
+        requestAnimationFrame(ktvAnimationLoop);
 
         // 播放/暂停
         ktvPlayBtn.addEventListener('click', () => {
@@ -2049,8 +2069,7 @@
                 const percent = (audio.currentTime / audio.duration) * 100;
                 ktvProgressFill.style.width = percent + '%';
                 ktvCurrentTime.textContent = formatTime(audio.currentTime);
-                // 更新KTV字幕效果
-                updateKtvLyricProgress();
+                // KTV歌词同步已经用requestAnimationFrame每帧更新，这里不需要重复调用
             }
         });
 
