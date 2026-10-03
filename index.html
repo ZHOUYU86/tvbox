@@ -14,10 +14,9 @@
         html, body {
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
-            overflow-y: auto;
-            min-height: 100%;
-            scroll-behavior: smooth;
+            overflow: hidden;
+            height: 100%;
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
         }
 
         body {
@@ -115,21 +114,71 @@
             50% { opacity: 1; }
         }
 
-        /* 页面容器 - 普通滚动 */
+        /* 页面容器 - 翻书特效 */
         .pages-container {
             position: relative;
             z-index: 2;
             width: 100%;
+            height: 100vh;
+            perspective: 2000px;
+            overflow: hidden;
         }
 
         .page {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 60px 40px;
+            padding: 40px;
+            background: inherit;
+            transform-origin: top center;
+            transform: rotateX(0deg) translateZ(0);
+            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.8s ease;
+            backface-visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .page.active {
+            opacity: 1;
+            transform: rotateX(0deg) translateZ(0);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .page.flipped {
+            opacity: 0;
+            transform: rotateX(-180deg) translateZ(-100px);
+            z-index: 5;
+        }
+
+        .page.next-up {
+            opacity: 0;
+            transform: rotateX(180deg) translateZ(-100px);
+            z-index: 5;
+        }
+
+        /* 翻页阴影效果 */
+        .page::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent 30%);
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+        }
+
+        .page.flipping::after {
+            opacity: 1;
         }
 
         /* 翻页指示器 */
@@ -263,77 +312,66 @@
             color: rgba(255,255,255,0.6);
         }
 
-        /* KTV歌词显示 */
+        /* KTV歌词显示 - 一行显示 + 光标效果 */
         .ktv-lyrics {
-            height: 120px;
-            overflow: hidden;
-            margin-bottom: 30px;
+            height: 60px;
+            margin-bottom: 20px;
             position: relative;
-            mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
         .lyrics-container {
-            transition: transform 0.5s ease;
+            position: relative;
+            width: 100%;
+            text-align: center;
         }
 
         .lyric-line {
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
-            font-size: 20px;
-            color: rgba(255,255,255,0.3);
-            transition: all 0.3s ease;
-            position: relative;
-            display: block;
-        }
-
-        .lyric-line.active {
-            color: #fff;
-            font-size: 24px;
+            font-size: 26px;
             font-weight: bold;
-            text-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
-        }
-
-        .lyric-line.next {
-            color: rgba(255,255,255,0.5);
-        }
-
-        /* 当前行的KTV光标效果 */
-        .lyric-line.active .ktv-line-inner {
+            line-height: 60px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             position: relative;
             display: inline-block;
+            padding: 0 30px;
         }
 
-        .lyric-line.active .ktv-line-inner::after {
-            content: attr(data-text);
+        /* KTV字幕 - 蓝色唱过层 */
+        .lyric-line .ktv-text-overlay {
             position: absolute;
             top: 0;
             left: 0;
-            width: var(--progress, 0%);
+            width: 0%;
             height: 100%;
             color: #3b82f6;
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.9);
             overflow: hidden;
             white-space: nowrap;
+            padding: 0 30px;
+            transition: width 0.1s linear;
         }
 
-        /* 蓝色光标 */
+        /* 蓝色光标 - 深蓝色 */
         .lyric-cursor {
             position: absolute;
-            width: 3px;
-            height: 28px;
-            background: #3b82f6;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
-            border-radius: 2px;
             top: 50%;
             transform: translateY(-50%);
-            left: 0;
+            width: 5px;
+            height: 36px;
+            background: #1d4ed8;
+            box-shadow: 0 0 20px rgba(29, 78, 216, 1), 0 0 40px rgba(29, 78, 216, 0.6);
+            border-radius: 3px;
+            left: 30px;
+            transition: left 0.1s linear;
             z-index: 10;
             display: none;
         }
 
-        .lyric-line.active .lyric-cursor {
+        .lyric-cursor.show {
             display: block;
         }
 
@@ -540,10 +578,11 @@
 
         .nav-grid-large {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 15px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
         }
 
         .nav-item-large {
@@ -866,15 +905,14 @@
                     <div class="ktv-song-artist" id="ktvSongArtist">点击下方播放列表</div>
                 </div>
                 
-                <!-- KTV歌词 -->
+                <!-- KTV歌词 - 一行显示 + 光标效果 -->
                 <div class="ktv-lyrics">
-                    <div class="lyrics-container" id="lyricsContainer">
-                        <div class="lyric-line">🎵 欢迎使用KTV音乐播放器 🎵</div>
-                        <div class="lyric-line active">
-                            <span class="ktv-line-inner" data-text="添加歌曲，开始享受音乐吧！">添加歌曲，开始享受音乐吧！</span>
-                            <span class="lyric-cursor"></span>
+                    <div class="lyrics-container">
+                        <div class="lyric-line" id="ktvLyricLine">
+                            <span class="ktv-text-base">🎵 欢迎使用KTV音乐播放器 🎵</span>
+                            <span class="ktv-text-overlay" id="ktvTextOverlay">🎵 欢迎使用KTV音乐播放器 🎵</span>
+                            <span class="lyric-cursor" id="lyricCursor"></span>
                         </div>
-                        <div class="lyric-line next">点击播放列表添加歌曲</div>
                     </div>
                 </div>
                 
@@ -940,7 +978,74 @@
             </div>
             <div class="nav-grid-large" id="navGrid5"></div>
         </div>
+
+        <!-- 第6页：新闻资讯 -->
+        <div class="page" id="page5">
+            <div class="nav-page-title">📰 新闻资讯 <button class="add-site-btn-small" onclick="openAddSiteModal(6)">➕ 添加</button></div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput6" placeholder="搜索新闻或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput6')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid6"></div>
+        </div>
+
+        <!-- 第7页：音乐电台 -->
+        <div class="page" id="page6">
+            <div class="nav-page-title">🎵 音乐电台 <button class="add-site-btn-small" onclick="openAddSiteModal(7)">➕ 添加</button></div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput7" placeholder="搜索音乐或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput7')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid7"></div>
+        </div>
+
+        <!-- 第8页：游戏休闲 -->
+        <div class="page" id="page7">
+            <div class="nav-page-title">🎮 游戏休闲 <button class="add-site-btn-small" onclick="openAddSiteModal(8)">➕ 添加</button></div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput8" placeholder="搜索游戏或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput8')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid8"></div>
+        </div>
+
+        <!-- 第9页：学习教育 -->
+        <div class="page" id="page8">
+            <div class="nav-page-title">📚 学习教育 <button class="add-site-btn-small" onclick="openAddSiteModal(9)">➕ 添加</button></div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput9" placeholder="搜索学习或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput9')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid9"></div>
+        </div>
+
+        <!-- 第10页：更多分类 -->
+        <div class="page" id="page9">
+            <div class="nav-page-title">✨ 更多分类 <button class="add-site-btn-small" onclick="openAddSiteModal(10)">➕ 添加</button></div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput10" placeholder="搜索或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput10')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid10"></div>
+        </div>
     </div>
+
+    <!-- 翻页指示器 -->
+    <div class="page-indicator" id="pageIndicator">
+        <div class="indicator-dot active" data-page="0" title="首页"></div>
+        <div class="indicator-dot" data-page="1" title="影视娱乐"></div>
+        <div class="indicator-dot" data-page="2" title="购物生活"></div>
+        <div class="indicator-dot" data-page="3" title="社交通讯"></div>
+        <div class="indicator-dot" data-page="4" title="实用工具"></div>
+        <div class="indicator-dot" data-page="5" title="新闻资讯"></div>
+        <div class="indicator-dot" data-page="6" title="音乐电台"></div>
+        <div class="indicator-dot" data-page="7" title="游戏休闲"></div>
+        <div class="indicator-dot" data-page="8" title="学习教育"></div>
+        <div class="indicator-dot" data-page="9" title="更多分类"></div>
+    </div>
+
+    <!-- 翻页提示 -->
+    <div class="scroll-hint" id="scrollHint">↓ 滚动鼠标翻页 ↓</div>
 
     <!-- 播放列表弹窗 -->
     <div class="ktv-playlist-modal" id="playlistModal">
@@ -1007,60 +1112,114 @@
         updateTime();
         setInterval(updateTime, 1000);
 
-        // ========== 丝滑滚动效果 ==========
-        let currentScrollY = window.scrollY;
-        let targetScrollY = window.scrollY;
-        let isSmoothScrolling = false;
-        const smoothStrength = 0.08; // 滚动平滑度，越小越丝滑
+        // ========== 翻书特效 ==========
+        let currentPage = 0;
+        const totalPages = 10;
+        const pages = document.querySelectorAll('.page');
+        const dots = document.querySelectorAll('.indicator-dot');
+        const scrollHint = document.getElementById('scrollHint');
+        let isFlipping = false;
 
-        // 拦截鼠标滚轮，实现丝滑滚动
+        function goToPage(pageIndex) {
+            if (pageIndex < 0 || pageIndex >= totalPages || isFlipping) return;
+            
+            isFlipping = true;
+            const oldPage = pages[currentPage];
+            const newPage = pages[pageIndex];
+            
+            if (pageIndex > currentPage) {
+                // 往下翻：当前页往上翻走，下一页从下面翻上来
+                oldPage.classList.add('flipping');
+                oldPage.classList.remove('active');
+                oldPage.classList.add('flipped');
+                
+                newPage.classList.add('next-up');
+                setTimeout(() => {
+                    newPage.classList.remove('next-up');
+                    newPage.classList.add('active');
+                }, 50);
+            } else {
+                // 往上翻：当前页往下翻走，上一页从上面翻下来
+                oldPage.classList.add('flipping');
+                oldPage.classList.remove('active');
+                oldPage.classList.add('next-up');
+                
+                newPage.classList.add('flipped');
+                setTimeout(() => {
+                    newPage.classList.remove('flipped');
+                    newPage.classList.add('active');
+                }, 50);
+            }
+            
+            currentPage = pageIndex;
+            
+            // 更新指示器
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index === currentPage) {
+                    dot.classList.add('active');
+                }
+            });
+            
+            // 最后一页隐藏翻页提示
+            if (currentPage === totalPages - 1) {
+                scrollHint.style.display = 'none';
+            } else {
+                scrollHint.style.display = 'block';
+            }
+            
+            // 动画结束后重置
+            setTimeout(() => {
+                pages.forEach(p => p.classList.remove('flipping'));
+                isFlipping = false;
+            }, 800);
+        }
+
+        // 点击指示器翻页
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const pageIndex = parseInt(dot.dataset.page);
+                goToPage(pageIndex);
+            });
+        });
+
+        // 鼠标滚轮翻页
         window.addEventListener('wheel', (e) => {
             e.preventDefault();
-            targetScrollY += e.deltaY;
-            // 限制滚动范围
-            targetScrollY = Math.max(0, Math.min(targetScrollY, document.body.scrollHeight - window.innerHeight));
+            if (isFlipping) return;
             
-            if (!isSmoothScrolling) {
-                isSmoothScrolling = true;
-                smoothScrollLoop();
+            if (e.deltaY > 0) {
+                goToPage(currentPage + 1);
+            } else {
+                goToPage(currentPage - 1);
             }
         }, { passive: false });
 
-        // 丝滑滚动循环
-        function smoothScrollLoop() {
-            currentScrollY += (targetScrollY - currentScrollY) * smoothStrength;
-            
-            // 接近目标时停止
-            if (Math.abs(targetScrollY - currentScrollY) < 0.5) {
-                currentScrollY = targetScrollY;
-                isSmoothScrolling = false;
+        // 键盘翻页
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                goToPage(currentPage + 1);
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                goToPage(currentPage - 1);
             }
-            
-            window.scrollTo(0, currentScrollY);
-            
-            if (isSmoothScrolling) {
-                requestAnimationFrame(smoothScrollLoop);
-            }
-        }
+        });
 
-        // 触摸滑动支持
+        // 触摸翻页
         let touchStartY = 0;
         window.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
         }, { passive: true });
-
-        window.addEventListener('touchmove', (e) => {
-            const touchCurrentY = e.touches[0].clientY;
-            const diff = touchStartY - touchCurrentY;
-            targetScrollY += diff * 0.5;
-            targetScrollY = Math.max(0, Math.min(targetScrollY, document.body.scrollHeight - window.innerHeight));
-            touchStartY = touchCurrentY;
-            
-            if (!isSmoothScrolling) {
-                isSmoothScrolling = true;
-                smoothScrollLoop();
+        window.addEventListener('touchend', (e) => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const diff = touchStartY - touchEndY;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    goToPage(currentPage + 1);
+                } else {
+                    goToPage(currentPage - 1);
+                }
             }
-        }, { passive: true });
+        });
 
         // ========== 搜索功能 ==========
         function doSearch(inputId) {
@@ -1157,6 +1316,96 @@
                 { name: '163邮箱', icon: '📧', url: 'https://mail.163.com' },
                 { name: '搜狗输入法', icon: '⌨️', url: 'https://pinyin.sogou.com' },
                 { name: '360安全卫士', icon: '🛡️', url: 'https://www.360.cn' }
+            ],
+            page6: [
+                { name: '新浪新闻', icon: '📰', url: 'https://news.sina.com.cn' },
+                { name: '腾讯新闻', icon: '📰', url: 'https://news.qq.com' },
+                { name: '网易新闻', icon: '📰', url: 'https://news.163.com' },
+                { name: '搜狐新闻', icon: '📰', url: 'https://news.sohu.com' },
+                { name: '凤凰网', icon: '📰', url: 'https://www.ifeng.com' },
+                { name: '今日头条', icon: '📰', url: 'https://www.toutiao.com' },
+                { name: '澎湃新闻', icon: '📰', url: 'https://www.thepaper.cn' },
+                { name: '界面新闻', icon: '📰', url: 'https://www.jiemian.com' },
+                { name: '36氪', icon: '💼', url: 'https://36kr.com' },
+                { name: '虎嗅网', icon: '💼', url: 'https://www.huxiu.com' },
+                { name: '第一财经', icon: '💰', url: 'https://www.yicai.com' },
+                { name: '财新网', icon: '💰', url: 'https://www.caixin.com' },
+                { name: '观察者网', icon: '🌐', url: 'https://www.guancha.cn' },
+                { name: '环球网', icon: '🌐', url: 'https://www.huanqiu.com' },
+                { name: '人民网', icon: '🌐', url: 'http://www.people.com.cn' },
+                { name: '新华网', icon: '🌐', url: 'http://www.xinhuanet.com' }
+            ],
+            page7: [
+                { name: '网易云音乐', icon: '🎵', url: 'https://music.163.com' },
+                { name: 'QQ音乐', icon: '🎵', url: 'https://y.qq.com' },
+                { name: '酷狗音乐', icon: '🎵', url: 'https://www.kugou.com' },
+                { name: '酷我音乐', icon: '🎵', url: 'https://www.kuwo.cn' },
+                { name: '虾米音乐', icon: '🎵', url: 'https://www.xiami.com' },
+                { name: '喜马拉雅', icon: '📻', url: 'https://www.ximalaya.com' },
+                { name: '蜻蜓FM', icon: '📻', url: 'https://www.qingting.fm' },
+                { name: '荔枝FM', icon: '📻', url: 'https://www.lizhi.fm' },
+                { name: '豆瓣音乐', icon: '🎵', url: 'https://music.douban.com' },
+                { name: '咪咕音乐', icon: '🎵', url: 'https://music.migu.cn' },
+                { name: '5sing原创', icon: '🎤', url: 'https://5sing.kugou.com' },
+                { name: 'MV猫', icon: '🎬', url: 'https://www.mvcat.com' },
+                { name: '音悦台', icon: '🎬', url: 'https://www.yinyuetai.com' },
+                { name: '落网', icon: '🎵', url: 'https://www.luoo.net' },
+                { name: '麦田音乐', icon: '🌾', url: 'https://www.mtyyw.com' },
+                { name: '清风DJ', icon: '🎧', url: 'https://www.vvvdj.com' }
+            ],
+            page8: [
+                { name: '4399小游戏', icon: '🎮', url: 'https://www.4399.com' },
+                { name: '7k7k小游戏', icon: '🎮', url: 'https://www.7k7k.com' },
+                { name: 'Steam', icon: '🎮', url: 'https://store.steampowered.com' },
+                { name: 'Epic Games', icon: '🎮', url: 'https://www.epicgames.com' },
+                { name: '游民星空', icon: '🎮', url: 'https://www.gamersky.com' },
+                { name: '3DM游戏网', icon: '🎮', url: 'https://www.3dmgame.com' },
+                { name: '游侠网', icon: '🎮', url: 'https://www.ali213.net' },
+                { name: '17173', icon: '🎮', url: 'https://www.17173.com' },
+                { name: '多玩游戏', icon: '🎮', url: 'https://www.duowan.com' },
+                { name: 'TapTap', icon: '📱', url: 'https://www.taptap.cn' },
+                { name: '好游快爆', icon: '📱', url: 'https://www.3839.com' },
+                { name: '九游', icon: '📱', url: 'https://www.9game.cn' },
+                { name: '斗地主', icon: '🃏', url: 'https://www.doudizhu.com' },
+                { name: '中国象棋', icon: '♟️', url: 'https://www.xiangqi.com' },
+                { name: '五子棋', icon: '⚫', url: 'https://www.wuziqi.com' },
+                { name: '狼人杀', icon: '🐺', url: 'https://www.langrensha.com' }
+            ],
+            page9: [
+                { name: '中国大学MOOC', icon: '🎓', url: 'https://www.icourse163.org' },
+                { name: '学堂在线', icon: '🎓', url: 'https://www.xuetangx.com' },
+                { name: '网易公开课', icon: '🎓', url: 'https://open.163.com' },
+                { name: '腾讯课堂', icon: '🎓', url: 'https://ke.qq.com' },
+                { name: '百度文库', icon: '📚', url: 'https://wenku.baidu.com' },
+                { name: '豆丁网', icon: '📚', url: 'https://www.docin.com' },
+                { name: '道客巴巴', icon: '📚', url: 'https://www.doc88.com' },
+                { name: '知乎', icon: '❓', url: 'https://www.zhihu.com' },
+                { name: '百度知道', icon: '❓', url: 'https://zhidao.baidu.com' },
+                { name: '作业帮', icon: '📝', url: 'https://www.zybang.com' },
+                { name: '小猿搜题', icon: '📝', url: 'https://www.yuanfudao.com' },
+                { name: '沪江英语', icon: '🌐', url: 'https://www.hujiang.com' },
+                { name: '扇贝单词', icon: '🐚', url: 'https://www.shanbay.com' },
+                { name: '百词斩', icon: '⚔️', url: 'https://www.baicizhan.com' },
+                { name: '粉笔网', icon: '✏️', url: 'https://www.fenbi.com' },
+                { name: '考研帮', icon: '📖', url: 'https://www.kaoyan.com' }
+            ],
+            page10: [
+                { name: '百度', icon: '🔍', url: 'https://www.baidu.com' },
+                { name: '谷歌', icon: '🔍', url: 'https://www.google.com' },
+                { name: '必应', icon: '🔍', url: 'https://www.bing.com' },
+                { name: '搜狗', icon: '🔍', url: 'https://www.sogou.com' },
+                { name: '360搜索', icon: '🔍', url: 'https://www.so.com' },
+                { name: '夸克', icon: '🔍', url: 'https://www.quark.cn' },
+                { name: 'GitHub', icon: '💻', url: 'https://github.com' },
+                { name: 'Gitee', icon: '💻', url: 'https://gitee.com' },
+                { name: 'Stack Overflow', icon: '💻', url: 'https://stackoverflow.com' },
+                { name: 'MDN', icon: '📖', url: 'https://developer.mozilla.org' },
+                { name: '菜鸟教程', icon: '📖', url: 'https://www.runoob.com' },
+                { name: 'W3School', icon: '📖', url: 'https://www.w3school.com.cn' },
+                { name: '掘金', icon: '💻', url: 'https://juejin.cn' },
+                { name: '博客园', icon: '💻', url: 'https://www.cnblogs.com' },
+                { name: '思否', icon: '💻', url: 'https://segmentfault.com' },
+                { name: '开源中国', icon: '💻', url: 'https://www.oschina.net' }
             ]
         };
 
@@ -1354,19 +1603,20 @@
 
         // 更新歌词显示（KTV效果，一行显示）
         function updateLyrics(songName) {
-            const lyricLine = document.getElementById('ktvLyricLine');
+            const textBase = document.querySelector('.ktv-text-base');
+            const textOverlay = document.getElementById('ktvTextOverlay');
             const text = `🎵 ${songName} - 正在播放 🎵`;
-            lyricLine.textContent = text;
-            lyricLine.setAttribute('data-text', text);
+            textBase.textContent = text;
+            textOverlay.textContent = text;
             // 重置进度
-            lyricLine.style.setProperty('--progress', '0%');
-            document.querySelector('.lyric-line::after').style.width = '0%';
+            textOverlay.style.width = '0%';
         }
 
         // 更新KTV字幕进度（蓝色光标和唱过层）
         function updateKtvLyricProgress() {
-            const lyricLine = document.getElementById('ktvLyricLine');
+            const textOverlay = document.getElementById('ktvTextOverlay');
             const cursor = document.getElementById('lyricCursor');
+            const lyricLine = document.getElementById('ktvLyricLine');
             
             if (!audio.duration || !isPlaying) {
                 cursor.classList.remove('show');
@@ -1375,20 +1625,12 @@
             
             const progress = (audio.currentTime / audio.duration) * 100;
             
-            // 更新蓝色唱过层
-            lyricLine.style.setProperty('--progress', progress + '%');
-            // 用JavaScript直接设置after伪元素的宽度
-            const style = document.createElement('style');
-            style.textContent = `.lyric-line::after { width: ${progress}% !important; }`;
-            // 移除旧的style
-            const oldStyle = document.getElementById('ktvLyricStyle');
-            if (oldStyle) oldStyle.remove();
-            style.id = 'ktvLyricStyle';
-            document.head.appendChild(style);
+            // 更新蓝色唱过层宽度
+            textOverlay.style.width = progress + '%';
             
             // 更新蓝色光标位置
-            const lineWidth = lyricLine.offsetWidth - 40; // 减去padding
-            const cursorLeft = 20 + (progress / 100) * lineWidth;
+            const lineWidth = lyricLine.offsetWidth - 60; // 减去左右padding
+            const cursorLeft = 30 + (progress / 100) * lineWidth;
             cursor.style.left = cursorLeft + 'px';
             cursor.classList.add('show');
         }
