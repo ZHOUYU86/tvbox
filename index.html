@@ -20,9 +20,8 @@
         }
 
         body {
-            background: linear-gradient(135deg, #006064 0%, #00838f 25%, #00acc1 50%, #26c6da 75%, #00bcd4 100%);
-            background-size: 400% 400%;
-            animation: gradientBG 20s ease infinite;
+            background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 30%, #2d3561 60%, #1e3a5f 100%);
+            background-size: 100% 100%;
             color: #fff;
             position: relative;
         }
@@ -36,7 +35,7 @@
             width: 100%;
             height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            opacity: 0.35;
+            opacity: 0.15;
             z-index: 1;
             pointer-events: none;
         }
@@ -63,7 +62,7 @@
         .bg-glow:nth-child(1) {
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, #006064, transparent);
+            background: radial-gradient(circle, #1e3a8a, transparent);
             top: -200px;
             left: -200px;
             animation-duration: 25s;
@@ -72,7 +71,7 @@
         .bg-glow:nth-child(2) {
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, #00acc1, transparent);
+            background: radial-gradient(circle, #3b82f6, transparent);
             bottom: -150px;
             right: -150px;
             animation-duration: 30s;
@@ -82,7 +81,7 @@
         .bg-glow:nth-child(3) {
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, #4dd0e1, transparent);
+            background: radial-gradient(circle, #60a5fa, transparent);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -113,6 +112,43 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
+        /* 流星效果 */
+        .meteor {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.5);
+            animation: meteorFall linear infinite;
+        }
+
+        .meteor::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, #fff, transparent);
+            transform: translateX(-100px) translateY(-50%);
+            transform-origin: right center;
+        }
+
+        @keyframes meteorFall {
+            0% {
+                transform: translate(0, 0) rotate(-45deg);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-500px, 500px) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
 
         /* 页面容器 - 翻书特效 */
         .pages-container {
@@ -818,8 +854,8 @@
         }
 
         .nav-item-large {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
+            background: transparent;
+            backdrop-filter: none;
             border-radius: 15px;
             padding: 15px 10px;
             text-align: center;
@@ -833,8 +869,8 @@
         .nav-item-large:hover {
             background: rgba(255,255,255,0.1);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
-            border-color: rgba(167, 139, 250, 0.5);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            border-color: rgba(96, 165, 250, 0.5);
         }
 
         .nav-item-large .site-icon {
@@ -1018,8 +1054,8 @@
             width: 100%;
             max-width: 600px;
             margin-bottom: 40px;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
+            background: transparent;
+            backdrop-filter: none;
             border-radius: 30px;
             padding: 8px;
             border: 1px solid rgba(255,255,255,0.1);
@@ -1135,62 +1171,19 @@
 
     <!-- 页面容器 -->
     <div class="pages-container">
-        <!-- 第1页：时间 + KTV音乐播放器 -->
+        <!-- 第1页：实用网站 -->
         <div class="page active" id="page0">
-            <div class="time-display-large" id="timeDisplay">00:00:00</div>
-            <div class="date-display-large" id="dateDisplay">加载中...</div>
-            
-            <div class="ktv-player-new">
-                <!-- 大图片区域 - 带翻页特效 -->
-                <div class="ktv-cover-area" id="ktvCoverArea">
-                    <div class="ktv-cover-base" id="ktvCoverBase"></div>
-                    <div class="ktv-cover-flip" id="ktvCoverFlip">
-                        <div class="ktv-cover-flip-inner" id="ktvCoverFlipInner"></div>
-                    </div>
-                    <!-- 歌曲信息叠加在图片上 -->
-                    <div class="ktv-song-overlay">
-                        <div class="ktv-song-title-new" id="ktvSongTitle">选择一首歌曲</div>
-                        <div class="ktv-song-artist-new" id="ktvSongArtist">点击下方播放列表</div>
-                    </div>
-                </div>
-                
-                <!-- KTV歌词区域 -->
-                <div class="ktv-lyrics-new">
-                    <div class="lyric-text-new" id="lyricText">🎵 欢迎使用KTV音乐播放器，点击播放列表添加歌曲 🎵</div>
-                    <div class="lyric-progress-bar-new" id="lyricProgressBar"></div>
-                    <div class="lyric-cursor-new" id="lyricCursor"></div>
-                </div>
-                
-                <!-- 控制栏 -->
-                <div class="ktv-controls-new">
-                    <button class="ktv-btn-new" id="ktvPrevBtn" title="上一首">⏮</button>
-                    <button class="ktv-btn-new play-btn-new" id="ktvPlayBtn" title="播放/暂停">▶</button>
-                    <button class="ktv-btn-new" id="ktvNextBtn" title="下一首">⏭</button>
-                    
-                    <!-- 进度条 -->
-                    <div class="ktv-progress-new" id="ktvProgress">
-                        <div class="ktv-progress-fill-new" id="ktvProgressFill"></div>
-                    </div>
-                    
-                    <div class="ktv-time-new">
-                        <span id="ktvCurrentTime">00:00</span> / <span id="ktvTotalTime">00:00</span>
-                    </div>
-                    
-                    <!-- 计数显示 -->
-                    <div class="ktv-counter-new" id="ktvCounter">0 / 0</div>
-                    
-                    <!-- 播放列表按钮 -->
-                    <button class="ktv-btn-new playlist-btn-new" id="ktvPlaylistBtn" title="播放列表">📋</button>
-                    
-                    <!-- 添加歌曲按钮 -->
-                    <button class="ktv-btn-new add-btn-new" id="ktvAddBtn" title="添加歌曲">➕</button>
-                </div>
+            <div class="nav-page-title">🔧 实用网站 <button class="add-site-btn-small" onclick="openAddSiteModal(1)">➕ 添加</button></div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput1" placeholder="搜索或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput1')">搜索</button>
             </div>
+            <div class="nav-grid-large" id="navGrid1"></div>
         </div>
 
-        <!-- 第2页：实用网站（空的，用户自己加） -->
+        <!-- 第2页：实用网站2 -->
         <div class="page" id="page1">
-            <div class="nav-page-title">🔧 实用网站 <button class="add-site-btn-small" onclick="openAddSiteModal(2)">➕ 添加</button></div>
+            <div class="nav-page-title">🔧 实用网站2 <button class="add-site-btn-small" onclick="openAddSiteModal(2)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput2" placeholder="搜索或百度一下...">
                 <button class="search-btn-large" onclick="doSearch('searchInput2')">搜索</button>
@@ -1198,9 +1191,9 @@
             <div class="nav-grid-large" id="navGrid2"></div>
         </div>
 
-        <!-- 第3页：影视娱乐 -->
+        <!-- 第3页：影视音乐 -->
         <div class="page" id="page2">
-            <div class="nav-page-title">🎬 影视娱乐 <button class="add-site-btn-small" onclick="openAddSiteModal(3)">➕ 添加</button></div>
+            <div class="nav-page-title">🎬 影视音乐 <button class="add-site-btn-small" onclick="openAddSiteModal(3)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput3" placeholder="搜索影视或百度一下...">
                 <button class="search-btn-large" onclick="doSearch('searchInput3')">搜索</button>
@@ -1238,50 +1231,43 @@
             <div class="nav-grid-large" id="navGrid6"></div>
         </div>
 
-        <!-- 第7页：更多 -->
+        <!-- 第7页：论坛社区 -->
         <div class="page" id="page6">
-            <div class="nav-page-title">✨ 更多 <button class="add-site-btn-small" onclick="openAddSiteModal(7)">➕ 添加</button></div>
+            <div class="nav-page-title">💬 论坛社区 <button class="add-site-btn-small" onclick="openAddSiteModal(7)">➕ 添加</button></div>
             <div class="search-box-large">
                 <input type="text" class="search-input-large" id="searchInput7" placeholder="搜索或百度一下...">
                 <button class="search-btn-large" onclick="doSearch('searchInput7')">搜索</button>
             </div>
             <div class="nav-grid-large" id="navGrid7"></div>
         </div>
+
+        <!-- 第8页：新闻资讯 -->
+        <div class="page" id="page7">
+            <div class="nav-page-title">📰 新闻资讯 <button class="add-site-btn-small" onclick="openAddSiteModal(8)">➕ 添加</button></div>
+            <div class="search-box-large">
+                <input type="text" class="search-input-large" id="searchInput8" placeholder="搜索或百度一下...">
+                <button class="search-btn-large" onclick="doSearch('searchInput8')">搜索</button>
+            </div>
+            <div class="nav-grid-large" id="navGrid8"></div>
+        </div>
     </div>
 
     <!-- 翻页指示器 -->
     <div class="page-indicator" id="pageIndicator">
-        <div class="indicator-dot active" data-page="0" title="首页"></div>
-        <div class="indicator-dot" data-page="1" title="实用网站"></div>
-        <div class="indicator-dot" data-page="2" title="影视娱乐"></div>
+        <div class="indicator-dot active" data-page="0" title="实用网站"></div>
+        <div class="indicator-dot" data-page="1" title="实用网站2"></div>
+        <div class="indicator-dot" data-page="2" title="影视音乐"></div>
         <div class="indicator-dot" data-page="3" title="购物生活"></div>
         <div class="indicator-dot" data-page="4" title="社交通讯"></div>
         <div class="indicator-dot" data-page="5" title="实用工具"></div>
-        <div class="indicator-dot" data-page="6" title="更多"></div>
+        <div class="indicator-dot" data-page="6" title="论坛社区"></div>
+        <div class="indicator-dot" data-page="7" title="新闻资讯"></div>
     </div>
 
     <!-- 翻页提示 -->
     <div class="scroll-hint" id="scrollHint">↓ 滚动鼠标翻页 ↓</div>
 
-    <!-- 播放列表弹窗 -->
-    <div class="ktv-playlist-modal" id="playlistModal">
-        <div class="playlist-content">
-            <div class="playlist-title">🎵 播放列表</div>
-            <div id="playlistItems"></div>
-            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-                <input type="text" id="addSongName" placeholder="歌曲名称" style="width:100%; padding:10px; margin-bottom:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
-                <input type="text" id="addSongUrl" placeholder="歌曲链接(MP3)" style="width:100%; padding:10px; margin-bottom:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
-                <input type="text" id="addSongArtist" placeholder="歌手（可选）" style="width:100%; padding:10px; margin-bottom:8px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none;">
-                <textarea id="addSongLrc" placeholder="LRC歌词（可选，粘贴带时间戳的歌词，实现KTV效果）" style="width:100%; padding:10px; margin-bottom:10px; background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:8px; outline:none; height:80px; resize:vertical; font-size:12px;"></textarea>
-                <button onclick="addSong()" style="width:100%; padding:10px; background:linear-gradient(135deg,#8b5cf6,#6366f1); border:none; color:#fff; border-radius:8px; cursor:pointer;">➕ 添加歌曲</button>
-            </div>
-            <div class="playlist-close">
-                <button onclick="closePlaylist()">关闭</button>
-            </div>
-        </div>
-    </div>
-
-    <audio id="audioPlayer"></audio>
+    
 
     <!-- 添加网站弹窗 -->
     <div class="add-site-modal" id="addSiteModal">
@@ -1300,7 +1286,7 @@
     <script>
         // ========== 生成星星背景 ==========
         const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 150; i++) {
             const star = document.createElement('div');
             star.className = 'star';
             star.style.left = Math.random() * 100 + '%';
@@ -1310,6 +1296,25 @@
             star.style.animationDelay = Math.random() * 3 + 's';
             starsContainer.appendChild(star);
         }
+        // ========== 生成流星 ==========
+        function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.className = 'meteor';
+            meteor.style.left = Math.random() * 80 + 20 + '%';
+            meteor.style.top = Math.random() * 30 + '%';
+            meteor.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+            meteor.style.animationDelay = Math.random() * 0.5 + 's';
+            starsContainer.appendChild(meteor);
+            setTimeout(() => {
+                if (meteor.parentNode) meteor.parentNode.removeChild(meteor);
+            }, 4000);
+        }
+        function scheduleMeteor() {
+            createMeteor();
+            setTimeout(scheduleMeteor, Math.random() * 3000 + 3000);
+        }
+        setTimeout(scheduleMeteor, 2000);
+
 
         // ========== 实时时间 ==========
         function updateTime() {
@@ -1331,7 +1336,7 @@
 
         // ========== 翻书特效 ==========
         let currentPage = 0;
-        const totalPages = 7;
+        const totalPages = 8;
         const pages = document.querySelectorAll('.page');
         const dots = document.querySelectorAll('.indicator-dot');
         const scrollHint = document.getElementById('scrollHint');
@@ -1454,7 +1459,7 @@
         }
 
         // 搜索框回车
-        ['searchInput2', 'searchInput3', 'searchInput4', 'searchInput5'].forEach(id => {
+        ['searchInput1', 'searchInput2', 'searchInput3', 'searchInput4', 'searchInput5', 'searchInput6', 'searchInput7', 'searchInput8'].forEach(id => {
             document.getElementById(id).addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') doSearch(id);
             });
@@ -1462,7 +1467,9 @@
 
         // ========== 网址导航数据 ==========
         const navData = {
-            page2: [
+            page1: [], // 实用网站（空的，用户自己加）
+            page2: [], // 实用网站2（空的，用户自己加）
+            page3: [
                 { name: '爱奇艺', icon: '🎬', url: 'https://www.iqiyi.com' },
                 { name: '腾讯视频', icon: '🎬', url: 'https://v.qq.com' },
                 { name: '优酷', icon: '🎬', url: 'https://www.youku.com' },
@@ -1470,17 +1477,17 @@
                 { name: '抖音', icon: '🎵', url: 'https://www.douyin.com' },
                 { name: '快手', icon: '🎵', url: 'https://www.kuaishou.com' },
                 { name: '芒果TV', icon: '🎬', url: 'https://www.mgtv.com' },
-                { name: '搜狐视频', icon: '🎬', url: 'https://tv.sohu.com' },
-                { name: '西瓜视频', icon: '🎬', url: 'https://www.ixigua.com' },
-                { name: '虎牙直播', icon: '🎮', url: 'https://www.huya.com' },
-                { name: '斗鱼直播', icon: '🎮', url: 'https://www.douyu.com' },
                 { name: '网易云音乐', icon: '🎵', url: 'https://music.163.com' },
-                { name: '乐视视频', icon: '🎬', url: 'https://www.le.com' },
+                { name: 'QQ音乐', icon: '🎵', url: 'https://y.qq.com' },
+                { name: '酷狗音乐', icon: '🎵', url: 'https://www.kugou.com' },
+                { name: '酷我音乐', icon: '🎵', url: 'https://www.kuwo.cn' },
                 { name: '咪咕视频', icon: '🎬', url: 'https://www.miguvideo.com' },
                 { name: '央视影音', icon: '📺', url: 'https://tv.cctv.com' },
-                { name: 'PP视频', icon: '🎬', url: 'https://www.pptv.com' }
+                { name: '西瓜视频', icon: '🎬', url: 'https://www.ixigua.com' },
+                { name: '虎牙直播', icon: '🎮', url: 'https://www.huya.com' },
+                { name: '斗鱼直播', icon: '🎮', url: 'https://www.douyu.com' }
             ],
-            page3: [
+            page4: [
                 { name: '淘宝', icon: '🛒', url: 'https://www.taobao.com' },
                 { name: '京东', icon: '🛒', url: 'https://www.jd.com' },
                 { name: '拼多多', icon: '🛒', url: 'https://www.pinduoduo.com' },
@@ -1494,29 +1501,29 @@
                 { name: '去哪儿', icon: '✈️', url: 'https://www.qunar.com' },
                 { name: '滴滴出行', icon: '🚗', url: 'https://www.didiglobal.com' },
                 { name: '当当', icon: '📚', url: 'https://www.dangdang.com' },
-                { name: '亚马逊', icon: '📦', url: 'https://www.amazon.cn' },
                 { name: '聚美优品', icon: '💄', url: 'https://www.jumei.com' },
-                { name: '蘑菇街', icon: '👗', url: 'https://www.mogujie.com' }
+                { name: '蘑菇街', icon: '👗', url: 'https://www.mogujie.com' },
+                { name: '盒马鲜生', icon: '🦐', url: 'https://www.freshhema.com' }
             ],
-            page4: [
+            page5: [
                 { name: '微信', icon: '💬', url: 'https://weixin.qq.com' },
                 { name: 'QQ', icon: '💬', url: 'https://im.qq.com' },
                 { name: '微博', icon: '📱', url: 'https://weibo.com' },
                 { name: '知乎', icon: '❓', url: 'https://www.zhihu.com' },
                 { name: '小红书', icon: '📖', url: 'https://www.xiaohongshu.com' },
                 { name: '豆瓣', icon: '🎬', url: 'https://www.douban.com' },
-                { name: '百度贴吧', icon: '💬', url: 'https://tieba.baidu.com' },
-                { name: '天涯社区', icon: '💬', url: 'https://www.tianya.cn' },
-                { name: '虎扑', icon: '🏀', url: 'https://www.hupu.com' },
-                { name: 'NGA', icon: '🎮', url: 'https://bbs.nga.cn' },
-                { name: '简书', icon: '✍️', url: 'https://www.jianshu.com' },
-                { name: 'CSDN', icon: '💻', url: 'https://www.csdn.net' },
-                { name: '脉脉', icon: '💼', url: 'https://maimai.cn' },
                 { name: '钉钉', icon: '📋', url: 'https://www.dingtalk.com' },
                 { name: '企业微信', icon: '🏢', url: 'https://work.weixin.qq.com' },
-                { name: 'QQ邮箱', icon: '📧', url: 'https://mail.qq.com' }
+                { name: 'QQ邮箱', icon: '📧', url: 'https://mail.qq.com' },
+                { name: '163邮箱', icon: '📧', url: 'https://mail.163.com' },
+                { name: '脉脉', icon: '💼', url: 'https://maimai.cn' },
+                { name: '简书', icon: '✍️', url: 'https://www.jianshu.com' },
+                { name: 'CSDN', icon: '💻', url: 'https://www.csdn.net' },
+                { name: '陌陌', icon: '💕', url: 'https://www.immomo.com' },
+                { name: '探探', icon: '💕', url: 'https://www.tantanapp.com' },
+                { name: 'Soul', icon: '💕', url: 'https://www.soulapp.cn' }
             ],
-            page5: [
+            page6: [
                 { name: '百度', icon: '🔍', url: 'https://www.baidu.com' },
                 { name: '百度网盘', icon: '☁️', url: 'https://pan.baidu.com' },
                 { name: '12306', icon: '🚄', url: 'https://www.12306.cn' },
@@ -1528,13 +1535,31 @@
                 { name: '石墨文档', icon: '📄', url: 'https://shimo.im' },
                 { name: '天眼查', icon: '🏢', url: 'https://www.tianyancha.com' },
                 { name: '企查查', icon: '🏢', url: 'https://www.qcc.com' },
-                { name: '学习强国', icon: '📚', url: 'https://www.xuexi.cn' },
                 { name: '迅雷', icon: '⚡', url: 'https://www.xunlei.com' },
-                { name: '163邮箱', icon: '📧', url: 'https://mail.163.com' },
                 { name: '搜狗输入法', icon: '⌨️', url: 'https://pinyin.sogou.com' },
-                { name: '360安全卫士', icon: '🛡️', url: 'https://www.360.cn' }
+                { name: '360安全卫士', icon: '🛡️', url: 'https://www.360.cn' },
+                { name: '学习强国', icon: '📚', url: 'https://www.xuexi.cn' },
+                { name: '阿里云盘', icon: '☁️', url: 'https://www.aliyundrive.com' }
             ],
-            page6: [
+            page7: [
+                { name: '百度贴吧', icon: '💬', url: 'https://tieba.baidu.com' },
+                { name: '天涯社区', icon: '💬', url: 'https://www.tianya.cn' },
+                { name: '虎扑', icon: '🏀', url: 'https://www.hupu.com' },
+                { name: 'NGA', icon: '🎮', url: 'https://bbs.nga.cn' },
+                { name: 'V2EX', icon: '💻', url: 'https://www.v2ex.com' },
+                { name: '掘金', icon: '⛏️', url: 'https://juejin.cn' },
+                { name: '开源中国', icon: '🐧', url: 'https://www.oschina.net' },
+                { name: 'SegmentFault', icon: '💻', url: 'https://segmentfault.com' },
+                { name: 'Stack Overflow', icon: '💻', url: 'https://stackoverflow.com' },
+                { name: 'GitHub', icon: '🐙', url: 'https://github.com' },
+                { name: 'Gitee', icon: '🐙', url: 'https://gitee.com' },
+                { name: '知乎专栏', icon: '❓', url: 'https://zhuanlan.zhihu.com' },
+                { name: '少数派', icon: '📱', url: 'https://sspai.com' },
+                { name: '机核网', icon: '🎮', url: 'https://www.gcores.com' },
+                { name: '游民星空', icon: '🎮', url: 'https://www.gamersky.com' },
+                { name: '3DM游戏网', icon: '🎮', url: 'https://www.3dmgame.com' }
+            ],
+            page8: [
                 { name: '新浪新闻', icon: '📰', url: 'https://news.sina.com.cn' },
                 { name: '腾讯新闻', icon: '📰', url: 'https://news.qq.com' },
                 { name: '网易新闻', icon: '📰', url: 'https://news.163.com' },
@@ -1544,85 +1569,13 @@
                 { name: '澎湃新闻', icon: '📰', url: 'https://www.thepaper.cn' },
                 { name: '界面新闻', icon: '📰', url: 'https://www.jiemian.com' },
                 { name: '36氪', icon: '💼', url: 'https://36kr.com' },
-                { name: '虎嗅网', icon: '💼', url: 'https://www.huxiu.com' },
-                { name: '第一财经', icon: '💰', url: 'https://www.yicai.com' },
+                { name: '虎嗅网', icon: '🐯', url: 'https://www.huxiu.com' },
+                { name: '知乎日报', icon: '❓', url: 'https://daily.zhihu.com' },
                 { name: '财新网', icon: '💰', url: 'https://www.caixin.com' },
-                { name: '观察者网', icon: '🌐', url: 'https://www.guancha.cn' },
-                { name: '环球网', icon: '🌐', url: 'https://www.huanqiu.com' },
-                { name: '人民网', icon: '🌐', url: 'http://www.people.com.cn' },
-                { name: '新华网', icon: '🌐', url: 'http://www.xinhuanet.com' }
-            ],
-            page7: [
-                { name: '网易云音乐', icon: '🎵', url: 'https://music.163.com' },
-                { name: 'QQ音乐', icon: '🎵', url: 'https://y.qq.com' },
-                { name: '酷狗音乐', icon: '🎵', url: 'https://www.kugou.com' },
-                { name: '酷我音乐', icon: '🎵', url: 'https://www.kuwo.cn' },
-                { name: '虾米音乐', icon: '🎵', url: 'https://www.xiami.com' },
-                { name: '喜马拉雅', icon: '📻', url: 'https://www.ximalaya.com' },
-                { name: '蜻蜓FM', icon: '📻', url: 'https://www.qingting.fm' },
-                { name: '荔枝FM', icon: '📻', url: 'https://www.lizhi.fm' },
-                { name: '豆瓣音乐', icon: '🎵', url: 'https://music.douban.com' },
-                { name: '咪咕音乐', icon: '🎵', url: 'https://music.migu.cn' },
-                { name: '5sing原创', icon: '🎤', url: 'https://5sing.kugou.com' },
-                { name: 'MV猫', icon: '🎬', url: 'https://www.mvcat.com' },
-                { name: '音悦台', icon: '🎬', url: 'https://www.yinyuetai.com' },
-                { name: '落网', icon: '🎵', url: 'https://www.luoo.net' },
-                { name: '麦田音乐', icon: '🌾', url: 'https://www.mtyyw.com' },
-                { name: '清风DJ', icon: '🎧', url: 'https://www.vvvdj.com' }
-            ],
-            page8: [
-                { name: '4399小游戏', icon: '🎮', url: 'https://www.4399.com' },
-                { name: '7k7k小游戏', icon: '🎮', url: 'https://www.7k7k.com' },
-                { name: 'Steam', icon: '🎮', url: 'https://store.steampowered.com' },
-                { name: 'Epic Games', icon: '🎮', url: 'https://www.epicgames.com' },
-                { name: '游民星空', icon: '🎮', url: 'https://www.gamersky.com' },
-                { name: '3DM游戏网', icon: '🎮', url: 'https://www.3dmgame.com' },
-                { name: '游侠网', icon: '🎮', url: 'https://www.ali213.net' },
-                { name: '17173', icon: '🎮', url: 'https://www.17173.com' },
-                { name: '多玩游戏', icon: '🎮', url: 'https://www.duowan.com' },
-                { name: 'TapTap', icon: '📱', url: 'https://www.taptap.cn' },
-                { name: '好游快爆', icon: '📱', url: 'https://www.3839.com' },
-                { name: '九游', icon: '📱', url: 'https://www.9game.cn' },
-                { name: '斗地主', icon: '🃏', url: 'https://www.doudizhu.com' },
-                { name: '中国象棋', icon: '♟️', url: 'https://www.xiangqi.com' },
-                { name: '五子棋', icon: '⚫', url: 'https://www.wuziqi.com' },
-                { name: '狼人杀', icon: '🐺', url: 'https://www.langrensha.com' }
-            ],
-            page9: [
-                { name: '中国大学MOOC', icon: '🎓', url: 'https://www.icourse163.org' },
-                { name: '学堂在线', icon: '🎓', url: 'https://www.xuetangx.com' },
-                { name: '网易公开课', icon: '🎓', url: 'https://open.163.com' },
-                { name: '腾讯课堂', icon: '🎓', url: 'https://ke.qq.com' },
-                { name: '百度文库', icon: '📚', url: 'https://wenku.baidu.com' },
-                { name: '豆丁网', icon: '📚', url: 'https://www.docin.com' },
-                { name: '道客巴巴', icon: '📚', url: 'https://www.doc88.com' },
-                { name: '知乎', icon: '❓', url: 'https://www.zhihu.com' },
-                { name: '百度知道', icon: '❓', url: 'https://zhidao.baidu.com' },
-                { name: '作业帮', icon: '📝', url: 'https://www.zybang.com' },
-                { name: '小猿搜题', icon: '📝', url: 'https://www.yuanfudao.com' },
-                { name: '沪江英语', icon: '🌐', url: 'https://www.hujiang.com' },
-                { name: '扇贝单词', icon: '🐚', url: 'https://www.shanbay.com' },
-                { name: '百词斩', icon: '⚔️', url: 'https://www.baicizhan.com' },
-                { name: '粉笔网', icon: '✏️', url: 'https://www.fenbi.com' },
-                { name: '考研帮', icon: '📖', url: 'https://www.kaoyan.com' }
-            ],
-            page10: [
-                { name: '百度', icon: '🔍', url: 'https://www.baidu.com' },
-                { name: '谷歌', icon: '🔍', url: 'https://www.google.com' },
-                { name: '必应', icon: '🔍', url: 'https://www.bing.com' },
-                { name: '搜狗', icon: '🔍', url: 'https://www.sogou.com' },
-                { name: '360搜索', icon: '🔍', url: 'https://www.so.com' },
-                { name: '夸克', icon: '🔍', url: 'https://www.quark.cn' },
-                { name: 'GitHub', icon: '💻', url: 'https://github.com' },
-                { name: 'Gitee', icon: '💻', url: 'https://gitee.com' },
-                { name: 'Stack Overflow', icon: '💻', url: 'https://stackoverflow.com' },
-                { name: 'MDN', icon: '📖', url: 'https://developer.mozilla.org' },
-                { name: '菜鸟教程', icon: '📖', url: 'https://www.runoob.com' },
-                { name: 'W3School', icon: '📖', url: 'https://www.w3school.com.cn' },
-                { name: '掘金', icon: '💻', url: 'https://juejin.cn' },
-                { name: '博客园', icon: '💻', url: 'https://www.cnblogs.com' },
-                { name: '思否', icon: '💻', url: 'https://segmentfault.com' },
-                { name: '开源中国', icon: '💻', url: 'https://www.oschina.net' }
+                { name: '第一财经', icon: '💰', url: 'https://www.yicai.com' },
+                { name: '华尔街见闻', icon: '💰', url: 'https://wallstreetcn.com' },
+                { name: '观察者网', icon: '📰', url: 'https://www.guancha.cn' },
+                { name: '环球网', icon: '📰', url: 'https://www.huanqiu.com' }
             ]
         };
 
@@ -1744,396 +1697,6 @@
         }
         renderNav();
 
-        // ========== KTV音乐播放器 ==========
-        const audio = document.getElementById('audioPlayer');
-        const ktvPlayBtn = document.getElementById('ktvPlayBtn');
-        const ktvPrevBtn = document.getElementById('ktvPrevBtn');
-        const ktvNextBtn = document.getElementById('ktvNextBtn');
-        const ktvProgress = document.getElementById('ktvProgress');
-        const ktvProgressFill = document.getElementById('ktvProgressFill');
-        const ktvCurrentTime = document.getElementById('ktvCurrentTime');
-        const ktvTotalTime = document.getElementById('ktvTotalTime');
-        const ktvSongTitle = document.getElementById('ktvSongTitle');
-        const ktvSongArtist = document.getElementById('ktvSongArtist');
-        const lyricsContainer = document.getElementById('lyricsContainer');
-        const playlistModal = document.getElementById('playlistModal');
-        const playlistItems = document.getElementById('playlistItems');
-
-        // 默认播放列表（空的，用户自己添加歌曲）
-        const defaultPlaylist = [];
-
-        let savedPlaylist = JSON.parse(localStorage.getItem('ktvPlaylist')) || [];
-        let playlist = savedPlaylist.length > 0 ? savedPlaylist : defaultPlaylist;
-        
-        // 如果是第一次使用或者播放列表为空，保存默认播放列表
-        if (!localStorage.getItem('ktvPlaylist') || savedPlaylist.length === 0) {
-            localStorage.setItem('ktvPlaylist', JSON.stringify(defaultPlaylist));
-        }
-        let currentSongIndex = -1;
-        let isPlaying = false;
-
-        // 格式化时间
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // 播放歌曲
-        function playSong(index) {
-            if (index < 0 || index >= playlist.length) return;
-            currentSongIndex = index;
-            const song = playlist[index];
-            
-            // 解析LRC歌词
-            currentLrc = parseLrc(song.lrc);
-            currentLrcIndex = -1;
-            
-            audio.src = song.url;
-            audio.play();
-            isPlaying = true;
-            ktvPlayBtn.textContent = '⏸';
-            ktvSongTitle.textContent = song.name;
-            ktvSongArtist.textContent = song.artist || '未知歌手';
-            
-            // 更新歌词
-            if (currentLrc.length > 0) {
-                document.getElementById('lyricText').textContent = '🎵 即将开始... 🎵';
-            } else {
-                updateLyrics(song.name);
-            }
-            
-            // 更新播放列表高亮
-            renderPlaylist();
-            savePlaylist();
-            updateCounter();
-        }
-
-        // ========== 图片翻页特效功能 ==========
-        let currentImageIndex = 0;
-        const coverBase = document.getElementById('ktvCoverBase');
-        const coverFlip = document.getElementById('ktvCoverFlip');
-        const coverFlipInner = document.getElementById('ktvCoverFlipInner');
-        const counterDisplay = document.getElementById('ktvCounter');
-        
-        // 专辑封面图片列表（本地美女图片）
-        const coverImages = [
-            'images/beauty1.jpg',
-            'images/beauty2.jpg',
-            'images/beauty3.jpg',
-            'images/beauty4.jpg',
-            'images/beauty5.jpg',
-            'images/beauty6.jpg',
-            'images/beauty7.jpg',
-            'images/beauty8.jpg',
-            'images/beauty9.jpg',
-            'images/beauty10.jpg'
-        ];
-        const totalImages = coverImages.length;
-
-        function switchImage() {
-            // 计算下一张
-            const nextIndex = (currentImageIndex + 1) % totalImages;
-            
-            // 设置翻页层的图片
-            coverFlipInner.style.backgroundImage = `url('${coverImages[nextIndex]}')`;
-            
-            // 开始翻页动画
-            coverFlip.classList.add('flipping');
-            
-            // 翻页完成后，更新底层图片，重置翻页层
-            setTimeout(() => {
-                coverBase.style.backgroundImage = `url('${coverImages[nextIndex]}')`;
-                coverFlip.classList.remove('flipping');
-                currentImageIndex = nextIndex;
-            }, 800);
-        }
-
-        // 每6秒自动切换图片（翻页特效）
-        setInterval(switchImage, 6000);
-
-        // 更新计数显示
-        function updateCounter() {
-            if (counterDisplay && playlist.length > 0) {
-                counterDisplay.textContent = `${currentSongIndex + 1} / ${playlist.length}`;
-            } else if (counterDisplay) {
-                counterDisplay.textContent = '0 / 0';
-            }
-        }
-
-        // 更新歌词显示
-        function updateLyrics(songName) {
-            const lyricText = document.getElementById('lyricText');
-            const text = `🎵 ${songName} - 正在播放 🎵`;
-            lyricText.textContent = text;
-            // 重置进度条和光标
-            document.getElementById('lyricProgressBar').style.width = '0%';
-            document.getElementById('lyricCursor').style.left = '0px';
-        }
-
-        // 更新KTV字幕进度（真正的KTV同步效果 - requestAnimationFrame流畅版）
-        function updateKtvLyricProgress() {
-            const progressBar = document.getElementById('lyricProgressBar');
-            const cursor = document.getElementById('lyricCursor');
-            const lyricText = document.getElementById('lyricText');
-            const lyricsBox = document.querySelector('.ktv-lyrics-new');
-            
-            // 安全检查：音频没有正常加载时，不更新进度条，避免乱跑
-            if (!audio || !audio.duration || isNaN(audio.duration) || !isFinite(audio.duration) || audio.duration <= 0) {
-                cursor.classList.remove('show');
-                progressBar.style.width = '0%';
-                return;
-            }
-            
-            if (!isPlaying || audio.paused) {
-                cursor.classList.remove('show');
-                return;
-            }
-            
-            const currentTime = audio.currentTime;
-            
-            // 安全检查：当前时间无效
-            if (isNaN(currentTime) || !isFinite(currentTime) || currentTime < 0) {
-                return;
-            }
-            
-            // 计算歌词区域的实际内容宽度（减去左右padding）
-            const boxStyle = window.getComputedStyle(lyricsBox);
-            const paddingLeft = parseFloat(boxStyle.paddingLeft) || 0;
-            const paddingRight = parseFloat(boxStyle.paddingRight) || 0;
-            const contentWidth = lyricsBox.offsetWidth - paddingLeft - paddingRight;
-            
-            // 如果有LRC歌词，实现真正的KTV同步效果
-            if (currentLrc.length > 0) {
-                // 找到当前应该显示的句子
-                let newIndex = -1;
-                for (let i = 0; i < currentLrc.length; i++) {
-                    if (currentTime >= currentLrc[i].time) {
-                        newIndex = i;
-                    } else {
-                        break;
-                    }
-                }
-                
-                // 如果句子变了，更新歌词文字并重置进度
-                if (newIndex !== currentLrcIndex && newIndex >= 0) {
-                    currentLrcIndex = newIndex;
-                    lyricText.textContent = currentLrc[newIndex].text;
-                    // 句子切换时重置进度条和光标
-                    progressBar.style.width = '0%';
-                    cursor.style.left = paddingLeft + 'px';
-                }
-                
-                // 计算当前句子的进度（光标在句子里从左往右跑）
-                if (currentLrcIndex >= 0) {
-                    const lineStartTime = currentLrc[currentLrcIndex].time;
-                    const lineEndTime = (currentLrcIndex + 1 < currentLrc.length) 
-                        ? currentLrc[currentLrcIndex + 1].time 
-                        : audio.duration;
-                    const lineDuration = lineEndTime - lineStartTime;
-                    
-                    // 安全检查：句子时长无效
-                    if (lineDuration <= 0 || isNaN(lineDuration)) {
-                        return;
-                    }
-                    
-                    let lineProgress = ((currentTime - lineStartTime) / lineDuration) * 100;
-                    // 限制进度在0-100之间，避免乱跑
-                    lineProgress = Math.max(0, Math.min(100, lineProgress));
-                    
-                    // 蓝色进度条和光标在句子里从左往右跑
-                    progressBar.style.width = lineProgress + '%';
-                    // 光标位置 = 左边padding + 进度比例 × 内容宽度
-                    const cursorLeft = paddingLeft + (lineProgress / 100) * contentWidth;
-                    cursor.style.left = cursorLeft + 'px';
-                    cursor.classList.add('show');
-                }
-            } else {
-                // 没有LRC歌词，用整体进度
-                let progress = (currentTime / audio.duration) * 100;
-                // 限制进度在0-100之间
-                progress = Math.max(0, Math.min(100, progress));
-                
-                progressBar.style.width = progress + '%';
-                const cursorLeft = paddingLeft + (progress / 100) * contentWidth;
-                cursor.style.left = cursorLeft + 'px';
-                cursor.classList.add('show');
-            }
-        }
-
-        // 用requestAnimationFrame实现流畅的KTV同步（每帧更新，跟声音完全同步）
-        function ktvAnimationLoop() {
-            updateKtvLyricProgress();
-            requestAnimationFrame(ktvAnimationLoop);
-        }
-        // 启动动画循环
-        requestAnimationFrame(ktvAnimationLoop);
-
-        // 播放/暂停
-        ktvPlayBtn.addEventListener('click', () => {
-            if (currentSongIndex === -1 && playlist.length > 0) {
-                playSong(0);
-                return;
-            }
-            if (isPlaying) {
-                audio.pause();
-                ktvPlayBtn.textContent = '▶';
-            } else {
-                audio.play();
-                ktvPlayBtn.textContent = '⏸';
-            }
-            isPlaying = !isPlaying;
-        });
-
-        // 上一首
-        ktvPrevBtn.addEventListener('click', () => {
-            if (playlist.length === 0) return;
-            const newIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
-            playSong(newIndex);
-        });
-
-        // 下一首
-        ktvNextBtn.addEventListener('click', () => {
-            if (playlist.length === 0) return;
-            const newIndex = (currentSongIndex + 1) % playlist.length;
-            playSong(newIndex);
-        });
-
-        // 进度条
-        audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
-                const percent = (audio.currentTime / audio.duration) * 100;
-                ktvProgressFill.style.width = percent + '%';
-                ktvCurrentTime.textContent = formatTime(audio.currentTime);
-                // KTV歌词同步已经用requestAnimationFrame每帧更新，这里不需要重复调用
-            }
-        });
-
-        audio.addEventListener('loadedmetadata', () => {
-            ktvTotalTime.textContent = formatTime(audio.duration);
-        });
-
-        ktvProgress.addEventListener('click', (e) => {
-            const rect = ktvProgress.getBoundingClientRect();
-            const percent = (e.clientX - rect.left) / rect.width;
-            if (audio.duration) {
-                audio.currentTime = percent * audio.duration;
-            }
-        });
-
-        // 歌曲结束自动下一首
-        audio.addEventListener('ended', () => {
-            if (playlist.length > 0) {
-                const newIndex = (currentSongIndex + 1) % playlist.length;
-                playSong(newIndex);
-            }
-        });
-
-        // 播放列表
-        function renderPlaylist() {
-            if (playlist.length === 0) {
-                playlistItems.innerHTML = '<div style="text-align:center; color:rgba(255,255,255,0.5); padding:20px;">还没有歌曲，在下方添加吧！</div>';
-                return;
-            }
-            
-            playlistItems.innerHTML = playlist.map((song, index) => `
-                <div class="playlist-item ${index === currentSongIndex ? 'playing' : ''}" onclick="playSong(${index})">
-                    <span>${index + 1}. ${song.name} ${song.artist ? '- ' + song.artist : ''}</span>
-                    <button onclick="event.stopPropagation(); deleteSong(${index})" style="background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer;">🗑</button>
-                </div>
-            `).join('');
-        }
-
-        // 打开播放列表
-        document.getElementById('ktvPlaylistBtn').addEventListener('click', () => {
-            playlistModal.classList.add('show');
-            renderPlaylist();
-        });
-
-        // 关闭播放列表
-        function closePlaylist() {
-            playlistModal.classList.remove('show');
-        }
-
-        // 添加歌曲
-        function addSong() {
-            const name = document.getElementById('addSongName').value.trim();
-            const url = document.getElementById('addSongUrl').value.trim();
-            const artist = document.getElementById('addSongArtist').value.trim();
-            const lrc = document.getElementById('addSongLrc').value.trim();
-            
-            if (!name || !url) {
-                alert('请填写歌曲名称和歌曲链接！');
-                return;
-            }
-            
-            playlist.push({ name, url, artist, lrc });
-            savePlaylist();
-            renderPlaylist();
-            
-            document.getElementById('addSongName').value = '';
-            document.getElementById('addSongUrl').value = '';
-            document.getElementById('addSongArtist').value = '';
-            document.getElementById('addSongLrc').value = '';
-            
-            alert('歌曲添加成功！' + (lrc ? '已包含LRC歌词，可实现KTV效果！' : ''));
-        }
-
-        // 解析LRC歌词
-        function parseLrc(lrcText) {
-            if (!lrcText) return [];
-            const lines = lrcText.split('\n');
-            const result = [];
-            const timeReg = /\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/g;
-            
-            for (const line of lines) {
-                const matches = [...line.matchAll(timeReg)];
-                const text = line.replace(timeReg, '').trim();
-                if (!text) continue;
-                
-                for (const match of matches) {
-                    const minutes = parseInt(match[1]);
-                    const seconds = parseInt(match[2]);
-                    const ms = match[3] ? parseInt(match[3].padEnd(3, '0')) : 0;
-                    const time = minutes * 60 + seconds + ms / 1000;
-                    result.push({ time, text });
-                }
-            }
-            
-            return result.sort((a, b) => a.time - b.time);
-        }
-
-        // 当前播放的LRC歌词
-        let currentLrc = [];
-        let currentLrcIndex = -1;
-
-        // 删除歌曲
-        function deleteSong(index) {
-            if (confirm('确定要删除这首歌曲吗？')) {
-                playlist.splice(index, 1);
-                if (currentSongIndex === index) {
-                    audio.pause();
-                    audio.src = '';
-                    isPlaying = false;
-                    ktvPlayBtn.textContent = '▶';
-                    currentSongIndex = -1;
-                    ktvSongTitle.textContent = '选择一首歌曲';
-                    ktvSongArtist.textContent = '点击下方播放列表';
-                } else if (currentSongIndex > index) {
-                    currentSongIndex--;
-                }
-                savePlaylist();
-                renderPlaylist();
-            }
-        }
-
-        // 保存播放列表
-        function savePlaylist() {
-            localStorage.setItem('ktvPlaylist', JSON.stringify(playlist));
-        }
-
-        // 初始化
-        renderPlaylist();
-    </script>
+        </script>
 </body>
 </html>
