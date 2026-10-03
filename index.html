@@ -312,51 +312,51 @@
             color: rgba(255,255,255,0.6);
         }
 
-        /* KTV歌词显示 - 简单可靠版 */
+        /* KTV歌词显示 - 超简单可靠版 */
         .ktv-lyrics {
-            height: 50px;
+            height: 45px;
             margin-bottom: 15px;
             position: relative;
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            overflow: hidden;
             display: flex;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
         }
 
+        /* 歌词文字 - 白色，肯定能看见 */
         .lyric-text {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
-            color: #fff;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            padding: 0 15px;
+            white-space: nowrap;
             position: relative;
             z-index: 1;
-            padding: 0 20px;
-            white-space: nowrap;
+            width: 100%;
+            text-align: center;
         }
 
-        /* 蓝色唱过层 - 覆盖在歌词上面 */
-        .lyric-overlay {
+        /* 蓝色唱过进度条 - 从左往右慢慢跑 */
+        .lyric-progress-bar {
             position: absolute;
             top: 0;
             left: 0;
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, rgba(29,78,216,0.4), rgba(29,78,216,0.2));
+            background: linear-gradient(90deg, rgba(29,78,216,0.5), rgba(59,130,246,0.3));
             z-index: 2;
-            transition: width 0.1s linear;
         }
 
-        /* 蓝色光标 */
+        /* 蓝色光标 - 跟着进度条跑 */
         .lyric-cursor {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 5px;
+            bottom: 5px;
             width: 4px;
-            height: 30px;
             background: #1d4ed8;
-            box-shadow: 0 0 15px rgba(29,78,216,1), 0 0 30px rgba(29,78,216,0.6);
+            box-shadow: 0 0 12px #1d4ed8, 0 0 20px rgba(29,78,216,0.6);
             border-radius: 2px;
             left: 0;
             z-index: 3;
@@ -898,10 +898,10 @@
                     <div class="ktv-song-artist" id="ktvSongArtist">点击下方播放列表</div>
                 </div>
                 
-                <!-- KTV歌词 - 简单可靠版 -->
+                <!-- KTV歌词 - 超简单可靠版 -->
                 <div class="ktv-lyrics">
                     <div class="lyric-text" id="lyricText">🎵 欢迎使用KTV音乐播放器，点击播放列表添加歌曲 🎵</div>
-                    <div class="lyric-overlay" id="lyricOverlay"></div>
+                    <div class="lyric-progress-bar" id="lyricProgressBar"></div>
                     <div class="lyric-cursor" id="lyricCursor"></div>
                 </div>
                 
@@ -1595,13 +1595,14 @@
             const lyricText = document.getElementById('lyricText');
             const text = `🎵 ${songName} - 正在播放 🎵`;
             lyricText.textContent = text;
-            // 重置进度
-            document.getElementById('lyricOverlay').style.width = '0%';
+            // 重置进度条和光标
+            document.getElementById('lyricProgressBar').style.width = '0%';
+            document.getElementById('lyricCursor').style.left = '0px';
         }
 
-        // 更新KTV字幕进度（蓝色光标和唱过层）
+        // 更新KTV字幕进度（蓝色进度条和光标慢慢跑）
         function updateKtvLyricProgress() {
-            const lyricOverlay = document.getElementById('lyricOverlay');
+            const progressBar = document.getElementById('lyricProgressBar');
             const cursor = document.getElementById('lyricCursor');
             const lyricsBox = document.querySelector('.ktv-lyrics');
             
@@ -1610,12 +1611,13 @@
                 return;
             }
             
+            // 计算播放进度百分比
             const progress = (audio.currentTime / audio.duration) * 100;
             
-            // 更新蓝色唱过层宽度
-            lyricOverlay.style.width = progress + '%';
+            // 蓝色进度条从左往右慢慢跑
+            progressBar.style.width = progress + '%';
             
-            // 更新蓝色光标位置
+            // 蓝色光标跟着进度条跑
             const boxWidth = lyricsBox.offsetWidth;
             const cursorLeft = (progress / 100) * boxWidth;
             cursor.style.left = cursorLeft + 'px';
