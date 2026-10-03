@@ -1,23 +1,900 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>TVBox 在线源</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的音乐空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #0a0a2e 0%, #1a1a4e 50%, #0d0d3d 100%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 星空Canvas */
+        #starCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 标题 */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            letter-spacing: 5px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+        }
+
+        /* 播放器主区域 */
+        .player {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 25px;
+        }
+
+        /* 歌曲信息 */
+        .song-info {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .song-title {
+            font-size: 28px;
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+        }
+
+        .song-artist {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* 歌词显示区域 - KTV风格 */
+        .lyrics-container {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 25px;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+        }
+
+        .lyrics {
+            transition: transform 0.5s ease;
+            text-align: center;
+        }
+
+        .lyric-line {
+            padding: 12px 0;
+            font-size: 18px;
+            color: rgba(255,255,255,0.4);
+            transition: all 0.3s ease;
+            line-height: 1.5;
+        }
+
+        .lyric-line.active {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,200,100,0.5);
+            transform: scale(1.05);
+        }
+
+        .lyric-line.near {
+            color: rgba(255,255,255,0.7);
+            font-size: 20px;
+        }
+
+        /* 进度条 */
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+        }
+
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .control-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.35);
+            transform: scale(1.1);
+        }
+
+        .control-btn.play-btn {
+            width: 70px;
+            height: 70px;
+            font-size: 28px;
+            background: linear-gradient(135deg, #ffd700, #ff6b6b);
+            box-shadow: 0 5px 20px rgba(255,107,107,0.4);
+        }
+
+        .control-btn.play-btn:hover {
+            transform: scale(1.15);
+        }
+
+        /* 音量控制 */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+
+        .volume-slider {
+            width: 120px;
+            height: 5px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* 歌曲列表 */
+        .playlist-section {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .section-title {
+            color: #fff;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .add-song-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .add-song-form input {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .add-song-form input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .add-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79,172,254,0.4);
+        }
+
+        .playlist {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .playlist::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .playlist::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+
+        .playlist::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .playlist-item.playing {
+            background: rgba(255,215,0,0.2);
+            border-color: rgba(255,215,0,0.5);
+        }
+
+        .playlist-item .song-num {
+            width: 30px;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+
+        .playlist-item .song-name {
+            flex: 1;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .playlist-item .delete-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 10px;
+            transition: all 0.3s ease;
+        }
+
+        .playlist-item .delete-btn:hover {
+            color: #ff6b6b;
+        }
+
+        /* 影视源接口区域 */
+        .api-section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 20px 25px;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .api-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            user-select: none;
+        }
+
+        .api-toggle:hover {
+            color: #fff;
+        }
+
+        .api-content {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .api-content.show {
+            display: block;
+        }
+
+        .api-item {
+            padding: 8px 0;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-item a {
+            color: #4facfe;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .api-item a:hover {
+            text-decoration: underline;
+        }
+
+        .copy-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 30px;
+            }
+            .player {
+                padding: 20px;
+            }
+            .song-title {
+                font-size: 22px;
+            }
+            .controls {
+                gap: 15px;
+            }
+            .control-btn {
+                width: 45px;
+                height: 45px;
+            }
+            .control-btn.play-btn {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>TVBox 在线源配置</h1>
-    <p>部署成功！以下是各源接口地址：</p>
-    <ul>
-        <li><a href="/xs/api.json">xs源</a></li>
-        <li><a href="/fty/api.json">fty源</a></li>
-        <li><a href="/wex/api.json">wex源</a></li>
-        <li><a href="/nf/api.json">nf源</a></li>
-        <li><a href="/feimao/api.json">肥猫源</a></li>
-        <li><a href="/cl/api.json">cl源</a></li>
-        <li><a href="/ouyang/api.json">ouyang源</a></li>
-        <li><a href="/lubin/api.json">lubin源</a></li>
-        <li><a href="/dl/api.json">dl源</a></li>
-        <li><a href="/tvurl/api.json">tvurl源</a></li>
-    </ul>
+    <!-- 动态星空+流星雨背景 -->
+    <canvas id="starCanvas"></canvas>
+    
+    <div class="container">
+        <!-- 标题 -->
+        <div class="header">
+            <h1>🎵 我的音乐空间</h1>
+            <p>享受音乐，享受生活</p>
+        </div>
+
+        <!-- 播放器 -->
+        <div class="player">
+            <div class="song-info">
+                <div class="song-title" id="songTitle">选择一首歌曲开始播放</div>
+                <div class="song-artist" id="songArtist">在下方列表添加你喜欢的歌曲</div>
+            </div>
+
+            <!-- KTV风格歌词 -->
+            <div class="lyrics-container">
+                <div class="lyrics" id="lyrics">
+                    <div class="lyric-line">🎤 欢迎来到我的音乐空间</div>
+                    <div class="lyric-line">在下方添加你喜欢的歌曲</div>
+                    <div class="lyric-line">点击播放按钮开始享受音乐</div>
+                    <div class="lyric-line">支持自定义歌曲和歌词</div>
+                    <div class="lyric-line">祝你听歌愉快！🎵</div>
+                </div>
+            </div>
+
+            <!-- 进度条 -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="time-display">
+                    <span id="currentTime">00:00</span>
+                    <span id="totalTime">00:00</span>
+                </div>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="controls">
+                <button class="control-btn" id="prevBtn" title="上一首">⏮</button>
+                <button class="control-btn play-btn" id="playBtn" title="播放/暂停">▶</button>
+                <button class="control-btn" id="nextBtn" title="下一首">⏭</button>
+            </div>
+
+            <!-- 音量 -->
+            <div class="volume-container">
+                <span>🔊</span>
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+                <span id="volumeValue">70%</span>
+            </div>
+        </div>
+
+        <!-- 歌曲列表 -->
+        <div class="playlist-section">
+            <div class="section-title">📋 歌曲列表</div>
+            <div class="add-song-form">
+                <input type="text" id="songNameInput" placeholder="歌曲名称">
+                <input type="text" id="songUrlInput" placeholder="歌曲链接（MP3地址）">
+                <input type="text" id="songArtistInput" placeholder="歌手（可选）">
+                <button class="add-btn" id="addSongBtn">➕ 添加</button>
+            </div>
+            <div class="playlist" id="playlist">
+                <div style="text-align:center; color:rgba(255,255,255,0.5); padding:20px;">
+                    还没有歌曲，在上方添加你喜欢的歌曲吧！
+                </div>
+            </div>
+        </div>
+
+        <!-- 影视源接口（折叠隐藏） -->
+        <div class="api-section">
+            <div class="api-toggle" id="apiToggle">
+                <span>📺 影视源接口（点击展开）</span>
+                <span id="apiArrow">▼</span>
+            </div>
+            <div class="api-content" id="apiContent">
+                <div class="api-item">
+                    <span>合并配置18：</span>
+                    <a href="/hebing/tvbox18.json" target="_blank">/hebing/tvbox18.json</a>
+                    <button class="copy-btn" onclick="copyText('/hebing/tvbox18.json')">复制</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="footer">
+            <p>✨ 我的音乐空间 · 用心打造 ✨</p>
+        </div>
+    </div>
+
+    <!-- 音频元素 -->
+    <audio id="audioPlayer"></audio>
+
+    <script>
+        // ========== 动态星空+流星雨效果 ==========
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 星星类
+        class Star {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.opacity = Math.random();
+                this.opacitySpeed = Math.random() * 0.02 + 0.005;
+                this.twinkleDirection = Math.random() > 0.5 ? 1 : -1;
+            }
+            update() {
+                this.opacity += this.opacitySpeed * this.twinkleDirection;
+                if (this.opacity >= 1) {
+                    this.opacity = 1;
+                    this.twinkleDirection = -1;
+                } else if (this.opacity <= 0.1) {
+                    this.opacity = 0.1;
+                    this.twinkleDirection = 1;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+                
+                // 大星星加光晕
+                if (this.size > 1.5) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(200, 220, 255, ${this.opacity * 0.2})`;
+                    ctx.fill();
+                }
+            }
+        }
+        
+        // 流星类
+        class Meteor {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height * 0.5 - 100;
+                this.length = Math.random() * 80 + 50;
+                this.speed = Math.random() * 8 + 6;
+                this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.3;
+                this.opacity = 1;
+                this.active = false;
+                this.waitTime = Math.random() * 200 + 50;
+                this.waitCounter = 0;
+            }
+            update() {
+                if (!this.active) {
+                    this.waitCounter++;
+                    if (this.waitCounter >= this.waitTime) {
+                        this.active = true;
+                    }
+                    return;
+                }
+                
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.opacity -= 0.008;
+                
+                if (this.opacity <= 0 || this.x > canvas.width + 100 || this.y > canvas.height + 100) {
+                    this.reset();
+                }
+            }
+            draw() {
+                if (!this.active || this.opacity <= 0) return;
+                
+                const tailX = this.x - Math.cos(this.angle) * this.length;
+                const tailY = this.y - Math.sin(this.angle) * this.length;
+                
+                const gradient = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+                gradient.addColorStop(0.3, `rgba(180, 220, 255, ${this.opacity * 0.6})`);
+                gradient.addColorStop(1, 'rgba(100, 150, 255, 0)');
+                
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(tailX, tailY);
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                
+                // 流星头部光点
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+        
+        // 创建星星
+        const stars = [];
+        const starCount = 200;
+        for (let i = 0; i < starCount; i++) {
+            stars.push(new Star());
+        }
+        
+        // 创建流星
+        const meteors = [];
+        const meteorCount = 5;
+        for (let i = 0; i < meteorCount; i++) {
+            const meteor = new Meteor();
+            meteor.waitCounter = Math.random() * 100;
+            meteors.push(meteor);
+        }
+        
+        // 动画循环
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制星星
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            
+            // 绘制流星
+            meteors.forEach(meteor => {
+                meteor.update();
+                meteor.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+        
+        // ========== 音乐播放器功能 ==========
+        // 歌曲列表（从localStorage加载）
+        let playlist = JSON.parse(localStorage.getItem('musicPlaylist') || '[]');
+        let currentIndex = -1;
+        let isPlaying = false;
+
+        // DOM元素
+        const audio = document.getElementById('audioPlayer');
+        const playBtn = document.getElementById('playBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const currentTimeEl = document.getElementById('currentTime');
+        const totalTimeEl = document.getElementById('totalTime');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        const songTitle = document.getElementById('songTitle');
+        const songArtist = document.getElementById('songArtist');
+        const playlistEl = document.getElementById('playlist');
+        const addSongBtn = document.getElementById('addSongBtn');
+        const songNameInput = document.getElementById('songNameInput');
+        const songUrlInput = document.getElementById('songUrlInput');
+        const songArtistInput = document.getElementById('songArtistInput');
+        const apiToggle = document.getElementById('apiToggle');
+        const apiContent = document.getElementById('apiContent');
+        const apiArrow = document.getElementById('apiArrow');
+
+        // 初始化
+        audio.volume = 0.7;
+        renderPlaylist();
+
+        // 格式化时间
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // 渲染歌曲列表
+        function renderPlaylist() {
+            if (playlist.length === 0) {
+                playlistEl.innerHTML = '<div style="text-align:center; color:rgba(255,255,255,0.5); padding:20px;">还没有歌曲，在上方添加你喜欢的歌曲吧！</div>';
+                return;
+            }
+            playlistEl.innerHTML = playlist.map((song, index) => `
+                <div class="playlist-item ${index === currentIndex ? 'playing' : ''}" onclick="playSong(${index})">
+                    <span class="song-num">${index + 1}</span>
+                    <span class="song-name">${song.name} ${song.artist ? '- ' + song.artist : ''}</span>
+                    <button class="delete-btn" onclick="event.stopPropagation(); deleteSong(${index})">🗑</button>
+                </div>
+            `).join('');
+        }
+
+        // 播放歌曲
+        function playSong(index) {
+            if (index < 0 || index >= playlist.length) return;
+            currentIndex = index;
+            const song = playlist[index];
+            audio.src = song.url;
+            audio.play();
+            isPlaying = true;
+            playBtn.textContent = '⏸';
+            songTitle.textContent = song.name;
+            songArtist.textContent = song.artist || '未知歌手';
+            renderPlaylist();
+            savePlaylist();
+        }
+
+        // 播放/暂停
+        playBtn.addEventListener('click', () => {
+            if (currentIndex === -1 && playlist.length > 0) {
+                playSong(0);
+                return;
+            }
+            if (isPlaying) {
+                audio.pause();
+                playBtn.textContent = '▶';
+            } else {
+                audio.play();
+                playBtn.textContent = '⏸';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // 上一首
+        prevBtn.addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            const newIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+            playSong(newIndex);
+        });
+
+        // 下一首
+        nextBtn.addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            const newIndex = (currentIndex + 1) % playlist.length;
+            playSong(newIndex);
+        });
+
+        // 进度条更新
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = percent + '%';
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+            }
+        });
+
+        audio.addEventListener('loadedmetadata', () => {
+            totalTimeEl.textContent = formatTime(audio.duration);
+        });
+
+        // 点击进度条跳转
+        progressBar.addEventListener('click', (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            if (audio.duration) {
+                audio.currentTime = percent * audio.duration;
+            }
+        });
+
+        // 音量控制
+        volumeSlider.addEventListener('input', () => {
+            audio.volume = volumeSlider.value / 100;
+            volumeValue.textContent = volumeSlider.value + '%';
+        });
+
+        // 歌曲结束自动下一首
+        audio.addEventListener('ended', () => {
+            if (playlist.length > 0) {
+                const newIndex = (currentIndex + 1) % playlist.length;
+                playSong(newIndex);
+            }
+        });
+
+        // 添加歌曲
+        addSongBtn.addEventListener('click', () => {
+            const name = songNameInput.value.trim();
+            const url = songUrlInput.value.trim();
+            const artist = songArtistInput.value.trim();
+            
+            if (!name || !url) {
+                alert('请填写歌曲名称和歌曲链接！');
+                return;
+            }
+            
+            playlist.push({ name, url, artist });
+            savePlaylist();
+            renderPlaylist();
+            
+            songNameInput.value = '';
+            songUrlInput.value = '';
+            songArtistInput.value = '';
+            
+            alert('歌曲添加成功！');
+        });
+
+        // 删除歌曲
+        function deleteSong(index) {
+            if (confirm('确定要删除这首歌曲吗？')) {
+                playlist.splice(index, 1);
+                if (currentIndex === index) {
+                    audio.pause();
+                    audio.src = '';
+                    isPlaying = false;
+                    playBtn.textContent = '▶';
+                    currentIndex = -1;
+                    songTitle.textContent = '选择一首歌曲开始播放';
+                    songArtist.textContent = '在下方列表添加你喜欢的歌曲';
+                } else if (currentIndex > index) {
+                    currentIndex--;
+                }
+                savePlaylist();
+                renderPlaylist();
+            }
+        }
+
+        // 保存到localStorage
+        function savePlaylist() {
+            localStorage.setItem('musicPlaylist', JSON.stringify(playlist));
+        }
+
+        // 影视源接口折叠
+        apiToggle.addEventListener('click', () => {
+            apiContent.classList.toggle('show');
+            apiArrow.textContent = apiContent.classList.contains('show') ? '▲' : '▼';
+        });
+
+        // 复制文本
+        function copyText(text) {
+            const fullUrl = window.location.origin + text;
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                alert('接口地址已复制：' + fullUrl);
+            }).catch(() => {
+                alert('复制失败，请手动复制：' + fullUrl);
+            });
+        }
+
+        // 回车键添加歌曲
+        songArtistInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addSongBtn.click();
+        });
+    </script>
 </body>
 </html>
