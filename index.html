@@ -372,19 +372,26 @@
         }
         .modal-close {
             position: absolute;
-            top: 15px;
-            right: 18px;
-            font-size: 28px;
+            top: 10px;
+            right: 10px;
+            font-size: 32px;
             font-weight: bold;
             color: #999;
             cursor: pointer;
             line-height: 1;
             transition: all 0.2s;
             z-index: 10;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
         .modal-close:hover {
             color: #ff0000;
             transform: rotate(90deg);
+            background: rgba(255,0,0,0.1);
         }
         /* 右键菜单 */
         .context-menu {
@@ -1163,7 +1170,7 @@
     </div>
     
     <!-- 密码验证弹窗 -->
-    <div class="modal-overlay" id="passwordModal" style="display:none;">
+    <div class="modal-overlay" id="passwordModal" style="display:none;" onclick="if(event.target===this)closePasswordModal()">
         <div class="modal" style="max-width:350px;">
             <span class="modal-close" onclick="closePasswordModal()">×</span>
             <h3 id="passwordModalTitle">🔒 请输入密码</h3>
@@ -1180,7 +1187,7 @@
     </div>
 
     <!-- 设置/修改密码弹窗 -->
-    <div class="modal-overlay" id="setPasswordModal" style="display:none;">
+    <div class="modal-overlay" id="setPasswordModal" style="display:none;" onclick="if(event.target===this)closeSetPasswordModal()">
         <div class="modal" style="max-width:350px;">
             <span class="modal-close" onclick="closeSetPasswordModal()">×</span>
             <h3 id="setPasswordModalTitle">🔒 设置密码</h3>
@@ -1196,7 +1203,7 @@
     </div>
 
     <!-- 添加/编辑网站弹窗 -->
-    <div class="modal-overlay" id="siteModal">
+    <div class="modal-overlay" id="siteModal" onclick="if(event.target===this)closeModal()">
         <div class="modal">
             <span class="modal-close" onclick="closeModal()">×</span>
             <h3 id="modalTitle">添加网站</h3>
@@ -1690,22 +1697,23 @@
                     const faviconUrl = `${protocol}//${domain}/favicon.ico`;
                     
                     siteEl.innerHTML = `
-                        <a href="${site.type === 'copy' ? 'javascript:void(0)' : site.url}" 
-                           target="${site.type === 'copy' ? '_self' : '_blank'}" 
-                           draggable="false" 
-                           style="text-decoration:none;color:inherit;display:block;"
-                           onclick="${site.type === 'copy' ? `event.preventDefault();copyToClipboard('${site.url.replace(/'/g, "\\'")}')` : ''}">
+                        <div style="text-decoration:none;color:inherit;display:block;cursor:default;">
                             ${site.type === 'copy' ? `
-                                <div style="text-align:left;padding:8px 12px;">
-                                    <div style="font-size:11px;color:#888;margin-bottom:3px;">📋 ${site.name}</div>
-                                    <div style="font-size:12px;color:#333;word-break:break-all;font-family:monospace;">${site.url}</div>
+                                <div style="text-align:left;padding:12px 15px;display:flex;align-items:center;gap:10px;">
+                                    <div style="flex:1;min-width:0;">
+                                        <div style="font-size:12px;color:#555;margin-bottom:6px;font-weight:bold;">📋 ${site.name}</div>
+                                        <div style="font-size:13px;color:#222;word-break:break-all;font-family:monospace;background:#f8f8f8;padding:10px 12px;border-radius:8px;border:1px solid #ddd;user-select:text;-webkit-user-select:text;line-height:1.5;">${site.url}</div>
+                                    </div>
+                                    <button onclick="copyToClipboard('${site.url.replace(/'/g, "\\'")}')" style="padding:12px 18px;background:#ff0000;color:white;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 8px rgba(255,0,0,0.3);">📋 复制</button>
                                 </div>
                             ` : `
-                                <img class="site-favicon" src="${faviconUrl}" alt="${site.name}" data-domain="${domain}" onerror="this.onerror=null;this.src='https://api.iowen.cn/favicon/${domain}.png';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};">
-                                <span class="icon" style="display:none;">${site.icon}</span>
-                                <span class="name">${site.name}</span>
+                                <a href="${site.url}" target="_blank" draggable="false" style="text-decoration:none;color:inherit;display:block;">
+                                    <img class="site-favicon" src="${faviconUrl}" alt="${site.name}" data-domain="${domain}" onerror="this.onerror=null;this.src='https://api.iowen.cn/favicon/${domain}.png';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};">
+                                    <span class="icon" style="display:none;">${site.icon}</span>
+                                    <span class="name">${site.name}</span>
+                                </a>
                             `}
-                        </a>
+                        </div>
                     `;
                     
                     // 复制型网站加特殊class，横向铺满
