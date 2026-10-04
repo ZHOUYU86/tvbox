@@ -79,25 +79,29 @@
         .url-label.local { color: #10b981; }
         .url-input {
             flex: 1;
-            padding: 8px 12px;
+            padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 13px;
+            border-radius: 8px;
+            font-size: 14px;
             font-family: Consolas, monospace;
-            background: #f9f9f9;
-            color: #333;
+            background: #fff;
+            color: #222;
+            min-width: 0;
+            user-select: text;
+            -webkit-user-select: text;
         }
         .copy-btn {
-            padding: 8px 16px;
+            padding: 12px 20px;
             background: #3b82f6;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             transition: background 0.2s;
             white-space: nowrap;
+            flex-shrink: 0;
         }
         .copy-btn:hover {
             background: #2563eb;
@@ -188,6 +192,37 @@
             margin-bottom: 20px;
             font-size: 13px;
             line-height: 1.6;
+        }
+        /* 手机端响应式 */
+        @media (max-width: 600px) {
+            .url-row {
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+            .url-label {
+                min-width: auto;
+                width: 100%;
+                font-size: 14px;
+                margin-bottom: 2px;
+            }
+            .url-input {
+                flex: 1 1 100%;
+                padding: 14px 16px;
+                font-size: 15px;
+                order: 1;
+            }
+            .copy-btn {
+                padding: 14px 24px;
+                font-size: 15px;
+                order: 2;
+            }
+            .delete-url-btn {
+                order: 3;
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
         }
     </style>
 </head>
