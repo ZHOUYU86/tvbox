@@ -1,7 +1,23 @@
-﻿{
+{
     "spider":  "./deps/feishu-sync/%E4%B8%80%E6%9C%A8%E6%BA%90/JAR/XB%E5%8C%85jar/LIBVIO.jar;md5;da018b4f9e93e66d29be9ff5013a2059",
     "wallpaper":  "https://t.alcy.cc/ys",
     "sites":  [
+                  {
+                      "key":  "nvyou",
+                      "name":  "👙女优爬虫",
+                      "type":  3,
+                      "api":  "https://zhouyu365666.top/assets/static/data/nvyou.json",
+                      "searchable":  1,
+                      "changeable":  1
+                  },
+                  {
+                      "key":  "nvyou",
+                      "name":  "👙 女优(爬虫)",
+                      "type":  3,
+                      "api":  "https://zhouyu365666.top/assets/static/data/nvyou.json",
+                      "searchable":  1,
+                      "changeable":  1
+                  },
                   {
                       "api":  "https://91av.cyou/api.php/provide/vod/",
                       "key":  "041c843aea19129a4716a6db4ab444ff",
