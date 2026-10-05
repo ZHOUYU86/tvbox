@@ -3146,18 +3146,18 @@ const embeddedLyrics = {
             const song = onlineSearchResults[index];
             const apiBase = 'https://music-api.gdstudio.xyz/api.php';
             
-            // 获取播放地址和歌词（网易云用落雪音乐API）
+            // 获取播放地址和歌词（网易云）
             let playUrl = song.url;
             let lrcUrl = song.lrc;
             
             try {
+                // 播放地址用落雪音乐API
                 const urlApi = apiBase + '?types=url&source=netease&id=' + song.id + '&br=320';
                 const urlData = await (await fetch(urlApi)).json();
                 if (urlData.url) playUrl = urlData.url;
                 
-                const lrcApi = apiBase + '?types=lrc&source=netease&id=' + song.id;
-                const lrcData = await (await fetch(lrcApi)).json();
-                if (lrcData.lrc) lrcUrl = lrcData.lrc;
+                // 歌词用网易云官方API
+                lrcUrl = 'https://music.163.com/api/song/lyric?id=' + song.id + '&lv=1&kv=1&tv=-1';
             } catch (e) {
                 console.log('获取播放地址失败');
             }
