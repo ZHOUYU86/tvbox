@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -1023,6 +1023,49 @@
         .music-search-bar button:active {
             transform: translateY(0);
         }
+        /* 平台切换 Tab */
+        .music-platform-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 0 15px 8px;
+            margin: -6px 0 8px;
+        }
+        .music-platform-tabs .platform-tab {
+            flex: 1;
+            text-align: center;
+            padding: 5px 0;
+            font-size: 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            color: #888;
+            background: #f2f4f7;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .music-platform-tabs .platform-tab:hover {
+            background: #e6f0ff;
+            color: #1677ff;
+        }
+        .music-platform-tabs .platform-tab.active {
+            background: linear-gradient(135deg, #1677ff, #096dd9);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(22,119,255,0.3);
+        }
+        /* KTV 红色光标 */
+        .lyric-caret {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #ff3b30;
+            margin-left: 1px;
+            vertical-align: -0.12em;
+            animation: lyricBlink 0.8s infinite;
+        }
+        @keyframes lyricBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
         /* 搜索结果面板（主面板内） */
         .search-results-panel {
             max-height: 280px;
@@ -1122,10 +1165,10 @@
         }
         .music-lyrics .lyric-line.active {
             display: block;
-            color: #1677ff;
+            color: #ff3b30;
             font-weight: bold;
             font-size: 16px;
-            text-shadow: 0 0 10px rgba(211, 47, 47, 0.3);
+            text-shadow: 0 0 10px rgba(255, 59, 48, 0.3);
         }
 
         /* 添加歌曲弹窗 - 居中显示 */
@@ -1415,6 +1458,13 @@
             <div class="music-search-bar">
                 <input type="text" id="musicSearchInput" placeholder="🔍 搜歌曲名或歌手名，按回车搜索..." onkeypress="if(event.key==='Enter')searchMusic()" />
                 <button onclick="searchMusic()">搜索</button>
+            </div>
+            <!-- 平台切换 -->
+            <div class="music-platform-tabs">
+                <span class="platform-tab active" data-server="netease" onclick="switchPlatform('netease', this)">网易云</span>
+                <span class="platform-tab" data-server="tencent" onclick="switchPlatform('tencent', this)">QQ音乐</span>
+                <span class="platform-tab" data-server="kugou" onclick="switchPlatform('kugou', this)">酷狗</span>
+                <span class="platform-tab" data-server="kuwo" onclick="switchPlatform('kuwo', this)">酷我</span>
             </div>
             <!-- 搜索结果 -->
             <div id="searchResults" class="search-results-panel" style="display:none;">
@@ -2985,15 +3035,34 @@ const embeddedLyrics = {
 
         // ========== 在线音乐全网搜索功能 ==========
         let onlineSearchResults = [];
-        
+        let currentPlatform = 'netease'; // 默认网易云
+
+        // 平台元数据
+        const platformMeta = {
+            netease: { name: '网易云', color: '#e60026' },
+            tencent: { name: 'QQ音乐', color: '#31c27c' },
+            kugou:   { name: '酷狗',   color: '#2ca2f9' },
+            kuwo:    { name: '酷我',   color: '#ff9500' }
+        };
+
+        // 切换平台
+        function switchPlatform(server, el) {
+            currentPlatform = server;
+            document.querySelectorAll('.music-platform-tabs .platform-tab').forEach(t => t.classList.remove('active'));
+            if (el) el.classList.add('active');
+            // 如果已经有搜索词，自动重新搜一次
+            const kw = document.getElementById('musicSearchInput').value.trim();
+            if (kw) searchMusic();
+        }
+
         // CORS代理列表（多个备选）
         const corsProxies = [
-            url => url,  // 先直接请求（最快）
+            url => url,  // 先直接请求（最快，走 /api/music-search 同源）
             url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
             url => 'https://corsproxy.io/?' + encodeURIComponent(url),
             url => 'https://cors.eu.org/' + url
         ];
-        
+
         // 带CORS代理的fetch
         async function fetchWithCORS(url, timeout = 10000) {
             for (let i = 0; i < corsProxies.length; i++) {
@@ -3012,66 +3081,44 @@ const embeddedLyrics = {
             }
             throw new Error('所有代理都失败');
         }
-        
-        // 全网搜索音乐（支持网易云、QQ音乐、酷狗、酷我）
+
+        // 搜索音乐（按选中平台）
         async function searchMusic() {
             const keyword = document.getElementById('musicSearchInput').value.trim();
             if (!keyword) {
                 alert('请输入搜索关键词');
                 return;
             }
-            
+
             const resultsDiv = document.getElementById('searchResults');
             const itemsDiv = document.getElementById('searchResultsItems');
             resultsDiv.style.display = 'block';
-            itemsDiv.innerHTML = '<div class="search-loading">🔍 全网搜索中（网易云/QQ/酷狗/酷我）...</div>';
-            
-            // 四个平台同时搜索
-            const platforms = [
-                { name: '网易云', server: 'netease', color: '#e60026' },
-                { name: 'QQ音乐', server: 'tencent', color: '#31c27c' },
-                { name: '酷狗', server: 'kugou', color: '#2ca2f9' },
-                { name: '酷我', server: 'kuwo', color: '#ffaa00' }
-            ];
-            
-            let allResults = [];
-            let successCount = 0;
-            
-            // 并行搜索四个平台
-            await Promise.all(platforms.map(async (platform) => {
-                try {
-                    // 用Meting API搜索（支持多平台）
-                    const searchUrl = 'https://api.i-meto.com/meting/api?server=' + platform.server + '&type=search&name=' + encodeURIComponent(keyword);
-                    const data = await fetchWithCORS(searchUrl, 8000);
-                    
-                    if (Array.isArray(data) && data.length > 0) {
-                        // 给每个结果加上平台信息
-                        const platformResults = data.slice(0, 8).map(song => ({
-                            ...song,
-                            platform: platform.name,
-                            platformColor: platform.color
-                        }));
-                        allResults = allResults.concat(platformResults);
-                        successCount++;
-                    }
-                } catch (e) {
-                    // 这个平台搜索失败，继续其他平台
+            const meta = platformMeta[currentPlatform] || platformMeta.netease;
+            itemsDiv.innerHTML = '<div class="search-loading">🔍 正在' + meta.name + '搜索...</div>';
+
+            try {
+                // 走本地 Cloudflare Pages Function 代理（解决CORS）
+                const searchUrl = '/api/music-search?server=' + encodeURIComponent(currentPlatform) +
+                                  '&keyword=' + encodeURIComponent(keyword);
+                const data = await (await fetch(searchUrl)).json();
+
+                if (Array.isArray(data) && data.length > 0) {
+                    onlineSearchResults = data.slice(0, 30).map(song => ({
+                        name: song.name || song.title || '未知歌曲',
+                        artist: song.artist || song.author || '未知',
+                        url: song.url,
+                        lrc: song.lrc,
+                        platform: meta.name,
+                        platformColor: meta.color
+                    }));
+                    renderSearchResults();
+                } else {
+                    itemsDiv.innerHTML = '<div class="search-loading">😢 ' + meta.name + '未找到相关歌曲<br><span style="font-size:10px;color:#999;">试试切换其他平台或换个关键词</span></div>';
+                    onlineSearchResults = [];
                 }
-            }));
-            
-            if (allResults.length > 0) {
-                // 按平台排序，去重
-                const seen = new Set();
-                onlineSearchResults = allResults.filter(song => {
-                    const key = song.name + ' - ' + song.artist;
-                    if (seen.has(key)) return false;
-                    seen.add(key);
-                    return true;
-                });
-                
-                renderSearchResults();
-            } else {
-                itemsDiv.innerHTML = '<div class="search-loading">😢 全网搜索未找到相关歌曲<br><span style="font-size:10px;color:#999;">请检查网络或换个关键词</span></div>';
+            } catch (e) {
+                itemsDiv.innerHTML = '<div class="search-loading">❌ 搜索失败：' + (e.message || '网络错误') + '<br><span style="font-size:10px;color:#999;">请稍后再试或切换平台</span></div>';
+                onlineSearchResults = [];
             }
         }
         
@@ -3136,31 +3183,8 @@ const embeddedLyrics = {
                 if (callback) callback();
                 return;
             }
-            // 在线歌曲的歌词地址可能也需要CORS代理
+            // 在线歌曲的歌词直接fetch（Meting API返回lrc地址，返回纯文本LRC）
             if (song.isOnline) {
-                fetchWithCORS(song.lrc, 8000)
-                    .then(text => {
-                        if (typeof text === 'string') {
-                            song.parsedLyrics = parseLRC(text);
-                        } else {
-                            song.parsedLyrics = [];
-                        }
-                        if (callback) callback();
-                    })
-                    .catch(() => {
-                        // 尝试直接fetch
-                        fetch(song.lrc)
-                            .then(r => r.text())
-                            .then(text => {
-                                song.parsedLyrics = parseLRC(text);
-                                if (callback) callback();
-                            })
-                            .catch(() => {
-                                song.parsedLyrics = [];
-                                if (callback) callback();
-                            });
-                    });
-            } else {
                 fetch(song.lrc)
                     .then(r => r.text())
                     .then(text => {
@@ -3171,7 +3195,19 @@ const embeddedLyrics = {
                         song.parsedLyrics = [];
                         if (callback) callback();
                     });
+                return;
             }
+            // 本地歌曲的lrc文件路径
+            fetch(song.lrc)
+                .then(r => r.text())
+                .then(text => {
+                    song.parsedLyrics = parseLRC(text);
+                    if (callback) callback();
+                })
+                .catch(() => {
+                    song.parsedLyrics = [];
+                    if (callback) callback();
+                });
         }
 
         // 加载歌曲
@@ -3326,18 +3362,20 @@ const embeddedLyrics = {
                 if (currentCharIndex < 0) currentCharIndex = 0;
                 if (currentCharIndex >= charCount) currentCharIndex = charCount - 1;
                 
-                // 渲染逐字歌词：唱过的红色，没唱的深灰色
+                // 渲染逐字歌词：唱过的红色，没唱的深灰色，末尾带红色光标
                 let charHtml = '';
                 for (let i = 0; i < charCount; i++) {
                     const ch = lineText[i];
                     if (i <= currentCharIndex) {
                         // 已经唱过的字（包括当前） - 红色
-                        charHtml += `<span style="color:#1677ff;font-weight:bold;">${ch}</span>`;
+                        charHtml += `<span style="color:#ff3b30;font-weight:bold;">${ch}</span>`;
                     } else {
                         // 没唱的字 - 深灰色
-                        charHtml += `<span style="color:#444;font-weight:bold;">${ch}</span>`;
+                        charHtml += `<span style="color:#555;font-weight:bold;">${ch}</span>`;
                     }
                 }
+                // 在当前唱到的字后面加红色闪烁光标
+                charHtml += '<span class="lyric-caret"></span>';
                 lyricsContainer.innerHTML = `<div class="lyric-line active">${charHtml}</div>`;
             } catch (e) {
                 // 出错也不影响播放
@@ -3558,6 +3596,7 @@ const embeddedLyrics = {
     </script>
 </body>
 </html>
+
 
 
 
