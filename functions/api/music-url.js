@@ -1,4 +1,4 @@
-// 取真实播放地址（直连平台官方接口，更稳定）
+// 取真实播放地址（官方接口 + Meting API备用）
 export async function onRequest(context) {
     const url = new URL(context.request.url);
     const server = url.searchParams.get('server') || '';
@@ -6,12 +6,11 @@ export async function onRequest(context) {
     try {
         let playUrl = '';
 
+        // 先试官方接口
         if (server === 'tencent') {
-            // QQ音乐
             const songmid = url.searchParams.get('songmid') || '';
             if (!songmid) return new Response('missing songmid', { status: 400 });
             
-            // 获取vkey
             const vkeyRes = await fetch('https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?g_tk=5381&jsonpCallback=MusicJsonCallback&loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&cid=205361747&uin=0&songmid=' + songmid + '&filename=C400' + songmid + '.m4a&guid=00000000000000000000000000000000', {
                 headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://y.qq.com/' }
             });
@@ -22,21 +21,18 @@ export async function onRequest(context) {
                 playUrl = 'https://dl.stream.qqmusic.qq.com/C400' + songmid + '.m4a?vkey=' + vkey + '&uin=0&fromtag=66';
             }
         } else if (server === 'kugou') {
-            // 酷狗
             const hash = url.searchParams.get('hash') || '';
             if (!hash) return new Response('missing hash', { status: 400 });
             
-            // 用酷狗的另一个接口获取播放地址
             const res = await fetch('https://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo&hash=' + hash, {
                 headers: { 
-                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15',
                     Referer: 'https://m.kugou.com/'
                 }
             });
             const data = await res.json();
             playUrl = data.url || (data.info && data.info.url) || '';
         } else if (server === 'kuwo') {
-            // 酷我
             const rid = url.searchParams.get('rid') || '';
             if (!rid) return new Response('missing rid', { status: 400 });
             
@@ -46,10 +42,37 @@ export async function onRequest(context) {
             const data = await res.json();
             playUrl = (data.data && data.data.url) || '';
         } else if (server === 'netease') {
-            // 网易云
             const id = url.searchParams.get('id') || '';
             if (!id) return new Response('missing id', { status: 400 });
             playUrl = 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3';
+        }
+
+        // 如果官方接口失败，用Meting API备用
+        if (!playUrl || !playUrl.startsWith('http')) {
+            let metingServer = '';
+            let metingId = '';
+            
+            if (server === 'tencent') {
+                metingServer = 'tencent';
+                metingId = url.searchParams.get('songmid') || '';
+            } else if (server === 'kugou') {
+                metingServer = 'kugou';
+                metingId = url.searchParams.get('hash') || '';
+            } else if (server === 'kuwo') {
+                metingServer = 'kuwo';
+                metingId = url.searchParams.get('rid') || '';
+            } else if (server === 'netease') {
+                metingServer = 'netease';
+                metingId = url.searchParams.get('id') || '';
+            }
+            
+            if (metingServer && metingId) {
+                const metingRes = await fetch('https://api.injahow.cn/meting/?type=url&id=' + metingId + '&server=' + metingServer);
+                const metingUrl = await metingRes.text();
+                if (metingUrl && metingUrl.startsWith('http')) {
+                    playUrl = metingUrl;
+                }
+            }
         }
 
         if (playUrl && playUrl.startsWith('http')) {

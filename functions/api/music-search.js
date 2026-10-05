@@ -50,7 +50,7 @@ async function searchNetease(kw) {
         out.push({
             name: s.name,
             artist: (s.artists && s.artists[0] && s.artists[0].name) || '未知',
-            pic: s.album && s.album.picUrl ? s.album.picUrl + '?param=200y200' : '',
+            pic: s.album && s.album.picUrl ? s.album.picUrl + '?param=200y200' : 'https://p1.music.126.net/6y-UleORITEDbvr0Im1-5w==/109951165804443793.jpg',
             url: 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3',
             lrc: '/api/music-lyric?server=netease&id=' + id
         });
