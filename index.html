@@ -3099,10 +3099,10 @@ const embeddedLyrics = {
             itemsDiv.innerHTML = '<div class="search-loading">🔍 正在' + meta.name + '搜索...</div>';
 
             try {
-                // Meting API 搜索（之前测试正常）
+                // Meting API 搜索（正确参数：type=name）
                 const apiMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
                 const serverName = apiMap[currentPlatform] || 'netease';
-                const searchUrl = 'https://api.injahow.cn/meting/?type=search&server=' + serverName + '&name=' + encodeURIComponent(keyword);
+                const searchUrl = 'https://api.injahow.cn/meting/?type=name&server=' + serverName + '&name=' + encodeURIComponent(keyword);
                 const data = await (await fetch(searchUrl)).json();
 
                 if (Array.isArray(data) && data.length > 0) {
