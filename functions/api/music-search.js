@@ -35,9 +35,13 @@ async function fetchJson(u, headers = {}) {
 
 // ---------- 网易云 ----------
 async function searchNetease(kw) {
+    // 用网易云的另一个接口
     const data = await fetchJson(
-        'https://music.163.com/api/search/get/web?csrf_token=&hlpretag=&hlposttag=&s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
-        { Referer: 'https://music.163.com/' }
+        'https://music.163.com/api/cloudsearch/pc?s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
+        { 
+            Referer: 'https://music.163.com/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
     );
     const songs = (data.result && data.result.songs) || [];
     const out = [];
@@ -67,7 +71,7 @@ async function searchQQ(kw) {
         out.push({
             name: s.songname,
             artist: (s.singer && s.singer[0] && s.singer[0].name) || '未知',
-            pic: 'https://y.qq.com/music/photo_new/T002R300x300M000' + s.albummid + '.jpg',
+            pic: 'https://y.qq.com/music/photo_new/T002R300x300M000' + s.albummid + '_1.jpg',
             url: '/api/music-url?server=tencent&songmid=' + songmid,
             lrc: '/api/music-lyric?server=tencent&songmid=' + songmid
         });
