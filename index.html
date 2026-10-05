@@ -2988,11 +2988,10 @@ const embeddedLyrics = {
         
         // CORS代理列表（多个备选）
         const corsProxies = [
+            url => url,  // 先直接请求（最快）
             url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
             url => 'https://corsproxy.io/?' + encodeURIComponent(url),
-            url => 'https://cors.eu.org/' + url,
-            url => 'https://cors-anywhere.herokuapp.com/' + url,
-            url => url  // 最后尝试直接请求
+            url => 'https://cors.eu.org/' + url
         ];
         
         // 带CORS代理的fetch
@@ -3559,6 +3558,7 @@ const embeddedLyrics = {
     </script>
 </body>
 </html>
+
 
 
 
