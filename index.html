@@ -1467,12 +1467,11 @@
             {
                 name: '系统工具',
                 icon: '🔧',
-                password: '123456',
+                password: null,
                 sites: [
                     { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'TVBox源地址大全.html', type: 'link' },
                     { name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' },
-                    { name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' },
-                    { name: '🔞 合并配置18（Cloudflare）', icon: '🔞', url: 'https://tvbox-bh1.pages.dev/assets/static/data/tvbox18.json', type: 'link' }
+                    { name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' }
                 ]
             }
         ];
@@ -1553,7 +1552,7 @@
                 if (cat.name === '更多分类' || cat.name === '其他') {
                     cat.name = '系统工具';
                     cat.icon = '🔧';
-                    cat.password = '123456';
+                    cat.password = null;
                     needSave = true;
                 }
                 // 如果是系统工具分类且没有网站，添加源地址大全入口
