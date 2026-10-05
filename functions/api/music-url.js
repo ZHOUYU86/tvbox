@@ -7,7 +7,12 @@ export async function onRequest(context) {
         if (server === 'tencent') {
             const songmid = url.searchParams.get('songmid') || '';
             if (!songmid) return new Response('missing songmid', { status: 400 });
-            const guid = '364156593';
+            
+            // 方式1：直接用QQ音乐外链接口
+            const directUrl = 'https://qqmusic.qq.com/fcgi-bin/u?__=' + songmid;
+            
+            // 方式2：用musicu接口获取vkey
+            const guid = '10000';
             const data = {
                 req_0: {
                     module: 'vkey.GetVkeyServer',
@@ -18,20 +23,30 @@ export async function onRequest(context) {
                         songtype: [0],
                         uin: '0',
                         loginflag: 1,
-                        platform: '20'
+                        platform: '20',
+                        format: 'json'
                     }
                 }
             };
             const api = 'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' + encodeURIComponent(JSON.stringify(data));
-            const r = await fetch(api, { headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://y.qq.com/' } });
+            const r = await fetch(api, { 
+                headers: { 
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 
+                    Referer: 'https://y.qq.com/' 
+                } 
+            });
             const j = await r.json();
             const info = j && j.req_0 && j.req_0.data && j.req_0.data.midurlinfo && j.req_0.data.midurlinfo[0];
             const sip = j && j.req_0 && j.req_0.data && j.req_0.data.sip;
-            const purl = info && info.purl;
-            if (!purl || !sip || !sip[0]) {
-                return new Response('该歌曲在QQ音乐为VIP专享，无法直接播放', { status: 403 });
+            let purl = info && info.purl;
+            
+            // 如果有purl，用拼接后的地址
+            if (purl && sip && sip[0]) {
+                return Response.redirect(sip[0] + purl, 302);
             }
-            return Response.redirect(sip[0] + purl, 302);
+            
+            // 如果没有purl，试试用直接外链
+            return Response.redirect(directUrl, 302);
         }
 
         if (server === 'kugou') {
