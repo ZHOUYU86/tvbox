@@ -9,19 +9,19 @@ export async function onRequest(context) {
         
         // 落雪音乐API的平台映射
         let lxSource = '';
-        if (server === 'netease') lxSource = 'wy';
-        else if (server === 'tencent') lxSource = 'tx';
-        else if (server === 'kugou') lxSource = 'kg';
-        else if (server === 'kuwo') lxSource = 'kw';
-        else if (server === 'qishui') lxSource = 'mg';
+        if (server === 'netease') lxSource = 'netease';
+        else if (server === 'tencent') lxSource = 'tencent';
+        else if (server === 'kugou') lxSource = 'kugou';
+        else if (server === 'kuwo') lxSource = 'kuwo';
+        else if (server === 'qishui') lxSource = 'migu';
         
         // 使用落雪音乐API获取播放地址
         if (lxSource && songId) {
             const lxUrl = `https://music-api.gdstudio.xyz/api.php?types=url&source=${lxSource}&id=${songId}&br=320`;
             const lxRes = await fetch(lxUrl);
             const lxData = await lxRes.json();
-            if (lxData && lxData.body && lxData.body.url) {
-                playUrl = lxData.body.url;
+            if (lxData && lxData.url) {
+                playUrl = lxData.url;
             }
         }
 
