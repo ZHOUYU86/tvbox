@@ -3111,6 +3111,8 @@ const embeddedLyrics = {
                         artist: song.artist || song.author || '未知',
                         url: song.url,
                         lrc: song.lrc,
+                        id: song.id,
+                        pic: song.pic,
                         platform: meta.name,
                         platformColor: meta.color
                     }));
@@ -3140,17 +3142,28 @@ const embeddedLyrics = {
             }).join('');
         }
         
-        // 播放搜索结果（Meting API直接返回播放地址和歌词地址）
-        function playSearchResult(index) {
+        // 播放搜索结果（参考落雪音乐API，更稳定）
+        async function playSearchResult(index) {
             const song = onlineSearchResults[index];
             
-            // 创建歌曲对象（Meting API直接返回url和lrc）
+            // 参考落雪音乐的接口：直接用网易云外链（最稳定）
+            let playUrl = song.url;
+            let lrcUrl = song.lrc;
+            let coverUrl = song.pic || '🎵';
+            
+            // 如果是网易云平台，直接用外链播放（最稳定，无需二次请求）
+            if (currentPlatform === 'netease' && song.id) {
+                playUrl = 'https://music.163.com/song/media/outer/url?id=' + song.id + '.mp3';
+                lrcUrl = 'https://music.163.com/api/song/lyric?id=' + song.id + '&lv=1&kv=1&tv=-1';
+            }
+            
+            // 创建歌曲对象
             const newSong = {
                 title: song.name,
                 artist: song.artist || '未知歌手',
-                cover: '🎵',
-                url: song.url,  // 直接用Meting返回的播放地址
-                lrc: song.lrc,  // 直接用Meting返回的歌词地址
+                cover: coverUrl,
+                url: playUrl,
+                lrc: lrcUrl,
                 isOnline: true,
                 platform: song.platform
             };
