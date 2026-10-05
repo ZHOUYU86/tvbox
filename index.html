@@ -1727,6 +1727,19 @@
                 const grid = item.querySelector(`#siteGrid-${catIndex}`);
                 
                 cat.sites.forEach((site, siteIndex) => {
+                    // 强制修复：系统工具分类里的特定网站，不管旧数据是什么，都用完整URL
+                    if (site.name) {
+                        if (site.name.includes('源地址大全')) {
+                            site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
+                        } else if (site.name.includes('接口编辑器')) {
+                            site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
+                        } else if (site.name.includes('接口站') && site.name.includes('Cloudflare')) {
+                            site.url = 'https://tvbox-bh1.pages.dev';
+                        } else if (site.name.includes('合并配置18') || site.name.includes('配置18')) {
+                            site.url = 'https://zhouyu365666.top/assets/static/data/tvbox18.json';
+                        }
+                    }
+                    
                     const siteEl = document.createElement('div');
                     siteEl.className = 'site-item';
                     siteEl.draggable = true;
