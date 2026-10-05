@@ -3099,9 +3099,8 @@ const embeddedLyrics = {
             itemsDiv.innerHTML = '<div class="search-loading">🔍 正在' + meta.name + '搜索...</div>';
 
             try {
-                // 落雪音乐API（只支持网易云）
-                const apiBase = 'https://music-api.gdstudio.xyz/api.php';
-                const searchUrl = apiBase + '?types=search&source=netease&name=' + encodeURIComponent(keyword) + '&count=30';
+                // Cloudflare Pages Functions API（支持多平台）
+                const searchUrl = '/api/music-search?keyword=' + encodeURIComponent(keyword) + '&server=' + currentPlatform;
                 const data = await (await fetch(searchUrl)).json();
 
                 if (Array.isArray(data) && data.length > 0) {
@@ -3141,26 +3140,13 @@ const embeddedLyrics = {
             }).join('');
         }
         
-        // 播放搜索结果（分平台优化播放地址）
+        // 播放搜索结果（Cloudflare Pages Functions API）
         async function playSearchResult(index) {
             const song = onlineSearchResults[index];
-            const apiBase = 'https://music-api.gdstudio.xyz/api.php';
             
-            // 获取播放地址和歌词（网易云）
+            // 播放地址和歌词已经在搜索结果里了，直接用
             let playUrl = song.url;
             let lrcUrl = song.lrc;
-            
-            try {
-                // 播放地址用落雪音乐API
-                const urlApi = apiBase + '?types=url&source=netease&id=' + song.id + '&br=320';
-                const urlData = await (await fetch(urlApi)).json();
-                if (urlData.url) playUrl = urlData.url;
-                
-                // 歌词用网易云官方API
-                lrcUrl = 'https://music.163.com/api/song/lyric?id=' + song.id + '&lv=1&kv=1&tv=-1';
-            } catch (e) {
-                console.log('获取播放地址失败');
-            }
             
             const coverUrl = song.pic || '🎵';
             
@@ -3345,7 +3331,7 @@ const embeddedLyrics = {
                     if (song.lyrics && song.lyrics.length > 0) {
                         lyricsContainer.innerHTML = `<div class="lyric-line active">${song.lyrics[lyricIndex % song.lyrics.length]}</div>`;
                     } else {
-                        lyricsContainer.innerHTML = `<div class="lyric-line">♪ 暂无歌词 ♪</div>`;
+                        lyricsContainer.innerHTML = `<div class="lyric-line" style="color:#999;text-align:center;padding:20px;">♪ 暂无歌词，请欣赏音乐 ♪</div>`;
                     }
                     return;
                 }
@@ -3378,9 +3364,9 @@ const embeddedLyrics = {
                 const lineDuration = Math.max(lineEndTime - lineStartTime, 1);
                 const lineText = currentLine.text.trim();
                 const charCount = lineText.length;
-                // 每个字的时间，加一点偏移让高亮稍微提前
+                // 每个字的时间，精确同步
                 const timePerChar = lineDuration / Math.max(charCount, 1);
-                const elapsedInLine = (currentTime - lineStartTime) + 1.3; // 提前1.3秒
+                const elapsedInLine = currentTime - lineStartTime;
                 let currentCharIndex = Math.floor(elapsedInLine / timePerChar);
                 if (currentCharIndex < 0) currentCharIndex = 0;
                 if (currentCharIndex >= charCount) currentCharIndex = charCount - 1;
