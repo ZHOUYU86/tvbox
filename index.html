@@ -1588,6 +1588,22 @@
                             }
                         }
                     });
+                    // 自动添加缺少的网站
+                    const hasEditor = cat.sites.some(s => s.name && s.name.includes('接口编辑器'));
+                    const hasStation = cat.sites.some(s => s.name && s.name.includes('接口站'));
+                    const has18 = cat.sites.some(s => s.name && (s.name.includes('合并配置18') || s.name.includes('配置18')));
+                    if (!hasEditor) {
+                        cat.sites.push({ name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' });
+                        needSave = true;
+                    }
+                    if (!hasStation) {
+                        cat.sites.push({ name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' });
+                        needSave = true;
+                    }
+                    if (!has18) {
+                        cat.sites.push({ name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' });
+                        needSave = true;
+                    }
                 }
             });
             if (needSave) saveData();
@@ -3171,6 +3187,35 @@ const embeddedLyrics = {
             createStars();
             animate();
             setTimeout(launchMeteor, 2500);
+            
+            // 强制检查：确保系统工具分类里的网站都在
+            setTimeout(() => {
+                let needFix = false;
+                navData.forEach(cat => {
+                    if (cat.name === '系统工具' && cat.sites) {
+                        const hasEditor = cat.sites.some(s => s.name && s.name.includes('接口编辑器'));
+                        const hasStation = cat.sites.some(s => s.name && s.name.includes('接口站'));
+                        const has18 = cat.sites.some(s => s.name && (s.name.includes('合并配置18') || s.name.includes('配置18')));
+                        if (!hasEditor) {
+                            cat.sites.push({ name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' });
+                            needFix = true;
+                        }
+                        if (!hasStation) {
+                            cat.sites.push({ name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' });
+                            needFix = true;
+                        }
+                        if (!has18) {
+                            cat.sites.push({ name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' });
+                            needFix = true;
+                        }
+                    }
+                });
+                if (needFix) {
+                    saveData();
+                    renderAccordion();
+                    console.log('已自动补全系统工具分类的网站');
+                }
+            }, 500);
         } catch(e) {
             console.error('其他初始化失败:', e);
         }
