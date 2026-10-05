@@ -1575,6 +1575,20 @@
                         needSave = true;
                     }
                 }
+                // 自动修复：如果系统工具分类里的链接是相对路径，改成完整URL
+                if (cat.name === '系统工具' && cat.sites) {
+                    cat.sites.forEach(site => {
+                        if (site.url && !site.url.startsWith('http')) {
+                            if (site.name && site.name.includes('源地址大全')) {
+                                site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
+                                needSave = true;
+                            } else if (site.name && site.name.includes('接口编辑器')) {
+                                site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
+                                needSave = true;
+                            }
+                        }
+                    });
+                }
             });
             if (needSave) saveData();
             // 自动迁移灰色图标为彩色图标
