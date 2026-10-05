@@ -943,6 +943,146 @@
         .playlist-item .del-btn:hover {
             color: #ff6b6b;
         }
+        /* 搜索框 */
+        .music-search-box {
+            padding: 10px 15px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .music-search-box input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+        }
+        .music-search-box input:focus {
+            border-color: #1677ff;
+        }
+        .music-search-box button {
+            padding: 6px 12px;
+            background: #1677ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .music-search-box button:hover {
+            background: #096dd9;
+        }
+        /* 主面板顶部搜索栏 */
+        .music-search-bar {
+            padding: 10px 15px 10px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 2px solid #1677ff;
+            background: linear-gradient(180deg, rgba(22,119,255,0.05), transparent);
+            margin: -12px -15px 10px;
+            padding: 12px 15px 10px;
+        }
+        .music-search-bar input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid #1677ff;
+            border-radius: 22px;
+            font-size: 14px;
+            outline: none;
+            background: #fff;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(22,119,255,0.15);
+        }
+        .music-search-bar input::placeholder {
+            color: #999;
+            font-weight: normal;
+        }
+        .music-search-bar input:focus {
+            border-color: #096dd9;
+            box-shadow: 0 0 0 4px rgba(22,119,255,0.15);
+        }
+        .music-search-bar button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #1677ff, #096dd9);
+            color: #fff;
+            border: none;
+            border-radius: 22px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(22,119,255,0.3);
+        }
+        .music-search-bar button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(22,119,255,0.4);
+        }
+        .music-search-bar button:active {
+            transform: translateY(0);
+        }
+        /* 搜索结果面板（主面板内） */
+        .search-results-panel {
+            max-height: 280px;
+            overflow-y: auto;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fff;
+            margin: 0 -15px 10px;
+        }
+        .search-results-header {
+            padding: 8px 15px;
+            font-size: 12px;
+            color: #1677ff;
+            background: rgba(22,119,255,0.08);
+            border-bottom: 1px solid #e6f0ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+        .search-result-item {
+            padding: 10px 15px;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .search-result-item:hover {
+            background: rgba(22,119,255,0.08);
+            color: #1677ff;
+        }
+        .search-result-item .song-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+        .search-result-item .song-artist {
+            color: #888;
+            font-size: 11px;
+            max-width: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .search-result-item .play-icon {
+            color: #1677ff;
+            font-size: 10px;
+        }
+        .search-loading {
+            padding: 20px 15px;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.8;
+        }
         /* 歌词显示 - 屏幕正中底部 */
         .music-lyrics {
             position: fixed;
@@ -1271,6 +1411,19 @@
         </div>
         <!-- 播放器主面板 -->
         <div class="music-panel" id="musicPanel">
+            <!-- 搜索框（顶部，明显位置） -->
+            <div class="music-search-bar">
+                <input type="text" id="musicSearchInput" placeholder="🔍 搜歌曲名或歌手名，按回车搜索..." onkeypress="if(event.key==='Enter')searchMusic()" />
+                <button onclick="searchMusic()">搜索</button>
+            </div>
+            <!-- 搜索结果 -->
+            <div id="searchResults" class="search-results-panel" style="display:none;">
+                <div class="search-results-header">
+                    <span>搜索结果</span>
+                    <span style="cursor:pointer;color:rgba(255,255,255,0.6);" onclick="clearSearch()">✕</span>
+                </div>
+                <div id="searchResultsItems"></div>
+            </div>
             <div class="music-top">
                 <!-- 圆形唱片 -->
                 <div class="music-cover" id="musicCover">
@@ -1467,9 +1620,10 @@
             {
                 name: '系统工具',
                 icon: '🔧',
-                password: null,
+                password: '123456',
                 sites: [
-                    { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'TVBox源地址大全.html', type: 'link' },
+                    { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
+                    { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' },
                     { name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' },
                     { name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' }
                 ]
@@ -1552,13 +1706,14 @@
                 if (cat.name === '更多分类' || cat.name === '其他') {
                     cat.name = '系统工具';
                     cat.icon = '🔧';
-                    cat.password = null;
+                    cat.password = '123456';
                     needSave = true;
                 }
                 // 如果是系统工具分类且没有网站，添加源地址大全入口
                 if (cat.name === '系统工具' && (!cat.sites || cat.sites.length === 0)) {
                     cat.sites = [
-                        { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'TVBox源地址大全.html', type: 'link' }
+                        { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
+                        { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' }
                     ];
                     needSave = true;
                 }
@@ -1567,8 +1722,39 @@
                     const firstSite = cat.sites[0];
                     if (firstSite.type === 'copy' || (firstSite.name && (firstSite.name.includes('本地') || firstSite.name.includes('在线')))) {
                         cat.sites = [
-                            { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'TVBox源地址大全.html', type: 'link' }
+                            { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
+                            { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' }
                         ];
+                        needSave = true;
+                    }
+                }
+                // 自动修复：如果系统工具分类里的链接是相对路径，改成完整URL
+                if (cat.name === '系统工具' && cat.sites) {
+                    cat.sites.forEach(site => {
+                        if (site.url && !site.url.startsWith('http')) {
+                            if (site.name && site.name.includes('源地址大全')) {
+                                site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
+                                needSave = true;
+                            } else if (site.name && site.name.includes('接口编辑器')) {
+                                site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
+                                needSave = true;
+                            }
+                        }
+                    });
+                    // 自动添加缺少的网站
+                    const hasEditor = cat.sites.some(s => s.name && s.name.includes('接口编辑器'));
+                    const hasStation = cat.sites.some(s => s.name && s.name.includes('接口站'));
+                    const has18 = cat.sites.some(s => s.name && (s.name.includes('合并配置18') || s.name.includes('配置18')));
+                    if (!hasEditor) {
+                        cat.sites.push({ name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' });
+                        needSave = true;
+                    }
+                    if (!hasStation) {
+                        cat.sites.push({ name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' });
+                        needSave = true;
+                    }
+                    if (!has18) {
+                        cat.sites.push({ name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' });
                         needSave = true;
                     }
                 }
@@ -1694,6 +1880,19 @@
                 const grid = item.querySelector(`#siteGrid-${catIndex}`);
                 
                 cat.sites.forEach((site, siteIndex) => {
+                    // 强制修复：系统工具分类里的特定网站，不管旧数据是什么，都用完整URL
+                    if (site.name) {
+                        if (site.name.includes('源地址大全')) {
+                            site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
+                        } else if (site.name.includes('接口编辑器')) {
+                            site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
+                        } else if (site.name.includes('接口站') && site.name.includes('Cloudflare')) {
+                            site.url = 'https://tvbox-bh1.pages.dev';
+                        } else if (site.name.includes('合并配置18') || site.name.includes('配置18')) {
+                            site.url = 'https://zhouyu365666.top/assets/static/data/tvbox18.json';
+                        }
+                    }
+                    
                     const siteEl = document.createElement('div');
                     siteEl.className = 'site-item';
                     siteEl.draggable = true;
@@ -2551,51 +2750,51 @@ const embeddedLyrics = {
 };
 
         const musicPlaylist = [
-            { title: '01. 缘', artist: '高胜美', cover: '🎵', url: '../music/高胜美/01. 缘.mp3', lrc: '../music/高胜美/01. 缘.lrc' },
-            { title: '01. 说起了我的梦', artist: '高胜美', cover: '🎵', url: '../music/高胜美/01. 说起了我的梦.mp3', lrc: '../music/高胜美/01. 说起了我的梦.lrc' },
-            { title: '01.刻骨铭心', artist: '高胜美', cover: '🎵', url: '../music/高胜美/01.刻骨铭心.mp3', lrc: '../music/高胜美/01.刻骨铭心.lrc' },
-            { title: '02. 今生相欠', artist: '高胜美', cover: '🎵', url: '../music/高胜美/02. 今生相欠.mp3', lrc: '../music/高胜美/02. 今生相欠.lrc' },
-            { title: '02. 潇洒的走', artist: '高胜美', cover: '🎵', url: '../music/高胜美/02. 潇洒的走.mp3', lrc: '../music/高胜美/02. 潇洒的走.lrc' },
-            { title: '02.铁心肠', artist: '高胜美', cover: '🎵', url: '../music/高胜美/02.铁心肠.mp3', lrc: '../music/高胜美/02.铁心肠.lrc' },
-            { title: '03. 只要你记得', artist: '高胜美', cover: '🎵', url: '../music/高胜美/03. 只要你记得.mp3', lrc: '../music/高胜美/03. 只要你记得.lrc' },
-            { title: '03. 缘深缘浅', artist: '高胜美', cover: '🎵', url: '../music/高胜美/03. 缘深缘浅.mp3', lrc: '../music/高胜美/03. 缘深缘浅.lrc' },
-            { title: '03.越爱越痛', artist: '高胜美', cover: '🎵', url: '../music/高胜美/03.越爱越痛.mp3', lrc: '../music/高胜美/03.越爱越痛.lrc' },
-            { title: '04. 一剪梅', artist: '高胜美', cover: '🎵', url: '../music/高胜美/04. 一剪梅.mp3', lrc: '../music/高胜美/04. 一剪梅.lrc' },
-            { title: '04. 我的心碎玻璃', artist: '高胜美', cover: '🎵', url: '../music/高胜美/04. 我的心碎玻璃.mp3', lrc: '../music/高胜美/04. 我的心碎玻璃.lrc' },
-            { title: '04.我等到花儿也谢了', artist: '高胜美', cover: '🎵', url: '../music/高胜美/04.我等到花儿也谢了.mp3', lrc: '../music/高胜美/04.我等到花儿也谢了.lrc' },
-            { title: '05. 今夜天空', artist: '高胜美', cover: '🎵', url: '../music/高胜美/05. 今夜天空.mp3', lrc: '../music/高胜美/05. 今夜天空.lrc' },
-            { title: '05. 梦驼铃', artist: '高胜美', cover: '🎵', url: '../music/高胜美/05. 梦驼铃.mp3', lrc: '../music/高胜美/05. 梦驼铃.lrc' },
-            { title: '05.别恋', artist: '高胜美', cover: '🎵', url: '../music/高胜美/05.别恋.mp3', lrc: '../music/高胜美/05.别恋.lrc' },
-            { title: '06. 情人山', artist: '高胜美', cover: '🎵', url: '../music/高胜美/06. 情人山.mp3', lrc: '../music/高胜美/06. 情人山.lrc' },
-            { title: '06. 流浪汉', artist: '高胜美', cover: '🎵', url: '../music/高胜美/06. 流浪汉.mp3', lrc: '../music/高胜美/06. 流浪汉.lrc' },
-            { title: '06.雨一直下', artist: '高胜美', cover: '🎵', url: '../music/高胜美/06.雨一直下.mp3', lrc: '../music/高胜美/06.雨一直下.lrc' },
-            { title: '07. 一去不回头', artist: '高胜美', cover: '🎵', url: '../music/高胜美/07. 一去不回头.mp3', lrc: '../music/高胜美/07. 一去不回头.lrc' },
-            { title: '07.受害人', artist: '高胜美', cover: '🎵', url: '../music/高胜美/07.受害人.mp3', lrc: '../music/高胜美/07.受害人.lrc' },
-            { title: '08. 爱你直到亿万年', artist: '高胜美', cover: '🎵', url: '../music/高胜美/08. 爱你直到亿万年.mp3', lrc: '../music/高胜美/08. 爱你直到亿万年.lrc' },
-            { title: '08.我为你伤心', artist: '高胜美', cover: '🎵', url: '../music/高胜美/08.我为你伤心.mp3', lrc: '../music/高胜美/08.我为你伤心.lrc' },
-            { title: '09. 对你的怀念特别多', artist: '高胜美', cover: '🎵', url: '../music/高胜美/09. 对你的怀念特别多.mp3', lrc: '../music/高胜美/09. 对你的怀念特别多.lrc' },
-            { title: '09. 爱的迷途', artist: '高胜美', cover: '🎵', url: '../music/高胜美/09. 爱的迷途.mp3', lrc: '../music/高胜美/09. 爱的迷途.lrc' },
-            { title: '09.上弦月', artist: '高胜美', cover: '🎵', url: '../music/高胜美/09.上弦月.mp3', lrc: '../music/高胜美/09.上弦月.lrc' },
-            { title: '10. 午夜世界', artist: '高胜美', cover: '🎵', url: '../music/高胜美/10. 午夜世界.mp3', lrc: '../music/高胜美/10. 午夜世界.lrc' },
-            { title: '10. 当做没有爱过我', artist: '高胜美', cover: '🎵', url: '../music/高胜美/10. 当做没有爱过我.mp3', lrc: '../music/高胜美/10. 当做没有爱过我.lrc' },
-            { title: '11. 不如归去', artist: '高胜美', cover: '🎵', url: '../music/高胜美/11. 不如归去.mp3', lrc: '../music/高胜美/11. 不如归去.lrc' },
-            { title: '11. 我不敢', artist: '高胜美', cover: '🎵', url: '../music/高胜美/11. 我不敢.mp3', lrc: '../music/高胜美/11. 我不敢.lrc' },
-            { title: '12. 不要说分手', artist: '高胜美', cover: '🎵', url: '../music/高胜美/12. 不要说分手.mp3', lrc: '../music/高胜美/12. 不要说分手.lrc' },
-            { title: '12. 风凄凄意绵绵', artist: '高胜美', cover: '🎵', url: '../music/高胜美/12. 风凄凄意绵绵.mp3', lrc: '../music/高胜美/12. 风凄凄意绵绵.lrc' },
-            { title: '13. 含泪的分手', artist: '高胜美', cover: '🎵', url: '../music/高胜美/13. 含泪的分手.mp3', lrc: '../music/高胜美/13. 含泪的分手.lrc' },
-            { title: '13. 往事只能回味', artist: '高胜美', cover: '🎵', url: '../music/高胜美/13. 往事只能回味.mp3', lrc: '../music/高胜美/13. 往事只能回味.lrc' },
-            { title: '14. 恨你不回头', artist: '高胜美', cover: '🎵', url: '../music/高胜美/14. 恨你不回头.mp3', lrc: '../music/高胜美/14. 恨你不回头.lrc' },
-            { title: '15. 喝彩', artist: '高胜美', cover: '🎵', url: '../music/高胜美/15. 喝彩.mp3', lrc: '../music/高胜美/15. 喝彩.lrc' },
-            { title: '15. 我怎么哭了', artist: '高胜美', cover: '🎵', url: '../music/高胜美/15. 我怎么哭了.mp3', lrc: '../music/高胜美/15. 我怎么哭了.lrc' },
-            { title: '16. 我怎能离开你', artist: '高胜美', cover: '🎵', url: '../music/高胜美/16. 我怎能离开你.mp3', lrc: '../music/高胜美/16. 我怎能离开你.lrc' },
-            { title: '17. 几度又几度', artist: '高胜美', cover: '🎵', url: '../music/高胜美/17. 几度又几度.mp3', lrc: '../music/高胜美/17. 几度又几度.lrc' },
-            { title: '17. 又是细雨', artist: '高胜美', cover: '🎵', url: '../music/高胜美/17. 又是细雨.mp3', lrc: '../music/高胜美/17. 又是细雨.lrc' },
-            { title: '18. 不是分手的时候', artist: '高胜美', cover: '🎵', url: '../music/高胜美/18. 不是分手的时候.mp3', lrc: '../music/高胜美/18. 不是分手的时候.lrc' },
-            { title: '18. 泪洒爱河桥', artist: '高胜美', cover: '🎵', url: '../music/高胜美/18. 泪洒爱河桥.mp3', lrc: '../music/高胜美/18. 泪洒爱河桥.lrc' },
-            { title: '19. 庭院深深', artist: '高胜美', cover: '🎵', url: '../music/高胜美/19. 庭院深深.mp3', lrc: '../music/高胜美/19. 庭院深深.lrc' },
-            { title: '19. 萍水相逢的人', artist: '高胜美', cover: '🎵', url: '../music/高胜美/19. 萍水相逢的人.mp3', lrc: '../music/高胜美/19. 萍水相逢的人.lrc' },
-            { title: '20. 何时再吻君', artist: '高胜美', cover: '🎵', url: '../music/高胜美/20. 何时再吻君.mp3', lrc: '../music/高胜美/20. 何时再吻君.lrc' },
-            { title: '20. 到底爱我不爱', artist: '高胜美', cover: '🎵', url: '../music/高胜美/20. 到底爱我不爱.mp3', lrc: '../music/高胜美/20. 到底爱我不爱.lrc' }
+            { title: '01. 缘', artist: '高胜美', cover: '🎵', url: 'music/高胜美/01. 缘.mp3', lrc: 'music/高胜美/01. 缘.lrc' },
+            { title: '01. 说起了我的梦', artist: '高胜美', cover: '🎵', url: 'music/高胜美/01. 说起了我的梦.mp3', lrc: 'music/高胜美/01. 说起了我的梦.lrc' },
+            { title: '01.刻骨铭心', artist: '高胜美', cover: '🎵', url: 'music/高胜美/01.刻骨铭心.mp3', lrc: 'music/高胜美/01.刻骨铭心.lrc' },
+            { title: '02. 今生相欠', artist: '高胜美', cover: '🎵', url: 'music/高胜美/02. 今生相欠.mp3', lrc: 'music/高胜美/02. 今生相欠.lrc' },
+            { title: '02. 潇洒的走', artist: '高胜美', cover: '🎵', url: 'music/高胜美/02. 潇洒的走.mp3', lrc: 'music/高胜美/02. 潇洒的走.lrc' },
+            { title: '02.铁心肠', artist: '高胜美', cover: '🎵', url: 'music/高胜美/02.铁心肠.mp3', lrc: 'music/高胜美/02.铁心肠.lrc' },
+            { title: '03. 只要你记得', artist: '高胜美', cover: '🎵', url: 'music/高胜美/03. 只要你记得.mp3', lrc: 'music/高胜美/03. 只要你记得.lrc' },
+            { title: '03. 缘深缘浅', artist: '高胜美', cover: '🎵', url: 'music/高胜美/03. 缘深缘浅.mp3', lrc: 'music/高胜美/03. 缘深缘浅.lrc' },
+            { title: '03.越爱越痛', artist: '高胜美', cover: '🎵', url: 'music/高胜美/03.越爱越痛.mp3', lrc: 'music/高胜美/03.越爱越痛.lrc' },
+            { title: '04. 一剪梅', artist: '高胜美', cover: '🎵', url: 'music/高胜美/04. 一剪梅.mp3', lrc: 'music/高胜美/04. 一剪梅.lrc' },
+            { title: '04. 我的心碎玻璃', artist: '高胜美', cover: '🎵', url: 'music/高胜美/04. 我的心碎玻璃.mp3', lrc: 'music/高胜美/04. 我的心碎玻璃.lrc' },
+            { title: '04.我等到花儿也谢了', artist: '高胜美', cover: '🎵', url: 'music/高胜美/04.我等到花儿也谢了.mp3', lrc: 'music/高胜美/04.我等到花儿也谢了.lrc' },
+            { title: '05. 今夜天空', artist: '高胜美', cover: '🎵', url: 'music/高胜美/05. 今夜天空.mp3', lrc: 'music/高胜美/05. 今夜天空.lrc' },
+            { title: '05. 梦驼铃', artist: '高胜美', cover: '🎵', url: 'music/高胜美/05. 梦驼铃.mp3', lrc: 'music/高胜美/05. 梦驼铃.lrc' },
+            { title: '05.别恋', artist: '高胜美', cover: '🎵', url: 'music/高胜美/05.别恋.mp3', lrc: 'music/高胜美/05.别恋.lrc' },
+            { title: '06. 情人山', artist: '高胜美', cover: '🎵', url: 'music/高胜美/06. 情人山.mp3', lrc: 'music/高胜美/06. 情人山.lrc' },
+            { title: '06. 流浪汉', artist: '高胜美', cover: '🎵', url: 'music/高胜美/06. 流浪汉.mp3', lrc: 'music/高胜美/06. 流浪汉.lrc' },
+            { title: '06.雨一直下', artist: '高胜美', cover: '🎵', url: 'music/高胜美/06.雨一直下.mp3', lrc: 'music/高胜美/06.雨一直下.lrc' },
+            { title: '07. 一去不回头', artist: '高胜美', cover: '🎵', url: 'music/高胜美/07. 一去不回头.mp3', lrc: 'music/高胜美/07. 一去不回头.lrc' },
+            { title: '07.受害人', artist: '高胜美', cover: '🎵', url: 'music/高胜美/07.受害人.mp3', lrc: 'music/高胜美/07.受害人.lrc' },
+            { title: '08. 爱你直到亿万年', artist: '高胜美', cover: '🎵', url: 'music/高胜美/08. 爱你直到亿万年.mp3', lrc: 'music/高胜美/08. 爱你直到亿万年.lrc' },
+            { title: '08.我为你伤心', artist: '高胜美', cover: '🎵', url: 'music/高胜美/08.我为你伤心.mp3', lrc: 'music/高胜美/08.我为你伤心.lrc' },
+            { title: '09. 对你的怀念特别多', artist: '高胜美', cover: '🎵', url: 'music/高胜美/09. 对你的怀念特别多.mp3', lrc: 'music/高胜美/09. 对你的怀念特别多.lrc' },
+            { title: '09. 爱的迷途', artist: '高胜美', cover: '🎵', url: 'music/高胜美/09. 爱的迷途.mp3', lrc: 'music/高胜美/09. 爱的迷途.lrc' },
+            { title: '09.上弦月', artist: '高胜美', cover: '🎵', url: 'music/高胜美/09.上弦月.mp3', lrc: 'music/高胜美/09.上弦月.lrc' },
+            { title: '10. 午夜世界', artist: '高胜美', cover: '🎵', url: 'music/高胜美/10. 午夜世界.mp3', lrc: 'music/高胜美/10. 午夜世界.lrc' },
+            { title: '10. 当做没有爱过我', artist: '高胜美', cover: '🎵', url: 'music/高胜美/10. 当做没有爱过我.mp3', lrc: 'music/高胜美/10. 当做没有爱过我.lrc' },
+            { title: '11. 不如归去', artist: '高胜美', cover: '🎵', url: 'music/高胜美/11. 不如归去.mp3', lrc: 'music/高胜美/11. 不如归去.lrc' },
+            { title: '11. 我不敢', artist: '高胜美', cover: '🎵', url: 'music/高胜美/11. 我不敢.mp3', lrc: 'music/高胜美/11. 我不敢.lrc' },
+            { title: '12. 不要说分手', artist: '高胜美', cover: '🎵', url: 'music/高胜美/12. 不要说分手.mp3', lrc: 'music/高胜美/12. 不要说分手.lrc' },
+            { title: '12. 风凄凄意绵绵', artist: '高胜美', cover: '🎵', url: 'music/高胜美/12. 风凄凄意绵绵.mp3', lrc: 'music/高胜美/12. 风凄凄意绵绵.lrc' },
+            { title: '13. 含泪的分手', artist: '高胜美', cover: '🎵', url: 'music/高胜美/13. 含泪的分手.mp3', lrc: 'music/高胜美/13. 含泪的分手.lrc' },
+            { title: '13. 往事只能回味', artist: '高胜美', cover: '🎵', url: 'music/高胜美/13. 往事只能回味.mp3', lrc: 'music/高胜美/13. 往事只能回味.lrc' },
+            { title: '14. 恨你不回头', artist: '高胜美', cover: '🎵', url: 'music/高胜美/14. 恨你不回头.mp3', lrc: 'music/高胜美/14. 恨你不回头.lrc' },
+            { title: '15. 喝彩', artist: '高胜美', cover: '🎵', url: 'music/高胜美/15. 喝彩.mp3', lrc: 'music/高胜美/15. 喝彩.lrc' },
+            { title: '15. 我怎么哭了', artist: '高胜美', cover: '🎵', url: 'music/高胜美/15. 我怎么哭了.mp3', lrc: 'music/高胜美/15. 我怎么哭了.lrc' },
+            { title: '16. 我怎能离开你', artist: '高胜美', cover: '🎵', url: 'music/高胜美/16. 我怎能离开你.mp3', lrc: 'music/高胜美/16. 我怎能离开你.lrc' },
+            { title: '17. 几度又几度', artist: '高胜美', cover: '🎵', url: 'music/高胜美/17. 几度又几度.mp3', lrc: 'music/高胜美/17. 几度又几度.lrc' },
+            { title: '17. 又是细雨', artist: '高胜美', cover: '🎵', url: 'music/高胜美/17. 又是细雨.mp3', lrc: 'music/高胜美/17. 又是细雨.lrc' },
+            { title: '18. 不是分手的时候', artist: '高胜美', cover: '🎵', url: 'music/高胜美/18. 不是分手的时候.mp3', lrc: 'music/高胜美/18. 不是分手的时候.lrc' },
+            { title: '18. 泪洒爱河桥', artist: '高胜美', cover: '🎵', url: 'music/高胜美/18. 泪洒爱河桥.mp3', lrc: 'music/高胜美/18. 泪洒爱河桥.lrc' },
+            { title: '19. 庭院深深', artist: '高胜美', cover: '🎵', url: 'music/高胜美/19. 庭院深深.mp3', lrc: 'music/高胜美/19. 庭院深深.lrc' },
+            { title: '19. 萍水相逢的人', artist: '高胜美', cover: '🎵', url: 'music/高胜美/19. 萍水相逢的人.mp3', lrc: 'music/高胜美/19. 萍水相逢的人.lrc' },
+            { title: '20. 何时再吻君', artist: '高胜美', cover: '🎵', url: 'music/高胜美/20. 何时再吻君.mp3', lrc: 'music/高胜美/20. 何时再吻君.lrc' },
+            { title: '20. 到底爱我不爱', artist: '高胜美', cover: '🎵', url: 'music/高胜美/20. 到底爱我不爱.mp3', lrc: 'music/高胜美/20. 到底爱我不爱.lrc' }
         ];
         let currentMusicIndex = 0;
         let isMusicPlaying = false;
@@ -2784,6 +2983,146 @@ const embeddedLyrics = {
             }
         }
 
+        // ========== 在线音乐全网搜索功能 ==========
+        let onlineSearchResults = [];
+        
+        // CORS代理列表（多个备选）
+        const corsProxies = [
+            url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+            url => 'https://corsproxy.io/?' + encodeURIComponent(url),
+            url => 'https://cors.eu.org/' + url,
+            url => 'https://cors-anywhere.herokuapp.com/' + url,
+            url => url  // 最后尝试直接请求
+        ];
+        
+        // 带CORS代理的fetch
+        async function fetchWithCORS(url, timeout = 10000) {
+            for (let i = 0; i < corsProxies.length; i++) {
+                try {
+                    const proxyUrl = corsProxies[i](url);
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), timeout);
+                    const response = await fetch(proxyUrl, { signal: controller.signal });
+                    clearTimeout(timer);
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (e) {
+                    // 继续试下一个代理
+                }
+            }
+            throw new Error('所有代理都失败');
+        }
+        
+        // 全网搜索音乐（支持网易云、QQ音乐、酷狗、酷我）
+        async function searchMusic() {
+            const keyword = document.getElementById('musicSearchInput').value.trim();
+            if (!keyword) {
+                alert('请输入搜索关键词');
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('searchResults');
+            const itemsDiv = document.getElementById('searchResultsItems');
+            resultsDiv.style.display = 'block';
+            itemsDiv.innerHTML = '<div class="search-loading">🔍 全网搜索中（网易云/QQ/酷狗/酷我）...</div>';
+            
+            // 四个平台同时搜索
+            const platforms = [
+                { name: '网易云', server: 'netease', color: '#e60026' },
+                { name: 'QQ音乐', server: 'tencent', color: '#31c27c' },
+                { name: '酷狗', server: 'kugou', color: '#2ca2f9' },
+                { name: '酷我', server: 'kuwo', color: '#ffaa00' }
+            ];
+            
+            let allResults = [];
+            let successCount = 0;
+            
+            // 并行搜索四个平台
+            await Promise.all(platforms.map(async (platform) => {
+                try {
+                    // 用Meting API搜索（支持多平台）
+                    const searchUrl = 'https://api.i-meto.com/meting/api?server=' + platform.server + '&type=search&name=' + encodeURIComponent(keyword);
+                    const data = await fetchWithCORS(searchUrl, 8000);
+                    
+                    if (Array.isArray(data) && data.length > 0) {
+                        // 给每个结果加上平台信息
+                        const platformResults = data.slice(0, 8).map(song => ({
+                            ...song,
+                            platform: platform.name,
+                            platformColor: platform.color
+                        }));
+                        allResults = allResults.concat(platformResults);
+                        successCount++;
+                    }
+                } catch (e) {
+                    // 这个平台搜索失败，继续其他平台
+                }
+            }));
+            
+            if (allResults.length > 0) {
+                // 按平台排序，去重
+                const seen = new Set();
+                onlineSearchResults = allResults.filter(song => {
+                    const key = song.name + ' - ' + song.artist;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                });
+                
+                renderSearchResults();
+            } else {
+                itemsDiv.innerHTML = '<div class="search-loading">😢 全网搜索未找到相关歌曲<br><span style="font-size:10px;color:#999;">请检查网络或换个关键词</span></div>';
+            }
+        }
+        
+        // 渲染搜索结果
+        function renderSearchResults() {
+            const itemsDiv = document.getElementById('searchResultsItems');
+            itemsDiv.innerHTML = onlineSearchResults.map((song, i) => {
+                return `
+                    <div class="search-result-item" onclick="playSearchResult(${i})">
+                        <span class="play-icon">▶</span>
+                        <span class="song-name">${song.name}</span>
+                        <span class="song-artist">${song.artist || '未知'}</span>
+                        <span style="font-size:9px;padding:2px 6px;border-radius:8px;color:#fff;background:${song.platformColor || '#999'};">${song.platform || ''}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 播放搜索结果（Meting API直接返回播放地址和歌词地址）
+        function playSearchResult(index) {
+            const song = onlineSearchResults[index];
+            
+            // 创建歌曲对象（Meting API直接返回url和lrc）
+            const newSong = {
+                title: song.name,
+                artist: song.artist || '未知歌手',
+                cover: '🎵',
+                url: song.url,  // 直接用Meting返回的播放地址
+                lrc: song.lrc,  // 直接用Meting返回的歌词地址
+                isOnline: true,
+                platform: song.platform
+            };
+            
+            // 添加到播放列表并播放
+            musicPlaylist.push(newSong);
+            const newIndex = musicPlaylist.length - 1;
+            playSong(newIndex);
+            
+            // 关闭搜索结果
+            clearSearch();
+        }
+        
+        // 清除搜索结果
+        function clearSearch() {
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('searchResultsItems').innerHTML = '';
+            document.getElementById('musicSearchInput').value = '';
+            onlineSearchResults = [];
+        }
+
         // 加载LRC歌词文件
         function loadLRC(song, callback) {
             // 优先使用内嵌的歌词（file://协议下也能用）
@@ -2798,16 +3137,42 @@ const embeddedLyrics = {
                 if (callback) callback();
                 return;
             }
-            fetch(song.lrc)
-                .then(r => r.text())
-                .then(text => {
-                    song.parsedLyrics = parseLRC(text);
-                    if (callback) callback();
-                })
-                .catch(() => {
-                    song.parsedLyrics = [];
-                    if (callback) callback();
-                });
+            // 在线歌曲的歌词地址可能也需要CORS代理
+            if (song.isOnline) {
+                fetchWithCORS(song.lrc, 8000)
+                    .then(text => {
+                        if (typeof text === 'string') {
+                            song.parsedLyrics = parseLRC(text);
+                        } else {
+                            song.parsedLyrics = [];
+                        }
+                        if (callback) callback();
+                    })
+                    .catch(() => {
+                        // 尝试直接fetch
+                        fetch(song.lrc)
+                            .then(r => r.text())
+                            .then(text => {
+                                song.parsedLyrics = parseLRC(text);
+                                if (callback) callback();
+                            })
+                            .catch(() => {
+                                song.parsedLyrics = [];
+                                if (callback) callback();
+                            });
+                    });
+            } else {
+                fetch(song.lrc)
+                    .then(r => r.text())
+                    .then(text => {
+                        song.parsedLyrics = parseLRC(text);
+                        if (callback) callback();
+                    })
+                    .catch(() => {
+                        song.parsedLyrics = [];
+                        if (callback) callback();
+                    });
+            }
         }
 
         // 加载歌曲
@@ -3154,6 +3519,35 @@ const embeddedLyrics = {
             createStars();
             animate();
             setTimeout(launchMeteor, 2500);
+            
+            // 强制检查：确保系统工具分类里的网站都在
+            setTimeout(() => {
+                let needFix = false;
+                navData.forEach(cat => {
+                    if (cat.name === '系统工具' && cat.sites) {
+                        const hasEditor = cat.sites.some(s => s.name && s.name.includes('接口编辑器'));
+                        const hasStation = cat.sites.some(s => s.name && s.name.includes('接口站'));
+                        const has18 = cat.sites.some(s => s.name && (s.name.includes('合并配置18') || s.name.includes('配置18')));
+                        if (!hasEditor) {
+                            cat.sites.push({ name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' });
+                            needFix = true;
+                        }
+                        if (!hasStation) {
+                            cat.sites.push({ name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' });
+                            needFix = true;
+                        }
+                        if (!has18) {
+                            cat.sites.push({ name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' });
+                            needFix = true;
+                        }
+                    }
+                });
+                if (needFix) {
+                    saveData();
+                    renderAccordion();
+                    console.log('已自动补全系统工具分类的网站');
+                }
+            }, 500);
         } catch(e) {
             console.error('其他初始化失败:', e);
         }
@@ -3165,3 +3559,7 @@ const embeddedLyrics = {
     </script>
 </body>
 </html>
+
+
+
+
