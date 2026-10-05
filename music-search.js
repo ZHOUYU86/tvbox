@@ -1,4 +1,4 @@
-// 音乐搜索代理：直连三大平台官方接口，归一化输出
+// 音乐搜索代理：直连平台官方接口，归一化输出
 // 输出格式：[{name, artist, url, lrc, pic}]
 export async function onRequest(context) {
     const { request } = context;
@@ -19,6 +19,7 @@ export async function onRequest(context) {
         else if (server === 'tencent') result = await searchQQ(keyword);
         else if (server === 'kugou') result = await searchKugou(keyword);
         else if (server === 'kuwo') result = await searchKuwo(keyword);
+        else if (server === 'qishui') result = await searchQishui(keyword);
         else return json({ error: '不支持的平台' }, 400);
         return json(result);
     } catch (e) {
@@ -27,7 +28,7 @@ export async function onRequest(context) {
 }
 
 async function fetchJson(u, headers = {}) {
-    const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0', ...headers } });
+    const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', ...headers } });
     const t = await r.text();
     try { return JSON.parse(t); } catch { return {}; }
 }
@@ -35,7 +36,7 @@ async function fetchJson(u, headers = {}) {
 // ---------- 网易云 ----------
 async function searchNetease(kw) {
     const data = await fetchJson(
-        'https://music.163.com/api/search/get/web?s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
+        'https://music.163.com/api/search/get/web?csrf_token=&hlpretag=&hlposttag=&s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
         { Referer: 'https://music.163.com/' }
     );
     const songs = (data.result && data.result.songs) || [];
@@ -46,9 +47,7 @@ async function searchNetease(kw) {
             name: s.name,
             artist: (s.artists && s.artists[0] && s.artists[0].name) || '未知',
             pic: s.album && s.album.picUrl ? s.album.picUrl + '?param=200y200' : '',
-            // 网易云外链跳转地址（浏览器 audio 可直接跟随 302）
             url: 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3',
-            // 歌词由前端再请求本代理 /api/music-lyric?server=netease&id=ID
             lrc: '/api/music-lyric?server=netease&id=' + id
         });
     }
@@ -69,7 +68,6 @@ async function searchQQ(kw) {
             name: s.songname,
             artist: (s.singer && s.singer[0] && s.singer[0].name) || '未知',
             pic: 'https://y.qq.com/music/photo_new/T002R300x300M000' + s.albummid + '.jpg',
-            // 播放地址由 /api/music-lyric?server=tencent&songmid=XXX 一并返回
             url: '/api/music-url?server=tencent&songmid=' + songmid,
             lrc: '/api/music-lyric?server=tencent&songmid=' + songmid
         });
@@ -103,7 +101,7 @@ async function searchKugou(kw) {
 async function searchKuwo(kw) {
     const data = await fetchJson(
         'https://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=' + encodeURIComponent(kw) + '&pn=1&rn=20&httpsStatus=1',
-        { Referer: 'https://www.kuwo.cn/' }
+        { Referer: 'https://www.kuwo.cn/', 'csrf': '0', 'Cookie': 'kw_token=0' }
     );
     const list = (data.data && data.data.list) || [];
     const out = [];
@@ -116,6 +114,27 @@ async function searchKuwo(kw) {
             pic: s.albumpic ? s.albumpic.replace('{size}', '200') : '',
             url: '/api/music-url?server=kuwo&rid=' + rid,
             lrc: '/api/music-lyric?server=kuwo&rid=' + rid
+        });
+    }
+    return out;
+}
+
+// ---------- 汽水音乐 ----------
+async function searchQishui(kw) {
+    // 汽水音乐使用抖音音乐接口
+    const data = await fetchJson(
+        'https://aweme.snssdk.com/aweme/v1/music/search/?keyword=' + encodeURIComponent(kw) + '&count=20&cursor=0',
+        { Referer: 'https://www.douyin.com/' }
+    );
+    const list = (data.music_list || []).map(m => m.music_info).filter(Boolean);
+    const out = [];
+    for (const s of list.slice(0, 15)) {
+        out.push({
+            name: s.title || '未知歌曲',
+            artist: s.author || '未知',
+            pic: s.cover_large ? s.cover_large.url_list[0] : '',
+            url: s.play_url ? s.play_url.url_list[0] : '',
+            lrc: ''
         });
     }
     return out;
