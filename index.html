@@ -3100,8 +3100,9 @@ const embeddedLyrics = {
 
             try {
                 // 走本地 Cloudflare Pages Function 代理（解决CORS）
-                const searchUrl = '/api/music-search?server=' + encodeURIComponent(currentPlatform) +
-                                  '&keyword=' + encodeURIComponent(keyword);
+                const apiMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
+                const serverName = apiMap[currentPlatform] || 'netease';
+                const searchUrl = 'https://api.injahow.cn/meting/?type=search&server=' + serverName + '&name=' + encodeURIComponent(keyword);
                 const data = await (await fetch(searchUrl)).json();
 
                 if (Array.isArray(data) && data.length > 0) {
