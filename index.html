@@ -1150,7 +1150,7 @@
             pointer-events: auto;
         }
         .music-lyrics .lyric-line {
-            font-size: 17px;
+            font-size: 19px;
             color: #333;
             transition: all 0.3s;
             padding: 2px 0;
@@ -1159,10 +1159,10 @@
         }
         .music-lyrics .lyric-line.active {
             display: block;
-            color: #0051ff;
+            color: #ff3b30;
             font-weight: bold;
-            font-size: 18px;
-            text-shadow: 0 0 10px rgba(0, 81, 255, 0.3);
+            font-size: 20px;
+            text-shadow: 0 0 10px rgba(255, 59, 48, 0.3);
         }
 
         /* 添加歌曲弹窗 - 居中显示 */
@@ -3398,8 +3398,8 @@ const embeddedLyrics = {
                 for (let i = 0; i < charCount; i++) {
                     const ch = lineText[i];
                     if (i <= currentCharIndex) {
-                        // 已经唱过的字（包括当前） - 深蓝色
-                        charHtml += `<span style="color:#0051ff;font-weight:bold;">${ch}</span>`;
+                        // 已经唱过的字（包括当前） - 粉红色
+                        charHtml += `<span style="color:#ff3b30;font-weight:bold;">${ch}</span>`;
                     } else {
                         // 没唱的字 - 深灰色
                         charHtml += `<span style="color:#555;font-weight:bold;">${ch}</span>`;
