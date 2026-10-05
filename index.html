@@ -3099,10 +3099,12 @@ const embeddedLyrics = {
             itemsDiv.innerHTML = '<div class="search-loading">🔍 正在' + meta.name + '搜索...</div>';
 
             try {
-                // Meting API 搜索（正确参数：type=name）
-                const apiMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
-                const serverName = apiMap[currentPlatform] || 'netease';
-                const searchUrl = 'https://api.injahow.cn/meting/?type=name&server=' + serverName + '&name=' + encodeURIComponent(keyword);
+                // 落雪音乐API（music-api.gdstudio.xyz）
+                const apiBase = 'https://music-api.gdstudio.xyz/api.php';
+                // 平台映射：netease→netease, tencent→tencent, kugou→kugou, kuwo→kuwo, qishui→tencent
+                const sourceMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
+                const source = sourceMap[currentPlatform] || 'netease';
+                const searchUrl = apiBase + '?types=search&source=' + source + '&name=' + encodeURIComponent(keyword) + '&count=30';
                 const data = await (await fetch(searchUrl)).json();
 
                 if (Array.isArray(data) && data.length > 0) {
@@ -3142,31 +3144,34 @@ const embeddedLyrics = {
             }).join('');
         }
         
-        // 播放搜索结果（分平台优化播放地址）
+        // 播放搜索结果（落雪音乐API，自动更新，最稳定）
         async function playSearchResult(index) {
             const song = onlineSearchResults[index];
+            const apiBase = 'https://music-api.gdstudio.xyz/api.php';
+            const sourceMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
+            const source = sourceMap[currentPlatform] || 'netease';
+            
+            // 获取播放地址
             let playUrl = song.url;
+            try {
+                const urlApi = apiBase + '?types=url&source=' + source + '&id=' + song.id + '&br=320';
+                const urlData = await (await fetch(urlApi)).json();
+                if (urlData.url) playUrl = urlData.url;
+            } catch (e) {
+                console.log('获取播放地址失败');
+            }
+            
+            // 获取歌词
             let lrcUrl = song.lrc;
+            try {
+                const lrcApi = apiBase + '?types=lrc&source=' + source + '&id=' + song.id;
+                const lrcData = await (await fetch(lrcApi)).json();
+                if (lrcData.lrc) lrcUrl = lrcData.lrc;
+            } catch (e) {
+                console.log('获取歌词失败');
+            }
+            
             const coverUrl = song.pic || '🎵';
-            
-            // 如果url为空，用Meting API获取播放地址
-            if (!playUrl && song.id) {
-                try {
-                    const apiMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
-                    const serverName = apiMap[currentPlatform] || 'netease';
-                    const urlApi = 'https://api.injahow.cn/meting/?type=url&server=' + serverName + '&id=' + song.id;
-                    const urlData = await (await fetch(urlApi)).json();
-                    if (urlData.url) playUrl = urlData.url;
-                } catch (e) {
-                    console.log('获取播放地址失败');
-                }
-            }
-            
-            // 网易云平台：直接用外链播放（最稳定）
-            if (currentPlatform === 'netease' && song.id) {
-                playUrl = 'https://music.163.com/song/media/outer/url?id=' + song.id + '.mp3';
-                lrcUrl = 'https://music.163.com/api/song/lyric?id=' + song.id + '&lv=1&kv=1&tv=-1';
-            }
             
             // 创建歌曲对象
             const newSong = {
