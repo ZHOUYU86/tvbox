@@ -3142,23 +3142,20 @@ const embeddedLyrics = {
             }).join('');
         }
         
-        // 播放搜索结果（Cloudflare Pages Functions API）
+        // 播放搜索结果（网易云外链直接播放）
         async function playSearchResult(index) {
             const song = onlineSearchResults[index];
             
-            // 播放地址和歌词已经在搜索结果里了，直接用
-            let playUrl = song.url;
-            let lrcUrl = song.lrc;
-            
-            const coverUrl = song.pic || '🎵';
+            // 封面用emoji，不要用图片，避免乱码
+            const coverUrl = '🎵';
             
             // 创建歌曲对象
             const newSong = {
                 title: song.name,
                 artist: song.artist || '未知歌手',
                 cover: coverUrl,
-                url: playUrl,
-                lrc: lrcUrl,
+                url: song.url,
+                lrc: song.lrc,
                 isOnline: true,
                 platform: song.platform
             };
