@@ -1054,13 +1054,7 @@
         }
         /* KTV 蓝色光标 */
         .lyric-caret {
-            display: inline-block;
-            width: 2px;
-            height: 1em;
-            background: #007aff;
-            margin-left: 1px;
-            vertical-align: -0.12em;
-            animation: lyricBlink 0.8s infinite;
+            display: none;
         }
         @keyframes lyricBlink {
             0%, 50% { opacity: 1; }
@@ -1165,10 +1159,10 @@
         }
         .music-lyrics .lyric-line.active {
             display: block;
-            color: #007aff;
+            color: #0051ff;
             font-weight: bold;
             font-size: 18px;
-            text-shadow: 0 0 10px rgba(0, 122, 255, 0.3);
+            text-shadow: 0 0 10px rgba(0, 81, 255, 0.3);
         }
 
         /* 添加歌曲弹窗 - 居中显示 */
@@ -3392,9 +3386,9 @@ const embeddedLyrics = {
                 const lineDuration = Math.max(lineEndTime - lineStartTime, 1);
                 const lineText = currentLine.text.trim();
                 const charCount = lineText.length;
-                // 每个字的时间，精确同步（提前0.5秒）
+                // 每个字的时间，精确同步（提前1.5秒）
                 const timePerChar = lineDuration / Math.max(charCount, 1);
-                const elapsedInLine = (currentTime - lineStartTime) + 0.5;
+                const elapsedInLine = (currentTime - lineStartTime) + 1.5;
                 let currentCharIndex = Math.floor(elapsedInLine / timePerChar);
                 if (currentCharIndex < 0) currentCharIndex = 0;
                 if (currentCharIndex >= charCount) currentCharIndex = charCount - 1;
@@ -3404,8 +3398,8 @@ const embeddedLyrics = {
                 for (let i = 0; i < charCount; i++) {
                     const ch = lineText[i];
                     if (i <= currentCharIndex) {
-                        // 已经唱过的字（包括当前） - 蓝色
-                        charHtml += `<span style="color:#007aff;font-weight:bold;">${ch}</span>`;
+                        // 已经唱过的字（包括当前） - 深蓝色
+                        charHtml += `<span style="color:#0051ff;font-weight:bold;">${ch}</span>`;
                     } else {
                         // 没唱的字 - 深灰色
                         charHtml += `<span style="color:#555;font-weight:bold;">${ch}</span>`;
