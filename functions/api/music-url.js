@@ -1,4 +1,4 @@
-// 取真实播放地址（QQ、酷狗需要二次请求；网易云在 music-search 已给外链）
+// 取真实播放地址（QQ、酷狗、酷我需要二次请求；网易云在 music-search 已给外链）
 export async function onRequest(context) {
     const url = new URL(context.request.url);
     const server = url.searchParams.get('server') || '';
@@ -8,17 +8,13 @@ export async function onRequest(context) {
             const songmid = url.searchParams.get('songmid') || '';
             if (!songmid) return new Response('missing songmid', { status: 400 });
             
-            // 方式1：直接用QQ音乐外链接口
-            const directUrl = 'https://qqmusic.qq.com/fcgi-bin/u?__=' + songmid;
-            
-            // 方式2：用musicu接口获取vkey
-            const guid = '10000';
+            // 方式：用QQ音乐官方接口获取播放地址
             const data = {
                 req_0: {
                     module: 'vkey.GetVkeyServer',
                     method: 'CgiGetVkey',
                     param: {
-                        guid: guid,
+                        guid: '10000',
                         songmid: [songmid],
                         songtype: [0],
                         uin: '0',
@@ -45,8 +41,15 @@ export async function onRequest(context) {
                 return Response.redirect(sip[0] + purl, 302);
             }
             
-            // 如果没有purl，试试用直接外链
-            return Response.redirect(directUrl, 302);
+            // 如果没有purl，试试用备用接口
+            const backupApi = 'https://api.injahow.cn/meting/?type=url&id=' + songmid + '&server=tencent';
+            const backupR = await fetch(backupApi);
+            const backupUrl = await backupR.text();
+            if (backupUrl && backupUrl.startsWith('http')) {
+                return Response.redirect(backupUrl, 302);
+            }
+            
+            return new Response('该歌曲暂无法播放', { status: 403 });
         }
 
         if (server === 'kugou') {
@@ -59,23 +62,44 @@ export async function onRequest(context) {
             const r = await fetch(api, { headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://www.kugou.com/' } });
             const j = await r.json();
             const playUrl = j && j.data && j.data.play_url;
-            if (!playUrl) {
-                return new Response('该歌曲在酷狗为VIP专享，无法直接播放', { status: 403 });
+            if (playUrl) {
+                return Response.redirect(playUrl, 302);
             }
-            return Response.redirect(playUrl, 302);
+            // 备用接口
+            const backupApi = 'https://api.injahow.cn/meting/?type=url&id=' + hash + '&server=kugou';
+            const backupR = await fetch(backupApi);
+            const backupUrl = await backupR.text();
+            if (backupUrl && backupUrl.startsWith('http')) {
+                return Response.redirect(backupUrl, 302);
+            }
+            return new Response('该歌曲暂无法播放', { status: 403 });
         }
 
         if (server === 'kuwo') {
             const rid = url.searchParams.get('rid') || '';
             if (!rid) return new Response('missing rid', { status: 400 });
             const api = 'https://www.kuwo.cn/api/www/url/getMusicUrl?mid=' + rid + '&type=music&br=128kmp3';
-            const r = await fetch(api, { headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://www.kuwo.cn/' } });
+            const r = await fetch(api, { 
+                headers: { 
+                    'User-Agent': 'Mozilla/5.0', 
+                    Referer: 'https://www.kuwo.cn/',
+                    'csrf': '0',
+                    'Cookie': 'kw_token=0'
+                } 
+            });
             const j = await r.json();
             const playUrl = j && j.data && j.data.url;
-            if (!playUrl) {
-                return new Response('该歌曲在酷我为VIP专享，无法直接播放', { status: 403 });
+            if (playUrl) {
+                return Response.redirect(playUrl, 302);
             }
-            return Response.redirect(playUrl, 302);
+            // 备用接口
+            const backupApi = 'https://api.injahow.cn/meting/?type=url&id=' + rid + '&server=kuwo';
+            const backupR = await fetch(backupApi);
+            const backupUrl = await backupR.text();
+            if (backupUrl && backupUrl.startsWith('http')) {
+                return Response.redirect(backupUrl, 302);
+            }
+            return new Response('该歌曲暂无法播放', { status: 403 });
         }
 
         return new Response('unknown server', { status: 400 });

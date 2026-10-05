@@ -28,7 +28,7 @@ export async function onRequest(context) {
 }
 
 async function fetchJson(u, headers = {}) {
-    const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0', ...headers } });
+    const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', ...headers } });
     const t = await r.text();
     try { return JSON.parse(t); } catch { return {}; }
 }
@@ -36,8 +36,8 @@ async function fetchJson(u, headers = {}) {
 // ---------- 网易云 ----------
 async function searchNetease(kw) {
     const data = await fetchJson(
-        'https://music.163.com/api/cloudsearch/pc?s=' + encodeURIComponent(kw) + '&type=1&offset=0&limit=20',
-        { Referer: 'https://music.163.com/', 'Content-Type': 'application/x-www-form-urlencoded' }
+        'https://music.163.com/api/search/get/web?csrf_token=&hlpretag=&hlposttag=&s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
+        { Referer: 'https://music.163.com/' }
     );
     const songs = (data.result && data.result.songs) || [];
     const out = [];
@@ -68,7 +68,6 @@ async function searchQQ(kw) {
             name: s.songname,
             artist: (s.singer && s.singer[0] && s.singer[0].name) || '未知',
             pic: 'https://y.qq.com/music/photo_new/T002R300x300M000' + s.albummid + '.jpg',
-            // 播放地址由 /api/music-lyric?server=tencent&songmid=XXX 一并返回
             url: '/api/music-url?server=tencent&songmid=' + songmid,
             lrc: '/api/music-lyric?server=tencent&songmid=' + songmid
         });
@@ -101,17 +100,18 @@ async function searchKugou(kw) {
 // ---------- 酷我 ----------
 async function searchKuwo(kw) {
     const data = await fetchJson(
-        'https://search.kuwo.cn/r.s?all=' + encodeURIComponent(kw) + '&ft=music&itemset=web_2013&client=kt&pn=0&rn=20&rformat=json&encoding=utf8',
-        { Referer: 'https://www.kuwo.cn/' }
+        'https://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=' + encodeURIComponent(kw) + '&pn=1&rn=20&httpsStatus=1',
+        { Referer: 'https://www.kuwo.cn/', 'csrf': '0', 'Cookie': 'kw_token=0' }
     );
-    const list = (data.abslist || []).filter(s => s.MUSICRID);
+    const list = (data.data && data.data.list) || [];
     const out = [];
     for (const s of list.slice(0, 15)) {
-        const rid = s.MUSICRID.replace('MUSIC_', '');
+        const rid = s.rid || s.id;
+        if (!rid) continue;
         out.push({
-            name: s.NAME || '未知歌曲',
-            artist: s.ARTIST || '未知',
-            pic: s.ALBUM_PIC ? s.ALBUM_PIC.replace('{size}', '200') : '',
+            name: s.name || '未知歌曲',
+            artist: s.artist || '未知',
+            pic: s.albumpic ? s.albumpic.replace('{size}', '200') : '',
             url: '/api/music-url?server=kuwo&rid=' + rid,
             lrc: '/api/music-lyric?server=kuwo&rid=' + rid
         });
@@ -121,20 +121,20 @@ async function searchKuwo(kw) {
 
 // ---------- 汽水音乐 ----------
 async function searchQishui(kw) {
-    // 汽水音乐API（字节跳动旗下）
+    // 汽水音乐使用抖音音乐接口
     const data = await fetchJson(
-        'https://api5-normal-lf.fqnovel.com/playing/music/v1/search/?keyword=' + encodeURIComponent(kw) + '&page=1&size=20',
-        { Referer: 'https://www.qishui.com/' }
+        'https://aweme.snssdk.com/aweme/v1/music/search/?keyword=' + encodeURIComponent(kw) + '&count=20&cursor=0',
+        { Referer: 'https://www.douyin.com/' }
     );
-    const list = (data.data && data.data.music_list) || [];
+    const list = (data.music_list || []).map(m => m.music_info).filter(Boolean);
     const out = [];
     for (const s of list.slice(0, 15)) {
         out.push({
-            name: s.music_name || '未知歌曲',
+            name: s.title || '未知歌曲',
             artist: s.author || '未知',
-            pic: s.cover || '',
-            url: s.music_url || '',
-            lrc: s.lyric_url || ''
+            pic: s.cover_large ? s.cover_large.url_list[0] : '',
+            url: s.play_url ? s.play_url.url_list[0] : '',
+            lrc: ''
         });
     }
     return out;
