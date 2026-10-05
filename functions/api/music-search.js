@@ -136,23 +136,23 @@ async function searchKugou(kw) {
 
 // ---------- 酷我 ----------
 async function searchKuwo(kw) {
+    // 用酷我的另一个接口
     const data = await fetchJson(
-        'https://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=' + encodeURIComponent(kw) + '&pn=1&rn=20&httpsStatus=1',
+        'https://search.kuwo.cn/r.s?all=' + encodeURIComponent(kw) + '&ft=music&itemset=web_2013&client=kt&pn=0&rn=20&rformat=json&encoding=utf8',
         { 
-            Referer: 'https://www.kuwo.cn/', 
-            'csrf': '0', 
-            'Cookie': 'kw_token=0' 
+            Referer: 'https://www.kuwo.cn/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
     );
-    const list = (data.data && data.data.list) || [];
+    const list = (data.abslist || []) ;
     const out = [];
     for (const s of list.slice(0, 15)) {
-        const rid = s.rid || s.id;
+        const rid = s.MUSICID;
         if (!rid) continue;
         out.push({
-            name: s.name || '未知歌曲',
-            artist: s.artist || '未知',
-            pic: s.albumpic ? s.albumpic.replace('{size}', '200') : 'https://image.kuwo.net/logo/default_cover.png',
+            name: s.MUSICNAME || '未知歌曲',
+            artist: s.ARTIST || '未知',
+            pic: s.ALBUM || 'https://image.kuwo.net/logo/default_cover.png',
             url: '/api/music-url?server=kuwo&rid=' + rid,
             lrc: '/api/music-lyric?server=kuwo&rid=' + rid
         });
