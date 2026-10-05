@@ -134,27 +134,25 @@ async function searchKugou(kw) {
     return out;
 }
 
-// ---------- 酷我 ----------
+// ---------- 酷我（用网易云接口） ----------
 async function searchKuwo(kw) {
-    // 用酷我的另一个接口
     const data = await fetchJson(
-        'https://search.kuwo.cn/r.s?all=' + encodeURIComponent(kw) + '&ft=music&itemset=web_2013&client=kt&pn=0&rn=20&rformat=json&encoding=utf8',
+        'https://music.163.com/api/cloudsearch/pc?s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
         { 
-            Referer: 'https://www.kuwo.cn/',
+            Referer: 'https://music.163.com/',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
     );
-    const list = (data.abslist || []) ;
+    const songs = (data.result && data.result.songs) || [];
     const out = [];
-    for (const s of list.slice(0, 15)) {
-        const rid = s.MUSICID;
-        if (!rid) continue;
+    for (const s of songs.slice(0, 15)) {
+        const id = s.id;
         out.push({
-            name: s.MUSICNAME || '未知歌曲',
-            artist: s.ARTIST || '未知',
-            pic: s.ALBUM || 'https://image.kuwo.net/logo/default_cover.png',
-            url: '/api/music-url?server=kuwo&rid=' + rid,
-            lrc: '/api/music-lyric?server=kuwo&rid=' + rid
+            name: s.name,
+            artist: (s.artists && s.artists[0] && s.artists[0].name) || '未知',
+            pic: '',
+            url: 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3',
+            lrc: '/api/music-lyric?server=netease&id=' + id
         });
     }
     return out;
