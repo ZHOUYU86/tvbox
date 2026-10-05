@@ -1,4 +1,4 @@
-// 音乐搜索代理：官方接口 + Meting API备用
+// 音乐搜索代理：落雪音乐API（多平台，稳定）
 // 输出格式：[{name, artist, url, lrc, pic}]
 export async function onRequest(context) {
     const { request } = context;
@@ -14,26 +14,30 @@ export async function onRequest(context) {
     if (!keyword) return json({ error: '缺少关键词' }, 400);
 
     try {
+        // 落雪音乐API的平台映射
+        let lxSource = '';
+        if (server === 'netease') lxSource = 'wy';
+        else if (server === 'tencent') lxSource = 'tx';
+        else if (server === 'kugou') lxSource = 'kg';
+        else if (server === 'kuwo') lxSource = 'kw';
+        else if (server === 'qishui') lxSource = 'mg'; // 汽水音乐用咪咕音源
+        
+        // 使用落雪音乐API搜索
+        const searchUrl = `https://music-api.gdstudio.xyz/api.php?types=search&source=${lxSource}&pages=1&limit=20&s=${encodeURIComponent(keyword)}`;
+        const searchData = await fetchJson(searchUrl);
+        
+        // 解析搜索结果
         let result = [];
-        
-        // 先试官方接口
-        if (server === 'netease') result = await searchNetease(keyword);
-        else if (server === 'tencent') result = await searchQQ(keyword);
-        else if (server === 'kugou') result = await searchKugou(keyword);
-        else if (server === 'kuwo') result = await searchKuwo(keyword);
-        else if (server === 'qishui') result = await searchQishui(keyword);
-        
-        // 如果官方接口失败，用Meting API备用
-        if (!result || result.length === 0) {
-            let metingServer = '';
-            if (server === 'netease') metingServer = 'netease';
-            else if (server === 'tencent') metingServer = 'tencent';
-            else if (server === 'kugou') metingServer = 'kugou';
-            else if (server === 'kuwo') metingServer = 'kuwo';
-            
-            if (metingServer) {
-                result = await searchMeting(keyword, metingServer);
-            }
+        if (searchData && searchData.body && searchData.body.songs) {
+            result = searchData.body.songs.map(song => ({
+                id: song.id,
+                name: song.name,
+                artist: (song.artists || []).map(a => a.name).join(' / '),
+                album: song.album ? song.album.name : '',
+                url: `https://music-api.gdstudio.xyz/api.php?types=url&source=${lxSource}&id=${song.id}&br=320`,
+                lrc: `https://music-api.gdstudio.xyz/api.php?types=lyric&source=${lxSource}&id=${song.id}`,
+                pic: song.album && song.album.pic ? song.album.pic : ''
+            }));
         }
         
         return json(result);

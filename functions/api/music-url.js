@@ -1,37 +1,27 @@
-// 取真实播放地址（Meting API为主，官方接口备用）
+// 取真实播放地址（落雪音乐API为主）
 export async function onRequest(context) {
     const url = new URL(context.request.url);
     const server = url.searchParams.get('server') || '';
+    const songId = url.searchParams.get('id') || '';
 
     try {
         let playUrl = '';
-        let metingServer = '';
-        let metingId = '';
-
-        // 映射到Meting API的server
-        if (server === 'tencent') {
-            metingServer = 'tencent';
-            metingId = url.searchParams.get('songmid') || '';
-        } else if (server === 'kugou') {
-            metingServer = 'kugou';
-            metingId = url.searchParams.get('hash') || '';
-        } else if (server === 'kuwo') {
-            metingServer = 'kuwo';
-            metingId = url.searchParams.get('rid') || '';
-        } else if (server === 'netease') {
-            metingServer = 'netease';
-            metingId = url.searchParams.get('id') || '';
-        } else if (server === 'qishui') {
-            metingServer = 'netease';
-            metingId = url.searchParams.get('id') || '';
-        }
-
-        // 先用Meting API
-        if (metingServer && metingId) {
-            const metingRes = await fetch('https://api.injahow.cn/meting/?type=url&id=' + metingId + '&server=' + metingServer);
-            const metingUrl = await metingRes.text();
-            if (metingUrl && metingUrl.startsWith('http')) {
-                playUrl = metingUrl;
+        
+        // 落雪音乐API的平台映射
+        let lxSource = '';
+        if (server === 'netease') lxSource = 'wy';
+        else if (server === 'tencent') lxSource = 'tx';
+        else if (server === 'kugou') lxSource = 'kg';
+        else if (server === 'kuwo') lxSource = 'kw';
+        else if (server === 'qishui') lxSource = 'mg';
+        
+        // 使用落雪音乐API获取播放地址
+        if (lxSource && songId) {
+            const lxUrl = `https://music-api.gdstudio.xyz/api.php?types=url&source=${lxSource}&id=${songId}&br=320`;
+            const lxRes = await fetch(lxUrl);
+            const lxData = await lxRes.json();
+            if (lxData && lxData.body && lxData.body.url) {
+                playUrl = lxData.body.url;
             }
         }
 
