@@ -3149,6 +3149,19 @@ const embeddedLyrics = {
             let lrcUrl = song.lrc;
             const coverUrl = song.pic || '🎵';
             
+            // 如果url为空，用Meting API获取播放地址
+            if (!playUrl && song.id) {
+                try {
+                    const apiMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
+                    const serverName = apiMap[currentPlatform] || 'netease';
+                    const urlApi = 'https://api.injahow.cn/meting/?type=url&server=' + serverName + '&id=' + song.id;
+                    const urlData = await (await fetch(urlApi)).json();
+                    if (urlData.url) playUrl = urlData.url;
+                } catch (e) {
+                    console.log('获取播放地址失败');
+                }
+            }
+            
             // 网易云平台：直接用外链播放（最稳定）
             if (currentPlatform === 'netease' && song.id) {
                 playUrl = 'https://music.163.com/song/media/outer/url?id=' + song.id + '.mp3';
