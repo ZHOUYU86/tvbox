@@ -1622,9 +1622,9 @@
                 icon: '🔧',
                 password: '123456',
                 sites: [
-                    { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
-                    { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' },
-                    { name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' },
+                    { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://zhouyu365666.top/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
+                    { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' },
+                    { name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://zhouyu365666.top', type: 'link' },
                     { name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' }
                 ]
             }
@@ -1712,8 +1712,8 @@
                 // 如果是系统工具分类且没有网站，添加源地址大全入口
                 if (cat.name === '系统工具' && (!cat.sites || cat.sites.length === 0)) {
                     cat.sites = [
-                        { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
-                        { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' }
+                        { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://zhouyu365666.top/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
+                        { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' }
                     ];
                     needSave = true;
                 }
@@ -1722,8 +1722,8 @@
                     const firstSite = cat.sites[0];
                     if (firstSite.type === 'copy' || (firstSite.name && (firstSite.name.includes('本地') || firstSite.name.includes('在线')))) {
                         cat.sites = [
-                            { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
-                            { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' }
+                            { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://zhouyu365666.top/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
+                            { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' }
                         ];
                         needSave = true;
                     }
@@ -1733,10 +1733,10 @@
                     cat.sites.forEach(site => {
                         if (site.url && !site.url.startsWith('http')) {
                             if (site.name && site.name.includes('源地址大全')) {
-                                site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
+                                site.url = 'https://zhouyu365666.top/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
                                 needSave = true;
                             } else if (site.name && site.name.includes('接口编辑器')) {
-                                site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
+                                site.url = 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
                                 needSave = true;
                             }
                         }
@@ -1746,11 +1746,11 @@
                     const hasStation = cat.sites.some(s => s.name && s.name.includes('接口站'));
                     const has18 = cat.sites.some(s => s.name && (s.name.includes('合并配置18') || s.name.includes('配置18')));
                     if (!hasEditor) {
-                        cat.sites.push({ name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' });
+                        cat.sites.push({ name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' });
                         needSave = true;
                     }
                     if (!hasStation) {
-                        cat.sites.push({ name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' });
+                        cat.sites.push({ name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://zhouyu365666.top', type: 'link' });
                         needSave = true;
                     }
                     if (!has18) {
@@ -1883,11 +1883,11 @@
                     // 强制修复：系统工具分类里的特定网站，不管旧数据是什么，都用完整URL
                     if (site.name) {
                         if (site.name.includes('源地址大全')) {
-                            site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
+                            site.url = 'https://zhouyu365666.top/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
                         } else if (site.name.includes('接口编辑器')) {
-                            site.url = 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
+                            site.url = 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
                         } else if (site.name.includes('接口站') && site.name.includes('Cloudflare')) {
-                            site.url = 'https://tvbox-bh1.pages.dev';
+                            site.url = 'https://zhouyu365666.top';
                         } else if (site.name.includes('合并配置18') || site.name.includes('配置18')) {
                             site.url = 'https://zhouyu365666.top/assets/static/data/tvbox18.json';
                         }
@@ -3529,11 +3529,11 @@ const embeddedLyrics = {
                         const hasStation = cat.sites.some(s => s.name && s.name.includes('接口站'));
                         const has18 = cat.sites.some(s => s.name && (s.name.includes('合并配置18') || s.name.includes('配置18')));
                         if (!hasEditor) {
-                            cat.sites.push({ name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://tvbox-bh1.pages.dev/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' });
+                            cat.sites.push({ name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' });
                             needFix = true;
                         }
                         if (!hasStation) {
-                            cat.sites.push({ name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://tvbox-bh1.pages.dev', type: 'link' });
+                            cat.sites.push({ name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://zhouyu365666.top', type: 'link' });
                             needFix = true;
                         }
                         if (!has18) {
@@ -3559,6 +3559,8 @@ const embeddedLyrics = {
     </script>
 </body>
 </html>
+
+
 
 
 
