@@ -3114,6 +3114,8 @@ const embeddedLyrics = {
                         platform: meta.name,
                         platformColor: meta.color
                     }));
+                    // 打印一下歌词地址，方便调试
+                    console.log('歌词地址:', onlineSearchResults[0].lrc);
                     renderSearchResults();
                 } else {
                     itemsDiv.innerHTML = '<div class="search-loading">😢 ' + meta.name + '未找到相关歌曲<br><span style="font-size:10px;color:#999;">试试切换其他平台或换个关键词</span></div>';
@@ -3192,15 +3194,23 @@ const embeddedLyrics = {
                 if (callback) callback();
                 return;
             }
-            // 在线歌曲的歌词直接fetch（Meting API返回lrc地址，返回纯文本LRC）
+            // 在线歌曲的歌词直接fetch（Cloudflare Pages Functions API返回lrc地址，返回纯文本LRC）
             if (song.isOnline) {
-                fetch(song.lrc)
+                // 如果是相对路径，转换成完整URL
+                let lrcUrl = song.lrc;
+                if (lrcUrl.startsWith('/')) {
+                    lrcUrl = window.location.origin + lrcUrl;
+                }
+                console.log('加载歌词:', lrcUrl);
+                fetch(lrcUrl)
                     .then(r => r.text())
                     .then(text => {
+                        console.log('歌词内容:', text.substring(0, 100));
                         song.parsedLyrics = parseLRC(text);
                         if (callback) callback();
                     })
-                    .catch(() => {
+                    .catch((e) => {
+                        console.log('歌词加载失败:', e);
                         song.parsedLyrics = [];
                         if (callback) callback();
                     });
