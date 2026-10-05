@@ -14,31 +14,30 @@ export async function onRequest(context) {
     if (!keyword) return json({ error: '缺少关键词' }, 400);
 
     try {
-        // 落雪音乐API的平台映射
-        let lxSource = '';
-        if (server === 'netease') lxSource = 'netease';
-        else if (server === 'tencent') lxSource = 'tencent';
-        else if (server === 'kugou') lxSource = 'kugou';
-        else if (server === 'kuwo') lxSource = 'kuwo';
-        else if (server === 'qishui') lxSource = 'migu'; // 汽水音乐用咪咕音源
-        
-        // 使用落雪音乐API搜索
-        const searchUrl = `https://music-api.gdstudio.xyz/api.php?types=search&source=${lxSource}&pages=1&limit=20&name=${encodeURIComponent(keyword)}`;
-        const searchData = await fetchJson(searchUrl);
-        
-        // 解析搜索结果
         let result = [];
-        if (Array.isArray(searchData)) {
-            result = searchData.map(song => ({
-                id: song.id,
-                name: song.name,
-                artist: Array.isArray(song.artist) ? song.artist.join(' / ') : (song.artist || '未知歌手'),
-                album: song.album || '',
-                url: `https://music-api.gdstudio.xyz/api.php?types=url&source=${lxSource}&id=${song.id}&br=320`,
-                lrc: `https://music-api.gdstudio.xyz/api.php?types=lyric&source=${lxSource}&id=${song.id}`,
-                pic: song.pic_id ? `https://p1.music.126.net/cover/${song.pic_id}.jpg` : ''
-            }));
+        
+        // 网易云用落雪音乐API
+        if (server === 'netease') {
+            const searchUrl = `https://music-api.gdstudio.xyz/api.php?types=search&source=netease&pages=1&limit=20&name=${encodeURIComponent(keyword)}`;
+            const searchData = await fetchJson(searchUrl);
+            
+            if (Array.isArray(searchData)) {
+                result = searchData.map(song => ({
+                    id: song.id,
+                    name: song.name,
+                    artist: Array.isArray(song.artist) ? song.artist.join(' / ') : (song.artist || '未知歌手'),
+                    album: song.album || '',
+                    url: `https://music-api.gdstudio.xyz/api.php?types=url&source=netease&id=${song.id}&br=320`,
+                    lrc: `https://music-api.gdstudio.xyz/api.php?types=lyric&source=netease&id=${song.id}`,
+                    pic: song.pic_id ? `https://p1.music.126.net/cover/${song.pic_id}.jpg` : ''
+                }));
+            }
         }
+        // 其他平台用官方接口
+        else if (server === 'tencent') result = await searchQQ(keyword);
+        else if (server === 'kugou') result = await searchKugou(keyword);
+        else if (server === 'kuwo') result = await searchKuwo(keyword);
+        else if (server === 'qishui') result = await searchQishui(keyword);
         
         return json(result);
     } catch (e) {
