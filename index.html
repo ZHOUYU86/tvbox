@@ -3386,9 +3386,9 @@ const embeddedLyrics = {
                 const lineDuration = Math.max(lineEndTime - lineStartTime, 1);
                 const lineText = currentLine.text.trim();
                 const charCount = lineText.length;
-                // 每个字的时间，精确同步（提前1.5秒）
+                // 每个字的时间，精确同步（提前2秒）
                 const timePerChar = lineDuration / Math.max(charCount, 1);
-                const elapsedInLine = (currentTime - lineStartTime) + 1.5;
+                const elapsedInLine = (currentTime - lineStartTime) + 2.0;
                 let currentCharIndex = Math.floor(elapsedInLine / timePerChar);
                 if (currentCharIndex < 0) currentCharIndex = 0;
                 if (currentCharIndex >= charCount) currentCharIndex = charCount - 1;
@@ -3406,7 +3406,7 @@ const embeddedLyrics = {
                     }
                 }
                 // 在当前唱到的字后面加红色闪烁光标
-                charHtml += '<span class="lyric-caret"></span>';
+                // charHtml += '<span class="lyric-caret"></span>';
                 lyricsContainer.innerHTML = `<div class="lyric-line active">${charHtml}</div>`;
             } catch (e) {
                 // 出错也不影响播放
