@@ -1,0 +1,64 @@
+﻿name: 自动同步成人接口
+on:
+  schedule:
+    - cron: '0 16 * * *'  # 每天北京时间0点运行
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 下载上游catcr.json
+        run: |
+          curl -L -o catcr.json https://raw.githubusercontent.com/lemonguo121/BoxRes/main/Myuse/catcr.json
+          echo "下载完成，大小: $(wc -c < catcr.json) 字节"
+
+      - name: 合并接口（删量子+去重）
+        run: |
+          python3 << 'EOF'
+          import json
+
+          # 读取上游catcr.json，删掉量子
+          with open('catcr.json', 'r', encoding='utf-8') as f:
+              catcr = json.load(f)
+          catcr['sites'] = [s for s in catcr['sites'] if '量子' not in s['name']]
+          print(f"上游站点数（删量子后）: {len(catcr['sites'])}")
+
+          # 读取我们的tvbox18.json
+          with open('assets/static/data/tvbox18.json', 'r', encoding='utf-8') as f:
+              tvbox18 = json.load(f)
+          print(f"我们的站点数: {len(tvbox18['sites'])}")
+
+          # 合并去重（按name）
+          names = set()
+          merged = []
+          # 先加我们的站点
+          for s in tvbox18['sites']:
+              if s['name'] not in names:
+                  names.add(s['name'])
+                  merged.append(s)
+          # 再加上游的站点
+          for s in catcr['sites']:
+              if s['name'] not in names:
+                  names.add(s['name'])
+                  merged.append(s)
+
+          tvbox18['sites'] = merged
+          print(f"合并后总站点数: {len(merged)}")
+
+          # 保存
+          with open('assets/static/data/tvbox18.json', 'w', encoding='utf-8') as f:
+              json.dump(tvbox18, f, ensure_ascii=False, indent=2)
+          print("保存成功！")
+          EOF
+
+      - name: 提交并推送
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add assets/static/data/tvbox18.json
+          git commit -m '🔄 自动同步成人接口' || echo '没有变化，跳过提交'
+          git push

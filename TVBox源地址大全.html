@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVBox 源地址大全 - 一键复制</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .source-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .source-card:hover {
+            transform: translateY(-2px);
+        }
+        .source-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .source-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .source-badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .source-badge.warning {
+            background: #f59e0b;
+        }
+        .url-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+        .url-label {
+            min-width: 80px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #666;
+        }
+        .url-label.online1 { color: #3b82f6; }
+        .url-label.online2 { color: #8b5cf6; }
+        .url-label.local { color: #10b981; }
+        .url-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: Consolas, monospace;
+            background: #fff;
+            color: #222;
+            min-width: 0;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+        .copy-btn {
+            padding: 12px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .copy-btn:hover {
+            background: #2563eb;
+        }
+        .copy-btn.copied {
+            background: #10b981;
+        }
+        .copy-btn.online2 { background: #8b5cf6; }
+        .copy-btn.online2:hover { background: #7c3aed; }
+        .copy-btn.local { background: #10b981; }
+        .copy-btn.local:hover { background: #059669; }
+        .delete-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: #fee2e2;
+            color: #dc2626;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: all 0.2s;
+        }
+        .delete-btn:hover {
+            background: #dc2626;
+            color: white;
+            transform: scale(1.1);
+        }
+        .delete-url-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: #fee2e2;
+            color: #dc2626;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .delete-url-btn:hover {
+            background: #dc2626;
+            color: white;
+            transform: scale(1.1);
+        }
+        .restore-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .restore-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            margin-top: 30px;
+            font-size: 12px;
+        }
+        .tip {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        /* 手机端响应式 */
+        @media (max-width: 600px) {
+            .url-row {
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+            .url-label {
+                min-width: auto;
+                width: 100%;
+                font-size: 14px;
+                margin-bottom: 2px;
+            }
+            .url-input {
+                flex: 1 1 100%;
+                padding: 14px 16px;
+                font-size: 15px;
+                order: 1;
+            }
+            .copy-btn {
+                padding: 14px 24px;
+                font-size: 15px;
+                order: 2;
+            }
+            .delete-url-btn {
+                order: 3;
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align:center;margin-bottom:15px;">
+            <a href="index.html" style="display:inline-block;padding:14px 30px;background:#1677ff;color:white;text-decoration:none;border-radius:10px;font-size:16px;font-weight:bold;box-shadow:0 4px 15px rgba(22,119,255,0.4);">
+                ← 返回导航主页
+            </a>
+        </div>
+        <h1>📺 TVBox 源地址大全</h1>
+        <p class="subtitle">点击复制按钮，一键复制接口地址到 TVBox / OK影视</p>
+        
+        <div style="text-align:center;margin-bottom:15px;">
+            <button onclick="recheckAll()" style="padding:10px 25px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;box-shadow:0 4px 15px rgba(59,130,246,0.4);transition:all 0.2s;">
+                🔄 重新检测所有源状态
+            </button>
+        </div>
+        
+        <div class="tip">
+            💡 <strong>使用说明：</strong>每个源有3个地址 —— 
+            <span style="color:#60a5fa">在线1（自定义域名，推荐）</span>、
+            <span style="color:#a78bfa">在线2（Cloudflare原生域名）</span>、
+            <span style="color:#34d399">本地（电脑和手机同一WiFi时用）</span>。
+            点击右边的"复制"按钮即可复制地址，然后粘贴到TVBox的配置地址里。
+        </div>
+
+        <div id="sources"></div>
+
+        <!-- 合并配置18（私密接口） -->
+        <div class="source-card" style="border: 2px solid #1677ff;">
+            <div class="source-header">
+                <h2>🔞 合并配置18（私密接口）</h2>
+                <span class="badge">健康</span>
+            </div>
+            <div class="source-item">
+                <span class="label online1">在线1</span>
+                <span class="url">https://zhouyu365666.top/assets/static/data/tvbox18.json</span>
+                <button class="copy-btn online1" onclick="copyToClipboard('https://zhouyu365666.top/assets/static/data/tvbox18.json')">复制</button>
+            </div>
+            <div class="source-footer">
+                <span>📊 站点数：32</span>
+                <span>📁 路径：/assets/static/data/tvbox18.json</span>
+                <span class="detect">✓ 在线正常</span>
+            </div>
+        </div>
+
+        <div style="text-align:center;margin:20px 0;">
+            <a href="index.html" style="display:inline-block;padding:14px 30px;background:#1677ff;color:white;text-decoration:none;border-radius:10px;font-size:16px;font-weight:bold;box-shadow:0 4px 15px rgba(22,119,255,0.4);">
+                ← 返回导航主页
+            </a>
+        </div>
+
+        <div class="footer">
+            TVBox 源地址管理工具 | 共 11 个源 | 检测时间：<span id="time"></span>
+        </div>
+    </div>
+
+    <script>
+        const sources = [
+            { name: "小洒 (xs)", en: "xs", sites: 103, status: "健康" },
+            { name: "FTY (fty)", en: "fty", sites: 52, status: "健康" },
+            { name: "王二小 (wex)", en: "wex", sites: 96, status: "健康" },
+            { name: "南风 (nf)", en: "nf", sites: 0, status: "健康" },
+            { name: "肥猫 (feimao)", en: "feimao", sites: 39, status: "健康" },
+            { name: "CL (cl)", en: "cl", sites: 92, status: "健康" },
+            { name: "欧阳 (ouyang)", en: "ouyang", sites: 131, status: "健康" },
+            { name: "鲁宾 (lubin)", en: "lubin", sites: 206, status: "健康" },
+            { name: "东篱 (dl)", en: "dl", sites: 93, status: "健康" },
+            { name: "TVURL (tvurl)", en: "tvurl", sites: 86, status: "健康" },
+        ];
+
+        const ONLINE1 = "https://zhouyu365666.top";
+        const ONLINE2 = "https://tvbox-bh1.pages.dev";
+        const LOCAL = "http://10.144.194.238:8080";
+
+        function createCard(src) {
+            const card = document.createElement('div');
+            card.className = 'source-card';
+            card.dataset.en = src.en;
+            
+            const badgeClass = src.status === "健康" ? "" : "warning";
+            const deletedUrls = getDeletedUrls();
+            
+            // 生成地址行，如果已删除就不显示
+            let urlRows = '';
+            const urlTypes = [
+                { key: 'online1', label: '在线1', url: `${ONLINE1}/${src.en}/api.json`, cls: 'online1' },
+                { key: 'online2', label: '在线2', url: `${ONLINE2}/${src.en}/api.json`, cls: 'online2' },
+                { key: 'local', label: '本地', url: `${LOCAL}/${src.en}/api.json`, cls: 'local' }
+            ];
+            
+            urlTypes.forEach(ut => {
+                const delKey = `${src.en}_${ut.key}`;
+                if (!deletedUrls.includes(delKey)) {
+                    urlRows += `
+                        <div class="url-row" id="row-${delKey}">
+                            <span class="url-label ${ut.cls}">${ut.label}</span>
+                            <input type="text" class="url-input" value="${ut.url}" readonly>
+                            <button class="copy-btn ${ut.cls}" onclick="copyUrl(this)">复制</button>
+                            <button class="delete-url-btn" onclick="deleteUrl('${src.en}', '${ut.key}', '${src.name}', '${ut.label}')" title="删除此地址">×</button>
+                        </div>
+                    `;
+                }
+            });
+            
+            // 如果三个地址都删了，就不显示这个源卡片了
+            if (urlRows === '') return null;
+            
+            card.innerHTML = `
+                <div class="source-header">
+                    <div class="source-name">${src.name}</div>
+                    <div class="source-badge ${badgeClass}" id="badge-${src.en}">${src.status}</div>
+                </div>
+                ${urlRows}
+                <div class="stats">
+                    <span>📊 站点数：${src.sites}</span>
+                    <span>📁 路径：/${src.en}/api.json</span>
+                    <span id="detect-${src.en}" style="color:#999;">⏳ 检测中...</span>
+                </div>
+            `;
+            return card;
+        }
+
+        // 删除地址相关
+        function getDeletedUrls() {
+            try {
+                return JSON.parse(localStorage.getItem('deleted_urls') || '[]');
+            } catch(e) {
+                return [];
+            }
+        }
+
+        function saveDeletedUrls(list) {
+            localStorage.setItem('deleted_urls', JSON.stringify(list));
+        }
+
+        function deleteUrl(en, type, sourceName, typeLabel) {
+            if (!confirm(`确定要删除【${sourceName} - ${typeLabel}】这个地址吗？\n\n删除后可在页面底部点击"恢复所有地址"找回。`)) return;
+            
+            const delKey = `${en}_${type}`;
+            const deleted = getDeletedUrls();
+            if (!deleted.includes(delKey)) {
+                deleted.push(delKey);
+                saveDeletedUrls(deleted);
+            }
+            
+            // 重新渲染
+            renderAll();
+        }
+
+        function restoreAllUrls() {
+            if (!confirm('确定要恢复所有已删除的地址吗？')) return;
+            saveDeletedUrls([]);
+            renderAll();
+        }
+
+        function updateCount() {
+            const deleted = getDeletedUrls();
+            const totalUrls = sources.length * 3;
+            const visible = totalUrls - deleted.length;
+            const footer = document.querySelector('.footer');
+            if (footer) {
+                footer.innerHTML = `TVBox 源地址管理工具 | 共 ${sources.length} 个源 / ${visible} 个地址（已删除 ${deleted.length} 个地址） | 检测时间：<span id="time"></span>`;
+                document.getElementById('time').textContent = new Date().toLocaleString('zh-CN');
+            }
+        }
+
+        function copyUrl(btn) {
+            const input = btn.parentElement.querySelector('.url-input');
+            input.select();
+            document.execCommand('copy');
+            
+            const originalText = btn.textContent;
+            btn.textContent = '✓ 已复制';
+            btn.classList.add('copied');
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('copied');
+            }, 1500);
+        }
+
+        // 自动检测源状态
+        async function checkSourceStatus(en) {
+            const badge = document.getElementById(`badge-${en}`);
+            const detect = document.getElementById(`detect-${en}`);
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                const response = await fetch(`${ONLINE1}/${en}/api.json`, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                // no-cors模式下只要有响应就算正常
+                badge.textContent = '健康';
+                badge.classList.remove('warning');
+                detect.textContent = '✓ 在线正常';
+                detect.style.color = '#10b981';
+            } catch (err) {
+                // 超时或错误，试试在线2
+                try {
+                    const controller2 = new AbortController();
+                    const timeoutId2 = setTimeout(() => controller2.abort(), 8000);
+                    await fetch(`${ONLINE2}/${en}/api.json`, {
+                        method: 'GET',
+                        mode: 'no-cors',
+                        signal: controller2.signal
+                    });
+                    clearTimeout(timeoutId2);
+                    badge.textContent = '健康';
+                    badge.classList.remove('warning');
+                    detect.textContent = '✓ 在线2正常';
+                    detect.style.color = '#10b981';
+                } catch (err2) {
+                    badge.textContent = '待检测';
+                    badge.classList.add('warning');
+                    detect.textContent = '⚠ 网络受限';
+                    detect.style.color = '#f59e0b';
+                }
+            }
+        }
+
+        // 重新检测所有源
+        function recheckAll() {
+            sources.forEach((src, index) => {
+                const badge = document.getElementById(`badge-${src.en}`);
+                const detect = document.getElementById(`detect-${src.en}`);
+                if (badge) {
+                    badge.textContent = '检测中';
+                    badge.classList.remove('warning');
+                }
+                if (detect) {
+                    detect.textContent = '⏳ 检测中...';
+                    detect.style.color = '#999';
+                }
+                setTimeout(() => checkSourceStatus(src.en), index * 500);
+            });
+        }
+
+        // 渲染所有源
+        function renderAll() {
+            const container = document.getElementById('sources');
+            container.innerHTML = '';
+            const deleted = getDeletedUrls();
+            
+            sources.forEach(src => {
+                const card = createCard(src);
+                if (card) {
+                    container.appendChild(card);
+                }
+            });
+            
+            // 如果有已删除的地址，显示恢复按钮
+            let restoreDiv = document.getElementById('restoreDiv');
+            if (!restoreDiv) {
+                restoreDiv = document.createElement('div');
+                restoreDiv.id = 'restoreDiv';
+                restoreDiv.style.textAlign = 'center';
+                restoreDiv.style.marginTop = '20px';
+                container.parentNode.appendChild(restoreDiv);
+            }
+            if (deleted.length > 0) {
+                restoreDiv.innerHTML = `<button class="restore-btn" onclick="restoreAllUrls()">🔄 恢复所有已删除的地址（${deleted.length}个）</button>`;
+            } else {
+                restoreDiv.innerHTML = '';
+            }
+            
+            updateCount();
+            
+            // 自动检测所有源状态
+            setTimeout(() => {
+                sources.forEach((src, index) => {
+                    setTimeout(() => checkSourceStatus(src.en), index * 500);
+                });
+            }, 1000);
+        }
+
+        // 初始渲染
+        renderAll();
+    </script>
+</body>
+</html>
