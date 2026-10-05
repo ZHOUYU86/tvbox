@@ -3099,7 +3099,7 @@ const embeddedLyrics = {
             itemsDiv.innerHTML = '<div class="search-loading">🔍 正在' + meta.name + '搜索...</div>';
 
             try {
-                // 走本地 Cloudflare Pages Function 代理（解决CORS）
+                // Meting API 搜索（之前测试正常）
                 const apiMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
                 const serverName = apiMap[currentPlatform] || 'netease';
                 const searchUrl = 'https://api.injahow.cn/meting/?type=search&server=' + serverName + '&name=' + encodeURIComponent(keyword);
@@ -3142,16 +3142,14 @@ const embeddedLyrics = {
             }).join('');
         }
         
-        // 播放搜索结果（参考落雪音乐API，更稳定）
+        // 播放搜索结果（分平台优化播放地址）
         async function playSearchResult(index) {
             const song = onlineSearchResults[index];
-            
-            // 参考落雪音乐的接口：直接用网易云外链（最稳定）
             let playUrl = song.url;
             let lrcUrl = song.lrc;
-            let coverUrl = song.pic || '🎵';
+            const coverUrl = song.pic || '🎵';
             
-            // 如果是网易云平台，直接用外链播放（最稳定，无需二次请求）
+            // 网易云平台：直接用外链播放（最稳定）
             if (currentPlatform === 'netease' && song.id) {
                 playUrl = 'https://music.163.com/song/media/outer/url?id=' + song.id + '.mp3';
                 lrcUrl = 'https://music.163.com/api/song/lyric?id=' + song.id + '&lv=1&kv=1&tv=-1';
