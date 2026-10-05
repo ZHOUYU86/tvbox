@@ -3099,12 +3099,9 @@ const embeddedLyrics = {
             itemsDiv.innerHTML = '<div class="search-loading">🔍 正在' + meta.name + '搜索...</div>';
 
             try {
-                // 落雪音乐API（music-api.gdstudio.xyz）
+                // 落雪音乐API（只支持网易云）
                 const apiBase = 'https://music-api.gdstudio.xyz/api.php';
-                // 平台映射：netease→netease, tencent→tencent, kugou→kugou, kuwo→kuwo, qishui→tencent
-                const sourceMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
-                const source = sourceMap[currentPlatform] || 'netease';
-                const searchUrl = apiBase + '?types=search&source=' + source + '&name=' + encodeURIComponent(keyword) + '&count=30';
+                const searchUrl = apiBase + '?types=search&source=netease&name=' + encodeURIComponent(keyword) + '&count=30';
                 const data = await (await fetch(searchUrl)).json();
 
                 if (Array.isArray(data) && data.length > 0) {
@@ -3144,31 +3141,25 @@ const embeddedLyrics = {
             }).join('');
         }
         
-        // 播放搜索结果（落雪音乐API，自动更新，最稳定）
+        // 播放搜索结果（分平台优化播放地址）
         async function playSearchResult(index) {
             const song = onlineSearchResults[index];
             const apiBase = 'https://music-api.gdstudio.xyz/api.php';
-            const sourceMap = { netease: 'netease', tencent: 'tencent', kugou: 'kugou', kuwo: 'kuwo', qishui: 'tencent' };
-            const source = sourceMap[currentPlatform] || 'netease';
             
-            // 获取播放地址
+            // 获取播放地址和歌词（网易云用落雪音乐API）
             let playUrl = song.url;
+            let lrcUrl = song.lrc;
+            
             try {
-                const urlApi = apiBase + '?types=url&source=' + source + '&id=' + song.id + '&br=320';
+                const urlApi = apiBase + '?types=url&source=netease&id=' + song.id + '&br=320';
                 const urlData = await (await fetch(urlApi)).json();
                 if (urlData.url) playUrl = urlData.url;
-            } catch (e) {
-                console.log('获取播放地址失败');
-            }
-            
-            // 获取歌词
-            let lrcUrl = song.lrc;
-            try {
-                const lrcApi = apiBase + '?types=lrc&source=' + source + '&id=' + song.id;
+                
+                const lrcApi = apiBase + '?types=lrc&source=netease&id=' + song.id;
                 const lrcData = await (await fetch(lrcApi)).json();
                 if (lrcData.lrc) lrcUrl = lrcData.lrc;
             } catch (e) {
-                console.log('获取歌词失败');
+                console.log('获取播放地址失败');
             }
             
             const coverUrl = song.pic || '🎵';
