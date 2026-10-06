@@ -533,16 +533,7 @@
         }
         /* 顶部时间天气栏 */
         .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1000px;
-            margin: 0 auto 15px;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            backdrop-filter: blur(8px);
+            display: none;
         }
         .time-display {
             display: flex;
@@ -1511,17 +1502,17 @@
                 <div class="music-info">
                     <div class="music-title" id="musicTitle">歌曲名称</div>
                     <div class="music-artist" id="musicArtist">艺术家</div>
-                    <div class="music-meta">
-                        <span class="music-mode" id="musicMode" onclick="toggleMode()" title="循环模式">🔁</span>
-                        <span class="music-lyric-toggle" id="lyricToggle" onclick="toggleLyrics()" title="歌词">🎤</span>
-                    </div>
                 </div>
                 <!-- 控制按钮 -->
                 <div class="music-controls">
+                    <button class="music-btn" onclick="toggleMode()" title="循环模式">🔀</button>
                     <button class="music-btn" onclick="prevMusic()" title="上一首">⏮</button>
                     <button class="music-btn" onclick="nextMusic()" title="下一首">⏭</button>
+                    <button class="music-btn playlist" onclick="togglePlaylist()" title="播放列表">☰</button>
                 </div>
             </div>
+            <!-- 歌词显示行 -->
+            <div class="music-lyric-line" id="musicLyricLine">♪ 歌词显示 ♪</div>
             <!-- 底部：进度条 + 时间 + 音量 -->
             <div class="music-bottom">
                 <div class="music-progress" onclick="seekMusic(event)">
