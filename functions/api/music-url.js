@@ -1,4 +1,4 @@
-// 取真实播放地址（网易云音乐官方接口）
+// 取真实播放地址（落雪音乐API）
 export async function onRequest(context) {
     const url = new URL(context.request.url);
     const songId = url.searchParams.get('id') || '';
@@ -6,9 +6,15 @@ export async function onRequest(context) {
     try {
         let playUrl = '';
         
-        // 用网易云音乐官方播放地址
+        // 用落雪音乐API获取真实播放地址
         if (songId) {
-            playUrl = `https://music.163.com/song/media/outer/url?id=${songId}.mp3`;
+            const apiUrl = `https://music-api.gdstudio.xyz/api.php?types=url&source=netease&id=${songId}&br=320`;
+            const r = await fetch(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+            const data = await r.json();
+            
+            if (data && data.url) {
+                playUrl = data.url;
+            }
         }
 
         if (playUrl && playUrl.startsWith('http')) {

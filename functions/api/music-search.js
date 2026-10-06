@@ -16,9 +16,19 @@ export async function onRequest(context) {
     try {
         let result = [];
         
-        // 所有平台都用落雪音乐API（网易云），稳定
+        // 用落雪音乐API（修复编码问题）
         const searchUrl = `https://music-api.gdstudio.xyz/api.php?types=search&source=netease&pages=1&limit=20&name=${encodeURIComponent(keyword)}`;
-        const searchData = await fetchJson(searchUrl);
+        const r = await fetch(searchUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const buffer = await r.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(buffer);
+        
+        let searchData = [];
+        try {
+            searchData = JSON.parse(text);
+        } catch (e) {
+            return json({ error: 'JSON解析失败: ' + e.message, raw: text.substring(0, 200) }, 500);
+        }
         
         if (Array.isArray(searchData)) {
             result = searchData.map(song => ({
@@ -26,21 +36,26 @@ export async function onRequest(context) {
                 name: song.name,
                 artist: Array.isArray(song.artist) ? song.artist.join(' / ') : (song.artist || '未知歌手'),
                 album: song.album || '',
-                url: `https://music-api.gdstudio.xyz/api.php?types=url&source=netease&id=${song.id}&br=320`,
-                lrc: `https://music-api.gdstudio.xyz/api.php?types=lyric&source=netease&id=${song.id}`,
+                url: `/api/music-url?id=${song.id}`,
+                lrc: `/api/music-lyric?id=${song.id}`,
                 pic: song.pic_id ? `https://p1.music.126.net/cover/${song.pic_id}.jpg` : ''
             }));
+        } else {
+            return json({ error: '返回数据不是数组', data: searchData }, 500);
         }
         
         return json(result);
     } catch (e) {
-        return json({ error: e.message || '搜索失败' }, 500);
+        return json({ error: e.message || '搜索失败', stack: e.stack }, 500);
     }
 }
 
 async function fetchJson(u, headers = {}) {
     const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', ...headers } });
-    const t = await r.text();
+    // 用arrayBuffer获取原始数据，然后用UTF-8解码
+    const buffer = await r.arrayBuffer();
+    const decoder = new TextDecoder('utf-8');
+    const t = decoder.decode(buffer);
     try { return JSON.parse(t); } catch { return {}; }
 }
 
