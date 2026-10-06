@@ -1282,8 +1282,14 @@
                 font-size: 28px; 
                 white-space: nowrap;
             }
-            .top-bar { flex-direction: column; gap: 10px; text-align: center; }
+            .top-bar { 
+                display: none;
+            }
             .logo-decoration { width: 40px; }
+            .header {
+                margin-top: 0;
+                margin-bottom: 20px;
+            }
             .music-player {
                 bottom: 50%;
                 transform: translateY(50%);
@@ -1506,16 +1512,14 @@
                     <div class="music-title" id="musicTitle">歌曲名称</div>
                     <div class="music-artist" id="musicArtist">艺术家</div>
                     <div class="music-meta">
-                        <span class="music-mode" id="musicMode" onclick="toggleMode()">专辑循环</span>
-                        <span class="music-lyric-toggle" id="lyricToggle" onclick="toggleLyrics()">歌词开启</span>
-                        <span class="music-add-btn" onclick="addMusic()">+ 添加</span>
+                        <span class="music-mode" id="musicMode" onclick="toggleMode()" title="循环模式">🔁</span>
+                        <span class="music-lyric-toggle" id="lyricToggle" onclick="toggleLyrics()" title="歌词">🎤</span>
                     </div>
                 </div>
                 <!-- 控制按钮 -->
                 <div class="music-controls">
                     <button class="music-btn" onclick="prevMusic()" title="上一首">⏮</button>
                     <button class="music-btn" onclick="nextMusic()" title="下一首">⏭</button>
-                    <button class="music-btn playlist" onclick="togglePlaylist()" title="播放列表">☰</button>
                 </div>
             </div>
             <!-- 底部：进度条 + 时间 + 音量 -->
