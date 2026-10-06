@@ -1274,10 +1274,94 @@
             transform: translateY(-1px);
         }
         @media (max-width: 600px) {
-            .site-grid { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
-            .logo { font-size: 32px; }
-            .top-bar { flex-direction: column; gap: 10px; text-align: center; }
-            .logo-decoration { width: 40px; }
+            body { padding: 20px 12px; }
+            .site-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+                gap: 12px;
+                padding: 0 12px 16px;
+            }
+            .site-item {
+                padding: 16px 10px;
+                border-radius: 12px;
+            }
+            .site-item .site-favicon {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 8px;
+            }
+            .site-item .site-name {
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .logo { font-size: 36px; }
+            .top-bar { flex-direction: column; gap: 12px; text-align: center; }
+            .logo-decoration { width: 48px; }
+            .accordion-item {
+                border-radius: 12px;
+                margin-bottom: 12px;
+            }
+            .accordion-header {
+                padding: 18px 16px;
+                min-height: 60px;
+            }
+            .accordion-title {
+                font-size: 17px;
+            }
+            .accordion-icon {
+                font-size: 30px;
+            }
+            .add-site-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                border-radius: 10px;
+            }
+            .accordion-arrow {
+                font-size: 22px;
+            }
+            .search-box {
+                border-radius: 40px;
+            }
+            .search-box input {
+                padding: 16px 20px;
+                font-size: 16px;
+            }
+            .search-box button {
+                padding: 16px 24px;
+                font-size: 16px;
+                border-radius: 40px;
+            }
+            .modal {
+                padding: 20px;
+                width: 95%;
+                border-radius: 16px;
+            }
+            .modal h3 {
+                font-size: 20px;
+                margin-bottom: 16px;
+            }
+            .modal input, .modal select {
+                padding: 14px;
+                font-size: 16px;
+                border-radius: 10px;
+            }
+            .modal button {
+                padding: 14px;
+                font-size: 16px;
+                border-radius: 10px;
+            }
+            .music-player {
+                border-radius: 16px;
+            }
+            .music-tabs button {
+                padding: 10px 16px;
+                font-size: 14px;
+                border-radius: 20px;
+            }
+            .music-controls button {
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -1670,6 +1754,7 @@
                     { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://zhouyu365666.top/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
                     { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' },
                     { name: '📡 TVBox接口站（Cloudflare）', icon: '📡', url: 'https://zhouyu365666.top', type: 'link' },
+                    { name: '🐼 肥猫聚合接口（multi）', icon: '🐼', url: 'https://tvbox-bh1.pages.dev/feimao/multi.json', type: 'link' },
                     { name: '🔞 合并配置18（域名）', icon: '🔞', url: 'https://zhouyu365666.top/assets/static/data/tvbox18.json', type: 'link' }
                 ]
             }
