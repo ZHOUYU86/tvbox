@@ -220,6 +220,7 @@
             { name: "鲁宾 (lubin)", en: "lubin" },
             { name: "东篱 (dl)", en: "dl" },
             { name: "TVURL (tvurl)", en: "tvurl" },
+            { name: "🐼 肥猫聚合 (multi)", en: "feimao-multi", isMulti: true },
         ];
 
         const adultSource = {
@@ -281,10 +282,14 @@
             const card = document.createElement('div');
             card.className = 'source-card' + (isAdult ? ' adult' : '');
             
+            // 根据是否是multi接口，选择不同的路径
+            const suffix = src.isMulti ? '/multi.json' : '/api.json';
+            const pathPrefix = src.isMulti ? '/feimao' : `/${src.en}`;
+            
             const urlTypes = [
-                { key: 'online1', label: '在线1', cls: 'online1', url: `${ONLINE1}/${src.en}/api.json` },
-                { key: 'online2', label: '在线2', cls: 'online2', url: `${ONLINE2}/${src.en}/api.json` },
-                { key: 'local', label: '本地', cls: 'local', url: `${LOCAL}/${src.en}/api.json` }
+                { key: 'online1', label: '在线1', cls: 'online1', url: `${ONLINE1}${pathPrefix}${suffix}` },
+                { key: 'online2', label: '在线2', cls: 'online2', url: `${ONLINE2}${pathPrefix}${suffix}` },
+                { key: 'local', label: '本地', cls: 'local', url: `${LOCAL}${pathPrefix}${suffix}` }
             ];
             
             let urlRows = '';
