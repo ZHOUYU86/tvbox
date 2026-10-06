@@ -1,51 +1,20 @@
-// 取真实播放地址（直连平台官方接口，更稳定）
+// 取真实播放地址（落雪音乐API）
 export async function onRequest(context) {
     const url = new URL(context.request.url);
-    const server = url.searchParams.get('server') || '';
+    const songId = url.searchParams.get('id') || '';
 
     try {
         let playUrl = '';
-
-        if (server === 'tencent') {
-            // QQ音乐
-            const songmid = url.searchParams.get('songmid') || '';
-            if (!songmid) return new Response('missing songmid', { status: 400 });
+        
+        // 用落雪音乐API获取真实播放地址
+        if (songId) {
+            const apiUrl = `https://music-api.gdstudio.xyz/api.php?types=url&source=netease&id=${songId}&br=320`;
+            const r = await fetch(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+            const data = await r.json();
             
-            // 获取vkey
-            const vkeyRes = await fetch('https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?g_tk=5381&jsonpCallback=MusicJsonCallback&loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&cid=205361747&uin=0&songmid=' + songmid + '&filename=C400' + songmid + '.m4a&guid=00000000000000000000000000000000', {
-                headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://y.qq.com/' }
-            });
-            const vkeyData = await vkeyRes.json();
-            const vkey = (vkeyData.data && vkeyData.data.items && vkeyData.data.items[0] && vkeyData.data.items[0].vkey) || '';
-            
-            if (vkey) {
-                playUrl = 'https://dl.stream.qqmusic.qq.com/C400' + songmid + '.m4a?vkey=' + vkey + '&uin=0&fromtag=66';
+            if (data && data.url) {
+                playUrl = data.url;
             }
-        } else if (server === 'kugou') {
-            // 酷狗
-            const hash = url.searchParams.get('hash') || '';
-            if (!hash) return new Response('missing hash', { status: 400 });
-            
-            const res = await fetch('https://wwwapi.kugou.com/yy/index.php?r=play/getdata&hash=' + hash + '&mid=00000000000000000000000000000000&platid=4&dfid=0&appid=1014', {
-                headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://www.kugou.com/' }
-            });
-            const data = await res.json();
-            playUrl = (data.data && data.data.play_url) || '';
-        } else if (server === 'kuwo') {
-            // 酷我
-            const rid = url.searchParams.get('rid') || '';
-            if (!rid) return new Response('missing rid', { status: 400 });
-            
-            const res = await fetch('https://www.kuwo.cn/api/www/url/getMusicUrl?mid=' + rid + '&type=music&httpsStatus=1', {
-                headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://www.kuwo.cn/' }
-            });
-            const data = await res.json();
-            playUrl = (data.data && data.data.url) || '';
-        } else if (server === 'netease') {
-            // 网易云
-            const id = url.searchParams.get('id') || '';
-            if (!id) return new Response('missing id', { status: 400 });
-            playUrl = 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3';
         }
 
         if (playUrl && playUrl.startsWith('http')) {
