@@ -611,8 +611,8 @@
         }
         /* 收起/展开按钮 */
         .music-toggle {
-            width: 28px;
-            height: 80px;
+            width: 20px;
+            height: 50px;
             background: rgba(20, 20, 30, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-left: none;
@@ -621,8 +621,8 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: #333;
-            font-size: 14px;
+            color: #fff;
+            font-size: 10px;
             transition: all 0.3s;
             position: absolute;
             left: 0;
@@ -661,14 +661,14 @@
         }
         /* 圆形唱片 */
         .music-cover {
-            width: 72px;
-            height: 72px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             background: #1a1a2e;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 22px;
             position: relative;
             flex-shrink: 0;
             box-shadow: 0 0 0 3px #0a0a1a, 0 0 0 4px rgba(255,255,255,0.2), 0 4px 15px rgba(0,0,0,0.5);
@@ -677,8 +677,8 @@
         .music-cover::after {
             content: '';
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: linear-gradient(135deg, #1677ff, #40a9ff, #69c0ff, #e6f4ff);
             box-shadow: 0 0 8px rgba(255,255,255,0.5);
@@ -686,10 +686,10 @@
         /* 播放/暂停按钮（独立悬浮在唱片中间，不受旋转影响） */
         .play-btn-overlay {
             position: absolute;
-            left: 16px; /* 唱片中心36px - 按钮一半20px = 16px */
-            top: 16px;
-            width: 40px;
-            height: 40px;
+            left: 13px; /* 唱片中心28px - 按钮一半15px = 13px */
+            top: 13px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
             display: flex;
@@ -800,7 +800,6 @@
         }
         .music-btn#musicModeBtn {
             background: #ff9500;
-            color: #fff;
         }
         .music-btn:hover {
             background: #40a9ff;
@@ -1369,12 +1368,23 @@
                 max-width: 95%;
                 left: 50%;
                 transform: translateX(-50%);
+                z-index: 100;
             }
             .switch {
                 background-color: #fff;
             }
             input:checked + .slider {
                 background-color: #34c759;
+            }
+            .music-cover {
+                width: 56px;
+                height: 56px;
+            }
+            .play-btn-overlay {
+                width: 30px;
+                height: 30px;
+                left: 13px;
+                top: 13px;
             }
         }
     </style>
