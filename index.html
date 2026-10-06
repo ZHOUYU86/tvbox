@@ -784,9 +784,9 @@
             flex-shrink: 0;
         }
         .music-btn {
-            background: none;
+            background: #1677ff;
             border: none;
-            color: #222;
+            color: #fff;
             font-size: 16px;
             cursor: pointer;
             transition: all 0.2s;
@@ -798,9 +798,11 @@
             justify-content: center;
             border-radius: 50%;
         }
+        .music-btn#musicModeBtn {
+            background: #ff9500;
+        }
         .music-btn:hover {
-            color: #40a9ff;
-            background: rgba(255, 107, 157, 0.15);
+            background: #40a9ff;
         }
         .music-btn.playlist {
             font-size: 14px;
@@ -860,7 +862,7 @@
             border-radius: 50%;
         }
         input:checked + .slider {
-            background-color: #1677ff;
+            background-color: #34c759;
         }
         input:checked + .slider:before {
             transform: translateX(20px);
@@ -1359,6 +1361,11 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 font-size: 11px;
+            }
+            .music-lyrics {
+                bottom: 10px;
+                width: 90%;
+                max-width: 90%;
             }
         }
     </style>
