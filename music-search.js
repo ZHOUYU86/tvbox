@@ -1,4 +1,4 @@
-// 音乐搜索代理：直连平台官方接口，归一化输出
+// 音乐搜索代理：落雪音乐API（所有平台都用网易云，稳定）
 // 输出格式：[{name, artist, url, lrc, pic}]
 export async function onRequest(context) {
     const { request } = context;
@@ -15,29 +15,77 @@ export async function onRequest(context) {
 
     try {
         let result = [];
-        if (server === 'netease') result = await searchNetease(keyword);
-        else if (server === 'tencent') result = await searchQQ(keyword);
-        else if (server === 'kugou') result = await searchKugou(keyword);
-        else if (server === 'kuwo') result = await searchKuwo(keyword);
-        else if (server === 'qishui') result = await searchQishui(keyword);
-        else return json({ error: '不支持的平台' }, 400);
+        
+        // 用落雪音乐API（修复编码问题）
+        const searchUrl = `https://music-api.gdstudio.xyz/api.php?types=search&source=netease&pages=1&limit=20&name=${encodeURIComponent(keyword)}`;
+        const r = await fetch(searchUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const buffer = await r.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(buffer);
+        
+        let searchData = [];
+        try {
+            searchData = JSON.parse(text);
+        } catch (e) {
+            return json({ error: 'JSON解析失败: ' + e.message, raw: text.substring(0, 200) }, 500);
+        }
+        
+        if (Array.isArray(searchData)) {
+            result = searchData.map(song => ({
+                id: song.id,
+                name: song.name,
+                artist: Array.isArray(song.artist) ? song.artist.join(' / ') : (song.artist || '未知歌手'),
+                album: song.album || '',
+                url: `/api/music-url?id=${song.id}`,
+                lrc: `/api/music-lyric?id=${song.id}`,
+                pic: song.pic_id ? `https://p1.music.126.net/cover/${song.pic_id}.jpg` : ''
+            }));
+        } else {
+            return json({ error: '返回数据不是数组', data: searchData }, 500);
+        }
+        
         return json(result);
     } catch (e) {
-        return json({ error: e.message || '搜索失败' }, 500);
+        return json({ error: e.message || '搜索失败', stack: e.stack }, 500);
     }
 }
 
 async function fetchJson(u, headers = {}) {
     const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', ...headers } });
-    const t = await r.text();
+    // 用arrayBuffer获取原始数据，然后用UTF-8解码
+    const buffer = await r.arrayBuffer();
+    const decoder = new TextDecoder('utf-8');
+    const t = decoder.decode(buffer);
     try { return JSON.parse(t); } catch { return {}; }
+}
+
+// Meting API备用搜索
+async function searchMeting(kw, server) {
+    const data = await fetchJson(
+        'https://api.injahow.cn/meting/?type=search&server=' + server + '&name=' + encodeURIComponent(kw)
+    );
+    const list = (data && data.songs) || (data && data.list) || [];
+    const out = [];
+    for (const s of list.slice(0, 15)) {
+        out.push({
+            name: s.name || s.title || '未知歌曲',
+            artist: s.artist || s.author || '未知',
+            pic: s.pic || s.cover || '',
+            url: s.url || '',
+            lrc: s.lrc || ''
+        });
+    }
+    return out;
 }
 
 // ---------- 网易云 ----------
 async function searchNetease(kw) {
     const data = await fetchJson(
-        'https://music.163.com/api/search/get/web?csrf_token=&hlpretag=&hlposttag=&s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
-        { Referer: 'https://music.163.com/' }
+        'https://music.163.com/api/cloudsearch/pc?s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
+        { 
+            Referer: 'https://music.163.com/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
     );
     const songs = (data.result && data.result.songs) || [];
     const out = [];
@@ -46,7 +94,7 @@ async function searchNetease(kw) {
         out.push({
             name: s.name,
             artist: (s.artists && s.artists[0] && s.artists[0].name) || '未知',
-            pic: s.album && s.album.picUrl ? s.album.picUrl + '?param=200y200' : '',
+            pic: s.album && s.album.picUrl ? s.album.picUrl + '?param=200y200' : 'https://p1.music.126.net/6y-UleORITEDbvr0Im1-5w==/109951165804443793.jpg',
             url: 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3',
             lrc: '/api/music-lyric?server=netease&id=' + id
         });
@@ -67,7 +115,7 @@ async function searchQQ(kw) {
         out.push({
             name: s.songname,
             artist: (s.singer && s.singer[0] && s.singer[0].name) || '未知',
-            pic: 'https://y.qq.com/music/photo_new/T002R300x300M000' + s.albummid + '.jpg',
+            pic: 'https://y.qq.com/music/photo_new/T002R300x300M000' + s.albummid + '_1.jpg',
             url: '/api/music-url?server=tencent&songmid=' + songmid,
             lrc: '/api/music-lyric?server=tencent&songmid=' + songmid
         });
@@ -89,7 +137,7 @@ async function searchKugou(kw) {
         out.push({
             name: s.SongName || s.OriSongName || (s.FileName || '').split(' - ').pop() || '未知',
             artist: s.SingerName || '未知',
-            pic: s.Image ? s.Image.replace('{size}', '200') : '',
+            pic: s.Image ? s.Image.replace('{size}', '200') : 'https://static.kugou.com/v5/web/search/img/default_cover.png',
             url: '/api/music-url?server=kugou&hash=' + hash,
             lrc: '/api/music-lyric?server=kugou&hash=' + hash
         });
@@ -97,23 +145,25 @@ async function searchKugou(kw) {
     return out;
 }
 
-// ---------- 酷我 ----------
+// ---------- 酷我（用网易云接口） ----------
 async function searchKuwo(kw) {
     const data = await fetchJson(
-        'https://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=' + encodeURIComponent(kw) + '&pn=1&rn=20&httpsStatus=1',
-        { Referer: 'https://www.kuwo.cn/', 'csrf': '0', 'Cookie': 'kw_token=0' }
+        'https://music.163.com/api/cloudsearch/pc?s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
+        { 
+            Referer: 'https://music.163.com/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
     );
-    const list = (data.data && data.data.list) || [];
+    const songs = (data.result && data.result.songs) || [];
     const out = [];
-    for (const s of list.slice(0, 15)) {
-        const rid = s.rid || s.id;
-        if (!rid) continue;
+    for (const s of songs.slice(0, 15)) {
+        const id = s.id;
         out.push({
-            name: s.name || '未知歌曲',
-            artist: s.artist || '未知',
-            pic: s.albumpic ? s.albumpic.replace('{size}', '200') : '',
-            url: '/api/music-url?server=kuwo&rid=' + rid,
-            lrc: '/api/music-lyric?server=kuwo&rid=' + rid
+            name: s.name,
+            artist: (s.artists && s.artists[0] && s.artists[0].name) || '未知',
+            pic: '',
+            url: 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3',
+            lrc: '/api/music-lyric?server=netease&id=' + id
         });
     }
     return out;
@@ -121,20 +171,24 @@ async function searchKuwo(kw) {
 
 // ---------- 汽水音乐 ----------
 async function searchQishui(kw) {
-    // 汽水音乐使用抖音音乐接口
+    // 汽水音乐用网易云接口作为备用
     const data = await fetchJson(
-        'https://aweme.snssdk.com/aweme/v1/music/search/?keyword=' + encodeURIComponent(kw) + '&count=20&cursor=0',
-        { Referer: 'https://www.douyin.com/' }
+        'https://music.163.com/api/cloudsearch/pc?s=' + encodeURIComponent(kw) + '&type=1&offset=0&total=true&limit=20',
+        { 
+            Referer: 'https://music.163.com/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
     );
-    const list = (data.music_list || []).map(m => m.music_info).filter(Boolean);
+    const songs = (data.result && data.result.songs) || [];
     const out = [];
-    for (const s of list.slice(0, 15)) {
+    for (const s of songs.slice(0, 15)) {
+        const id = s.id;
         out.push({
-            name: s.title || '未知歌曲',
-            artist: s.author || '未知',
-            pic: s.cover_large ? s.cover_large.url_list[0] : '',
-            url: s.play_url ? s.play_url.url_list[0] : '',
-            lrc: ''
+            name: s.name,
+            artist: (s.artists && s.artists[0] && s.artists[0].name) || '未知',
+            pic: s.album && s.album.picUrl ? s.album.picUrl + '?param=200y200' : 'https://p1.music.126.net/6y-UleORITEDbvr0Im1-5w==/109951165804443793.jpg',
+            url: 'https://music.163.com/song/media/outer/url?id=' + id + '.mp3',
+            lrc: '/api/music-lyric?server=netease&id=' + id
         });
     }
     return out;
