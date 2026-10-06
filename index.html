@@ -800,6 +800,7 @@
         }
         .music-btn#musicModeBtn {
             background: #ff9500;
+            color: #fff;
         }
         .music-btn:hover {
             background: #40a9ff;
@@ -1364,8 +1365,16 @@
             }
             .music-lyrics {
                 bottom: 10px;
-                width: 90%;
-                max-width: 90%;
+                width: 95%;
+                max-width: 95%;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .switch {
+                background-color: #fff;
+            }
+            input:checked + .slider {
+                background-color: #34c759;
             }
         }
     </style>
