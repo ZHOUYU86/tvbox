@@ -1,4 +1,4 @@
-// 取歌词，统一返回 LRC 纯文本（落雪音乐API）
+// 取歌词，统一返回 LRC 纯文本（落雪音乐API，所有平台都用网易云）
 export async function onRequest(context) {
     const url = new URL(context.request.url);
     const server = url.searchParams.get('server') || '';
@@ -12,17 +12,9 @@ export async function onRequest(context) {
     try {
         let lrcText = '';
         
-        // 落雪音乐API的平台映射
-        let lxSource = '';
-        if (server === 'netease') lxSource = 'netease';
-        else if (server === 'tencent') lxSource = 'tencent';
-        else if (server === 'kugou') lxSource = 'kugou';
-        else if (server === 'kuwo') lxSource = 'kuwo';
-        else if (server === 'qishui') lxSource = 'migu';
-        
-        // 使用落雪音乐API获取歌词
-        if (lxSource && songId) {
-            const lxUrl = `https://music-api.gdstudio.xyz/api.php?types=lyric&source=${lxSource}&id=${songId}`;
+        // 所有平台都用落雪音乐API（网易云）
+        if (songId) {
+            const lxUrl = `https://music-api.gdstudio.xyz/api.php?types=lyric&source=netease&id=${songId}`;
             const lxRes = await fetch(lxUrl);
             const lxData = await lxRes.json();
             if (lxData && lxData.lyric) {

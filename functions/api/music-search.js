@@ -1,4 +1,4 @@
-// 音乐搜索代理：落雪音乐API（多平台，稳定）
+// 音乐搜索代理：落雪音乐API（所有平台都用网易云，稳定）
 // 输出格式：[{name, artist, url, lrc, pic}]
 export async function onRequest(context) {
     const { request } = context;
@@ -16,28 +16,21 @@ export async function onRequest(context) {
     try {
         let result = [];
         
-        // 网易云用落雪音乐API
-        if (server === 'netease') {
-            const searchUrl = `https://music-api.gdstudio.xyz/api.php?types=search&source=netease&pages=1&limit=20&name=${encodeURIComponent(keyword)}`;
-            const searchData = await fetchJson(searchUrl);
-            
-            if (Array.isArray(searchData)) {
-                result = searchData.map(song => ({
-                    id: song.id,
-                    name: song.name,
-                    artist: Array.isArray(song.artist) ? song.artist.join(' / ') : (song.artist || '未知歌手'),
-                    album: song.album || '',
-                    url: `https://music-api.gdstudio.xyz/api.php?types=url&source=netease&id=${song.id}&br=320`,
-                    lrc: `https://music-api.gdstudio.xyz/api.php?types=lyric&source=netease&id=${song.id}`,
-                    pic: song.pic_id ? `https://p1.music.126.net/cover/${song.pic_id}.jpg` : ''
-                }));
-            }
+        // 所有平台都用落雪音乐API（网易云），稳定
+        const searchUrl = `https://music-api.gdstudio.xyz/api.php?types=search&source=netease&pages=1&limit=20&name=${encodeURIComponent(keyword)}`;
+        const searchData = await fetchJson(searchUrl);
+        
+        if (Array.isArray(searchData)) {
+            result = searchData.map(song => ({
+                id: song.id,
+                name: song.name,
+                artist: Array.isArray(song.artist) ? song.artist.join(' / ') : (song.artist || '未知歌手'),
+                album: song.album || '',
+                url: `https://music-api.gdstudio.xyz/api.php?types=url&source=netease&id=${song.id}&br=320`,
+                lrc: `https://music-api.gdstudio.xyz/api.php?types=lyric&source=netease&id=${song.id}`,
+                pic: song.pic_id ? `https://p1.music.126.net/cover/${song.pic_id}.jpg` : ''
+            }));
         }
-        // 其他平台用官方接口
-        else if (server === 'tencent') result = await searchQQ(keyword);
-        else if (server === 'kugou') result = await searchKugou(keyword);
-        else if (server === 'kuwo') result = await searchKuwo(keyword);
-        else if (server === 'qishui') result = await searchQishui(keyword);
         
         return json(result);
     } catch (e) {
