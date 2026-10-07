@@ -1058,7 +1058,7 @@
             box-shadow: 0 0 0 4px rgba(22,119,255,0.15);
         }
         .music-search-bar button {
-            padding: 10px 20px;
+            padding: 10px 15px;
             background: linear-gradient(135deg, #1677ff, #096dd9);
             color: #fff;
             border: none;
@@ -1068,6 +1068,7 @@
             font-weight: 600;
             transition: all 0.2s;
             box-shadow: 0 2px 8px rgba(22,119,255,0.3);
+            white-space: nowrap;
         }
         .music-search-bar button:hover {
             transform: translateY(-1px);
@@ -1173,49 +1174,23 @@
             font-size: 13px;
             line-height: 1.8;
         }
-        /* 歌词显示 - 屏幕正中底部 */
+        /* 歌词显示 - 重新写 */
         .music-lyrics {
             position: fixed;
+            bottom: 20px;
             left: 50%;
-            bottom: 15px;
-            width: 90%;
-            max-width: 90%;
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid #e0e0e0;
-            border-radius: 25px;
-            padding: 20px 30px;
-            text-align: center;
-            transform: translateX(-50%) translateY(15px);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s;
-            z-index: 9999;
-            max-height: 60px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            color: #000;
+            transform: translateX(-50%);
+            z-index: 99999;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
             white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-        .music-lyrics.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .music-lyrics .lyric-line {
-            font-size: 19px;
-            color: #333;
-            transition: all 0.3s;
-            padding: 2px 0;
-            line-height: 1.4;
             display: none;
         }
-        .music-lyrics .lyric-line.active {
+        .music-lyrics.show {
             display: block;
-            color: #ff3b30;
-            font-weight: bold;
-            font-size: 20px;
-            text-shadow: 0 0 10px rgba(255, 59, 48, 0.3);
         }
 
         /* 添加歌曲弹窗 - 居中显示 */
@@ -1362,12 +1337,10 @@
                 font-size: 11px;
             }
             .music-lyrics {
-                bottom: 10px;
-                width: 90%;
-                max-width: 90%;
+                bottom: 20px;
                 left: 50%;
                 transform: translateX(-50%);
-                z-index: 9999;
+                z-index: 99999;
             }
             .switch {
                 background-color: #fff;
@@ -1381,6 +1354,13 @@
             }
             .play-btn-overlay {
                 width: 24px;
+            }
+            .music-search-bar button {
+                padding: 8px 12px;
+                font-size: 13px;
+                white-space: nowrap;
+                writing-mode: horizontal-tb;
+            }
                 height: 24px;
                 left: 12px;
                 top: 12px;
@@ -3130,11 +3110,19 @@ const embeddedLyrics = {
         // 切换播放列表
         function togglePlaylist() {
             const playlist = document.getElementById('musicPlaylist');
+            const lyrics = document.getElementById('musicLyrics');
+            const lyricSwitch = document.getElementById('lyricSwitch');
             if (playlist.classList.contains('show')) {
                 playlist.classList.remove('show');
+                // 播放列表关闭，如果歌词开关是开的，把歌词显示回来
+                if (lyricSwitch && lyricSwitch.checked) {
+                    lyrics.classList.add('show');
+                }
             } else {
                 playlist.classList.add('show');
                 renderPlaylist();
+                // 播放列表打开，自动把歌词隐藏掉
+                lyrics.classList.remove('show');
             }
         }
 
@@ -3560,8 +3548,8 @@ const embeddedLyrics = {
         // 音乐事件监听
         musicAudio.addEventListener('timeupdate', () => {
             if (musicAudio.duration) {
-                // 进度条慢0.5秒
-                const displayTime = Math.max(0, musicAudio.currentTime - 0.5);
+                // 进度条快0.5秒
+                const displayTime = Math.max(0, musicAudio.currentTime + 0.5);
                 const percent = (displayTime / musicAudio.duration) * 100;
                 document.getElementById('musicProgressBar').style.width = percent + '%';
                 document.getElementById('musicCurrentTime').textContent = formatTime(displayTime);
