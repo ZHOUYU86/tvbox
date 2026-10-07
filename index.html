@@ -1373,7 +1373,7 @@
                 background-color: #fff;
             }
             input:checked + .slider {
-                background-color: #34c759;
+                background-color: #ccc;
             }
             .music-cover {
                 width: 48px;
@@ -3559,9 +3559,11 @@ const embeddedLyrics = {
         // 音乐事件监听
         musicAudio.addEventListener('timeupdate', () => {
             if (musicAudio.duration) {
-                const percent = (musicAudio.currentTime / musicAudio.duration) * 100;
+                // 进度条慢0.5秒
+                const displayTime = Math.max(0, musicAudio.currentTime - 0.5);
+                const percent = (displayTime / musicAudio.duration) * 100;
                 document.getElementById('musicProgressBar').style.width = percent + '%';
-                document.getElementById('musicCurrentTime').textContent = formatTime(musicAudio.currentTime);
+                document.getElementById('musicCurrentTime').textContent = formatTime(displayTime);
                 // 实时同步LRC歌词
                 updateLyrics();
             }
