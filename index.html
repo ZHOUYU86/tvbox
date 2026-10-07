@@ -1563,6 +1563,11 @@
         </div>
     </div>
 
+        <!-- 歌词显示（在body最外层，不在music-player里面） -->
+        <div class="music-lyrics show" id="musicLyrics">
+            <div class="lyric-line">♪ 歌词显示 ♪</div>
+        </div>
+
     <!-- 左下角音乐播放器 - 集多样式 -->
     <div class="music-player">
         <div class="music-toggle" id="musicToggle" onclick="toggleMusicPanel()">
@@ -1575,10 +1580,6 @@
                 <button onclick="togglePlaylist()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:4px 12px;border-radius:4px;">&times; 关闭</button>
             </div>
             <div id="playlistItems"></div>
-        </div>
-        <!-- 歌词显示 -->
-        <div class="music-lyrics show" id="musicLyrics">
-            <div class="lyric-line">♪ 歌词显示 ♪</div>
         </div>
         <!-- 播放器主面板 -->
         <div class="music-panel" id="musicPanel">
