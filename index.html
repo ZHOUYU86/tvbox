@@ -1364,11 +1364,11 @@
             }
             .music-lyrics {
                 bottom: 10px;
-                width: 95%;
-                max-width: 95%;
+                width: 90%;
+                max-width: 90%;
                 left: 50%;
                 transform: translateX(-50%);
-                z-index: 100;
+                z-index: 9999;
             }
             .switch {
                 background-color: #fff;
@@ -1388,7 +1388,11 @@
                 font-size: 10px;
             }
             .music-info {
-                font-size: 12px;
+                font-size: 10px;
+                max-width: 80px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
             .music-btn {
                 width: 24px;
