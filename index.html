@@ -1562,8 +1562,8 @@
         </div>
     </div>
 
-        <!-- 歌词显示（在body最外层，不在music-player里面） -->
-        <div class="music-lyrics show" id="musicLyrics">
+        <!-- 歌词显示（默认不显示） -->
+        <div class="music-lyrics" id="musicLyrics">
             <div class="lyric-line">♪ 歌词显示 ♪</div>
         </div>
 
@@ -3522,9 +3522,9 @@ const embeddedLyrics = {
                 const lineDuration = Math.max(lineEndTime - lineStartTime, 1);
                 const lineText = currentLine.text.trim();
                 const charCount = lineText.length;
-                // 每个字的时间，精确同步（提前0.5秒）
+                // 每个字的时间，精确同步（提前0秒）
                 const timePerChar = lineDuration / Math.max(charCount, 1);
-                const elapsedInLine = (currentTime - lineStartTime) + 0.5;
+                const elapsedInLine = (currentTime - lineStartTime);
                 let currentCharIndex = Math.floor(elapsedInLine / timePerChar);
                 if (currentCharIndex < 0) currentCharIndex = 0;
                 if (currentCharIndex >= charCount) currentCharIndex = charCount - 1;
