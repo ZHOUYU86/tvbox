@@ -1,17 +1,17 @@
 {
-  "spider": "",
+  "spider": "https://zhouyu86.de5.net/js/555影视.js;fxg=1",
   "wallpaper": "",
-  "sitename": "555电影新域名接口",
+  "sitename": "555电影新接口",
   "sites": [
     {
       "key": "555new",
       "name": "555电影(新)",
-      "type": 1,
-      "api": "https://55dy1.top/api.php/provide/vod/",
+      "type": 3,
+      "api": "https://zhouyu86.de5.net/js/555影视.js;fxg=1",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": ""
+      "ext": {}
     }
   ],
   "parses": [],
