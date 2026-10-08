@@ -1871,13 +1871,17 @@
                     cat.password = '123456';
                     needSave = true;
                 }
-                // 如果是系统工具分类且没有网站，添加源地址大全入口
-                if (cat.name === '系统工具' && (!cat.sites || cat.sites.length === 0)) {
-                    cat.sites = [
-                        { name: '📺 TVBox源地址大全（一键复制）', icon: '📺', url: 'https://zhouyu365666.top/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html', type: 'link' },
-                        { name: '📝 TVBox接口编辑器（可修改）', icon: '📝', url: 'https://zhouyu365666.top/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html', type: 'link' }
-                    ];
-                    needSave = true;
+                // 强制给系统工具分类加密码锁
+                if (cat.name === '系统工具') {
+                    if (cat.password !== '123456') {
+                        cat.password = '123456';
+                        needSave = true;
+                    }
+                    // 同时把入口链接改成新域名
+                    if (cat.sites && cat.sites.length > 0) {
+                        cat.sites[0].url = 'https://zhouyu86.de5.net/TVBox%E6%BA%90%E5%9C%B0%E5%9D%80%E5%A4%A7%E5%85%A8.html';
+                        cat.sites[1].url = 'https://zhouyu86.de5.net/TVBox%E6%8E%A5%E5%8F%A3%E7%BC%96%E8%BE%91%E5%99%A8.html';
+                    }
                 }
                 // 自动升级：如果系统工具分类里是旧的33个复制型网站，替换成新的入口
                 if (cat.name === '系统工具' && cat.sites && cat.sites.length > 1) {
