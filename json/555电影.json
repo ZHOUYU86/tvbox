@@ -1,28 +1,20 @@
 {
-  "spider": "https://zhouyu86.de5.net/js/555电影.js;fxg=1",
+  "spider": "",
   "wallpaper": "",
   "sitename": "555电影新域名接口",
-  "parse": [
-    {
-      "name": "聚合解析",
-      "type": 3,
-      "url": "Demo"
-    }
-  ],
-  "flags": ["4K", "蓝光", "高清", "超清"],
   "sites": [
     {
-      "key": "csp_AppYsV2",
+      "key": "555new",
       "name": "555电影(新)",
       "type": 1,
-      "api": "https://zhouyu86.de5.net/js/555电影.js;fxg=1",
+      "api": "https://55dy1.top/api.php/provide/vod/",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": {}
+      "ext": ""
     }
   ],
   "parses": [],
-  "flags": [],
+  "flags": ["4K", "蓝光", "高清", "超清"],
   "ijk": 0
 }
