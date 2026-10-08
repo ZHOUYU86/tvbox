@@ -1,17 +1,21 @@
 {
-  "spider": "https://zhouyu86.de5.net/js/555影视.js;fxg=1",
+  "spider": "",
   "wallpaper": "",
-  "sitename": "555电影新接口",
+  "sitename": "555电影(555k91)",
   "sites": [
     {
-      "key": "555new",
-      "name": "555电影(新)",
-      "type": 3,
-      "api": "https://zhouyu86.de5.net/js/555影视.js;fxg=1",
+      "key": "555k",
+      "name": "555电影",
+      "type": 1,
+      "api": "https://555k91.com/api.php/provide/vod/",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": {}
+      "ext": "",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+        "Referer": "https://555k91.com/"
+      }
     }
   ],
   "parses": [],
