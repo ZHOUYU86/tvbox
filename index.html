@@ -299,10 +299,25 @@
             object-fit: contain;
             border-radius: 0;
         }
-        .site-item .icon {
-            font-size: 26px;
-            display: block;
-            margin-bottom: 5px;
+        .site-item .site-icon-box {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .site-item .site-icon-box .site-favicon {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            object-fit: contain;
+        }
+        .site-item .site-icon-box .icon {
+            font-size: 22px;
+            line-height: 1;
+            display: none;
+            margin: 0;
         }
         .site-item .name {
             font-size: 13px;
@@ -1322,15 +1337,25 @@
                 background: #f5f8ff;
                 border-color: #1677ff;
             }
-            .site-item .site-favicon {
+            .site-item .site-icon-box {
                 width: 48px;
                 height: 48px;
-                margin-bottom: 8px;
-                border-radius: 0;
+                margin: 0 auto 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
-            .site-item .icon {
-                font-size: 40px;
-                margin-bottom: 8px;
+            .site-item .site-icon-box .site-favicon {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                object-fit: contain;
+            }
+            .site-item .site-icon-box .icon {
+                font-size: 32px;
+                line-height: 1;
+                display: none;
+                margin: 0;
             }
             .site-item .name {
                 font-size: 13px;
@@ -2147,8 +2172,10 @@
                                 </div>
                             ` : `
                                 <a href="${site.url}" target="_blank" draggable="false" style="text-decoration:none;color:inherit;display:block;">
-                                    <img class="site-favicon" src="${faviconUrl}" alt="${site.name}" data-domain="${domain}" onerror="this.onerror=null;this.src='${faviconFallback1}';this.onerror=function(){this.onerror=null;this.src='${faviconFallback2}';this.onerror=function(){this.onerror=null;this.src='${faviconFallback3}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};};};">
-                                    <span class="icon" style="display:none;">${site.icon}</span>
+                                    <div class="site-icon-box">
+                                        <img class="site-favicon" src="${faviconUrl}" alt="${site.name}" data-domain="${domain}" onerror="this.onerror=null;this.src='${faviconFallback1}';this.onerror=function(){this.onerror=null;this.src='${faviconFallback2}';this.onerror=function(){this.onerror=null;this.src='${faviconFallback3}';this.onerror=function(){this.style.display='none';var ic=this.nextElementSibling;if(ic){ic.style.display='block';if(!ic.textContent.trim()){ic.textContent='🌐';}}};};};">
+                                        <span class="icon" style="display:none;">${site.icon || '🌐'}</span>
+                                    </div>
                                     <span class="name">${site.name}</span>
                                 </a>
                             `}
