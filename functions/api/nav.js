@@ -21,11 +21,14 @@ export async function onRequest(context) {
     try {
         // GET - 读取导航数据
         if (request.method === 'GET') {
-            const data = await kv.get(key);
-            if (data === null) {
-                return new Response(JSON.stringify({ empty: true, data: null }), { headers: CORS_HEADERS });
+            const raw = await kv.get(key);
+            if (raw === null) {
+                return new Response(JSON.stringify({ data: null }), { headers: CORS_HEADERS });
             }
-            return new Response(data, { headers: CORS_HEADERS });
+            // 包装为 { data: [...] } 格式，方便前端统一处理
+            let parsed = null;
+            try { parsed = JSON.parse(raw); } catch (e) { parsed = raw; }
+            return new Response(JSON.stringify({ data: parsed }), { headers: CORS_HEADERS });
         }
 
         // POST - 保存导航数据
