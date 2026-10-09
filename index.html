@@ -1848,8 +1848,24 @@
             '⭐','🌟','✨','💫','🔥','💥','💯','✅','❌','⭕'
         ];
 
-        // 加载数据
+        // 加载数据（优先从线上同步，其次本地缓存，最后默认）
         function loadData() {
+            // 先用本地/默认数据快速渲染，避免页面空白
+            loadLocalData();
+            // 再从线上同步数据（异步）
+            fetch('/api/nav?key=navData')
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
+                        navData = data.data;
+                        try { localStorage.setItem('myNavData_v2', JSON.stringify(navData)); } catch(e) {}
+                        renderAccordion();
+                    }
+                })
+                .catch(() => {});
+        }
+
+        function loadLocalData() {
             try {
                 const saved = localStorage.getItem('myNavData_v2');
                 if (saved) {
@@ -2012,10 +2028,18 @@
             }
         }
 
-        // 保存数据
+        // 保存数据（本地 + 线上同步）
         function saveData() {
             try {
                 localStorage.setItem('myNavData_v2', JSON.stringify(navData));
+            } catch(e) {}
+            // 同步到线上（全平台共享）
+            try {
+                fetch('/api/nav?key=navData', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(navData)
+                }).catch(() => {});
             } catch(e) {}
         }
 
@@ -2915,6 +2939,13 @@
             const saved = localStorage.getItem('musicPlaylist');
             if (saved) {
                 musicPlaylist = JSON.parse(saved);
+                // 自动清除指向已删除本地歌曲（高胜美等 music/ 路径）的旧缓存条目
+                if (Array.isArray(musicPlaylist)) {
+                    musicPlaylist = musicPlaylist.filter(function(song) {
+                        if (!song || !song.url) return false;
+                        return song.url.indexOf('music/') !== 0;
+                    });
+                }
             }
         } catch (e) {}
         
@@ -2957,6 +2988,10 @@
         function renderPlaylist() {
             const container = document.getElementById('playlistItems');
             document.getElementById('playlistCount').textContent = musicPlaylist.length;
+            if (!musicPlaylist || musicPlaylist.length === 0) {
+                container.innerHTML = '<div style="padding:20px;text-align:center;color:#888;font-size:13px;">歌单为空<br>请在搜索框搜索歌曲添加到列表</div>';
+                return;
+            }
             container.innerHTML = musicPlaylist.map((song, i) => `
                 <div class="playlist-item ${i === currentMusicIndex ? 'active' : ''}" onclick="playSong(${i})">
                     <span class="index">${i + 1}</span>
@@ -3317,6 +3352,10 @@
 
         // 加载歌曲
         function loadMusic(index) {
+            if (!musicPlaylist || musicPlaylist.length === 0 || !musicPlaylist[index]) {
+                alert('歌单为空，请先在搜索框搜索并添加歌曲');
+                return;
+            }
             currentMusicIndex = index;
             const song = musicPlaylist[index];
             musicAudio.src = song.url;
