@@ -2075,8 +2075,11 @@
                     } catch(e) {
                         domain = site.url.replace(/^https?:\/\//, '').split('/')[0];
                     }
-                    // 直接用网站自己的favicon，多个备用源
+                    // 直接用网站自己的favicon，多级备用源（iowen → google → duckduckgo）
                     const faviconUrl = `${protocol}//${domain}/favicon.ico`;
+                    const faviconFallback1 = `https://api.iowen.cn/favicon/${domain}.png`;
+                    const faviconFallback2 = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+                    const faviconFallback3 = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
                     
                     siteEl.innerHTML = `
                         <div style="text-decoration:none;color:inherit;display:block;cursor:default;">
@@ -2090,7 +2093,7 @@
                                 </div>
                             ` : `
                                 <a href="${site.url}" target="_blank" draggable="false" style="text-decoration:none;color:inherit;display:block;">
-                                    <img class="site-favicon" src="${faviconUrl}" alt="${site.name}" data-domain="${domain}" onerror="this.onerror=null;this.src='https://api.iowen.cn/favicon/${domain}.png';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};">
+                                    <img class="site-favicon" src="${faviconUrl}" alt="${site.name}" data-domain="${domain}" onerror="this.onerror=null;this.src='${faviconFallback1}';this.onerror=function(){this.onerror=null;this.src='${faviconFallback2}';this.onerror=function(){this.onerror=null;this.src='${faviconFallback3}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='block';};};};">
                                     <span class="icon" style="display:none;">${site.icon}</span>
                                     <span class="name">${site.name}</span>
                                 </a>
