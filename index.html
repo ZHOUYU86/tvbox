@@ -1306,7 +1306,37 @@
         @media (max-width: 600px) {
             .site-grid { 
                 grid-template-columns: repeat(4, 1fr); 
-                gap: 8px;
+                gap: 12px;
+                padding: 18px 16px 20px;
+            }
+            .site-item {
+                background: #ffffff;
+                border: 1px solid #ececec;
+                border-radius: 14px;
+                padding: 14px 4px 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                transition: all 0.2s ease;
+            }
+            .site-item:active {
+                transform: scale(0.96);
+                background: #f5f8ff;
+                border-color: #1677ff;
+            }
+            .site-item .site-favicon {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 7px;
+                border-radius: 10px;
+            }
+            .site-item .icon {
+                font-size: 34px;
+                margin-bottom: 7px;
+            }
+            .site-item .name {
+                font-size: 12px;
+                font-weight: 600;
+                color: #1a1a1a;
+                letter-spacing: 0.2px;
             }
             .logo { 
                 font-size: 28px; 
