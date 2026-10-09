@@ -2192,8 +2192,8 @@
                             ` : `
                                 <a href="${site.url}" target="_blank" draggable="false" style="text-decoration:none;color:inherit;display:block;">
                                     <div class="site-icon-box">
-                                        <img class="site-favicon" src="${faviconUrl}" alt="${site.name}" data-domain="${domain}" onerror="this.onerror=null;this.src='${faviconFallback1}';this.onerror=function(){this.onerror=null;this.src='${faviconFallback2}';this.onerror=function(){this.onerror=null;this.src='${faviconFallback3}';this.onerror=function(){this.style.display='none';var ic=this.nextElementSibling;if(ic){ic.style.display='flex';if(!ic.textContent.trim()){ic.textContent='🌐';}}};};};">
-                                        <span class="icon" style="display:none;">${site.icon || '🌐'}</span>
+                                        <span class="icon" style="display:flex;">${site.icon || '🌐'}</span>
+                                        <img class="site-favicon" src="${faviconUrl}" alt="${site.name}" data-domain="${domain}" style="display:none;" onload="var s=this.nextElementSibling;if(s&&s.textContent.trim()==='🌐'){this.style.display='block';s.style.display='none';}" onerror="this.style.display='none';this.onerror=null;this.src='${faviconFallback1}';this.onerror=function(){this.style.display='none';this.onerror=null;this.src='${faviconFallback2}';this.onerror=function(){this.style.display='none';this.onerror=null;this.src='${faviconFallback3}';this.onerror=function(){this.style.display='none';};};};">
                                     </div>
                                     <span class="name">${site.name}</span>
                                 </a>
@@ -3427,9 +3427,11 @@
         }
 
         // 加载歌曲
-        function loadMusic(index) {
+        function loadMusic(index, silent) {
             if (!musicPlaylist || musicPlaylist.length === 0 || !musicPlaylist[index]) {
-                alert('歌单为空，请先在搜索框搜索并添加歌曲');
+                if (!silent) {
+                    alert('歌单为空，请先在搜索框搜索并添加歌曲');
+                }
                 return;
             }
             currentMusicIndex = index;
@@ -3645,7 +3647,7 @@
 
         // 初始化音乐（加错误保护，防止卡住）
         try {
-            loadMusic(0);
+            loadMusic(0, true);
         } catch(e) { console.error('loadMusic error:', e); }
         try {
             setVolume(70);
